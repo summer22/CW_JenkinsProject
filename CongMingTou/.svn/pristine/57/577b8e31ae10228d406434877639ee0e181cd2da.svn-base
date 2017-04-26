@@ -1,0 +1,52 @@
+//
+//  CMT_ExperienceMaskView.h
+//  CongMingTou
+//
+//  Created by summer on 16/5/28.
+//  Copyright © 2016年 QiYuan. All rights reserved.
+//
+
+#import <UIKit/UIKit.h>
+
+
+@protocol CMT_ExperienceMaskViewDelegate <NSObject>
+
+//充值点击事件
+- (void)productMaskSubViewRechargeBtnClick;
+//投资保障协议点击事件
+- (void)productMaskSubViewprocolBtnClick;
+//协议是否选中事件
+- (void)productMaskSubViewSelectBtnClick:(BOOL)selectState;
+//协议查看点击事件
+- (void)productMaskSubViewAgreeBtnClick;
+//倍数输入值
+- (void)productMaskSubViewNumTextField:(NSString *)Num;
+
+@end
+
+@interface CMT_ExperienceMaskView : UIView
+
+//delegate
+@property (nonatomic,strong)id<CMT_ExperienceMaskViewDelegate>delegate;
+/**
+ *  显示投资浮层并传值
+ *
+ *  @param target              self
+ *  @param toPayCount          可用金额
+ *  @param availableBalanceStr 可投金额
+ *  @param aprStr              年收益率
+ *  @param percentStr          加息率
+ *  @param days                投资天数
+ *  @param startInvestAmount   起投金额
+ *  @param testAmount          体验金
+ *  @param minNewInvestAmount  新手标最低投资金额
+ *  @param maxNewInvestAmount  新手标最高投资金额
+
+ */
++ (void)showWithDelegate:(id)target toPayCount:(NSString *)toPayCount availableBalance:(NSString *)availableBalanceStr apr:(NSString *)aprStr addPercent:(NSString *)percentStr investDay:(NSString *)days startInvestAmountStr:(NSString *)startInvestAmount testAmountStr:(NSString *)testAmount minNewInvestAmount:(NSString *)minNewInvestAmountStr maxNewInvestAmount:(NSString *)maxNewInvestAmountStr;
+//删除
+- (void)removeSelf;
+
++ (void)removeMySelf;
+
+@end

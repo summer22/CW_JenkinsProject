@@ -1,0 +1,26 @@
+//
+//  CMT_MyWelfareListModel.m
+//  CongMingTou
+//
+//  Created by wzh on 16/5/24.
+//  Copyright © 2016年 QiYuan. All rights reserved.
+//
+
+#import "CMT_MyWelfareListModel.h"
+
+@implementation CMT_MyWelfareListModel
+
++ (CMT_MyWelfareListModel *)myWelfareListModelWithDic:(NSDictionary *)dic{
+    return [[self alloc]initWithDic:dic];
+}
+- (id)initWithDic:(NSDictionary *)dic{
+    if(self = [super init]){
+        [self setValuesForKeysWithDictionary:dic];
+    }
+    return self;
+}
+
+- (void)setValue:(id)value forUndefinedKey:(NSString *)key{
+    
+}
+@end

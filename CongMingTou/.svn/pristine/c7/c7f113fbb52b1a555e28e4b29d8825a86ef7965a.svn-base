@@ -1,0 +1,20 @@
+//
+//  CMT_makeSureTableViewCell.h
+//  CongMingTou
+//
+//  Created by summer on 16/5/27.
+//  Copyright © 2016年 QiYuan. All rights reserved.
+//
+
+#import <UIKit/UIKit.h>
+#import "CMT_InvestConfirmModel.h"
+
+@interface CMT_makeSureTableViewCell : UITableViewCell
++ (CMT_makeSureTableViewCell *)cellWithTablebView:(UITableView *)tableView indexPath:(NSIndexPath *)index modelData:(CMT_InvestConfirmModel *)model;
+
+/** 加息率 */
+@property (nonatomic,copy)NSString *rateStr;
+/** 本金券额度 */
+@property (nonatomic,copy)NSString *ticketNum;
+
+@end

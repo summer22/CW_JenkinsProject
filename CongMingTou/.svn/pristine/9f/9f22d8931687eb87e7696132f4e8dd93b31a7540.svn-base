@@ -1,0 +1,233 @@
+//
+//  CMT_ModifyPaymentPasswordViewController.m
+//  CongMingTou
+//
+//  Created by wzh on 16/5/17.
+//  Copyright © 2016年 QiYuan. All rights reserved.
+//
+
+#import "CMT_ModifyPaymentPasswordViewController.h"
+#import "CMT_AccountAndPasswordViewController.h"
+#import "CMT_ForgetPasswordViewController.h"
+#import "CMT_ChongZhIAndTiXIanViewController.h"
+#import "CMT_productDetViewController.h"
+#import "CMT_makeSureViewController.h"
+@interface CMT_ModifyPaymentPasswordViewController ()<CMT_InputViewDelegate>{
+    NSString *_curentPassword;
+}
+
+@property (strong, nonatomic) IBOutlet UILabel *desTitleLab;
+@property (strong, nonatomic) IBOutlet UIButton *forgetBtn;
+@property (strong, nonatomic) IBOutlet UIButton *commitBtn;
+@property (strong, nonatomic) IBOutlet CMT_InputView *inPutView;
+@end
+
+@implementation CMT_ModifyPaymentPasswordViewController
+
+- (void)viewWillAppear:(BOOL)animated{
+    [super viewWillAppear:animated];
+    [_inPutView.topTextField becomeFirstResponder];
+}
+- (void)viewDidLoad {
+    [super viewDidLoad];
+    // Do any additional setup after loading the view from its nib.
+    [self setDefautUI];
+}
+
+- (void)setDefautUI{
+
+    [_inPutView styteWithCornerRadius:5 borderColor:ThemeBackgroundColor borderWidth:1 shadowColor:ThemeBackgroundColor shadowOffset:CMT_ShadowOffset shadowOpacity:CMT_ShadowOpacity shadowRadius:CMT_ShadowRadius];
+    [_commitBtn styteWithCornerRadius:_commitBtn.height / 2 shadowColor:_commitBtn.backgroundColor shadowOffset:CMT_ShadowOffset shadowOpacity:CMT_ShadowOpacity shadowRadius:CMT_ShadowRadius];
+    _inPutView.backgroundColor = [UIColor whiteColor];
+    _inPutView.midLineColor = ThemeBackgroundColor;
+    _inPutView.pointColor = ThemeBackgroundColor;
+    _inPutView.pointRadius = 10;
+    _inPutView.delegate = self;
+    
+    if(_modifyPaymentPasswordType == CMTModifyPaymentPasswordTypeVerifyPassword){// 修改支付密码 －－ 验证原密码
+        _desTitleLab.text = [NSString stringWithFormat:@"请输入支付密码，以验证身份"];
+        _forgetBtn.hidden = NO;
+        _commitBtn.hidden = YES;
+    }else if (_modifyPaymentPasswordType == CMTModifyPaymentPasswordTypeEnterNewPassword){ //修改支付密码 －－ 验证原密码
+        _desTitleLab.text = [NSString stringWithFormat:@"请设置新密码"];
+        _forgetBtn.hidden = YES;
+        _commitBtn.hidden = YES;
+    }else if (_modifyPaymentPasswordType == CMTModifyPaymentPasswordTypeEnterAgainConfirmNewPassword){//修改支付密码 －－ 再次输入新密码确认
+        _desTitleLab.text = [NSString stringWithFormat:@"请再次输入以确认"];
+        _forgetBtn.hidden = YES;
+        _commitBtn.hidden = NO;
+        _commitBtn.alpha = 0.5;
+        _commitBtn.enabled = NO;
+    }
+}
+
+#pragma mark -- CMT_InputViewDelegate
+- (void)changeValueWithTopTextField:(UITextField *)textField{
+    if(textField.text.length == CMT_PayPwdLenght){
+        _commitBtn.alpha = 1;
+        _commitBtn.enabled = YES;
+    }else{
+        _commitBtn.alpha = 0.5;
+        _commitBtn.enabled = NO;
+
+    }
+}
+- (void)didCompleteInput:(NSString *)password andInputView:(CMT_InputView *)inputView{
+    _curentPassword = password;
+    if(_modifyPaymentPasswordType == CMTModifyPaymentPasswordTypeVerifyPassword){//修改支付密码 －－ 验证原密码
+        [self loadDataConfirmPayPasswordWithPhoneNum:[CMT_AccountTool accountModel].mobileNo andOldPassword:_curentPassword];
+    }else if (_modifyPaymentPasswordType == CMTModifyPaymentPasswordTypeEnterNewPassword) {//修改支付密码 －－ 输入新密码
+        
+        CMT_ModifyPaymentPasswordViewController *modifyPaymentPasswordVC = [[CMT_ModifyPaymentPasswordViewController alloc]init];
+        modifyPaymentPasswordVC.title = @"修改支付密码";
+        modifyPaymentPasswordVC.prePassWord = _curentPassword;
+        modifyPaymentPasswordVC.setPwdType = _setPwdType;
+        modifyPaymentPasswordVC.forgetVCType = _forgetVCType;
+        if(_setPwdType == CMTSetPwdTypeForgetPwd){
+            modifyPaymentPasswordVC.phoneNumStr = _phoneNumStr;
+        }
+        modifyPaymentPasswordVC.modifyPaymentPasswordType = CMTModifyPaymentPasswordTypeEnterAgainConfirmNewPassword;
+        [self.navigationController pushViewController:modifyPaymentPasswordVC animated:YES];
+
+        
+    }else if (_modifyPaymentPasswordType == CMTModifyPaymentPasswordTypeEnterAgainConfirmNewPassword){//修改支付密码 －－ 再次输入新密码确认
+        if(![_curentPassword isEqualToString:_prePassWord]){
+            [CMT_Tools showInfoAlert:CMT_Error_TwoPwdNoSame];
+        }
+    }
+    
+}
+
+#pragma  mark -- 点击事件
+- (IBAction)forgetBtnClicked:(id)sender {
+    CMT_ForgetPasswordViewController *forgetpasswordVC = [[CMT_ForgetPasswordViewController alloc]init];
+    forgetpasswordVC.enterForgetVCType = CMTEnterForgetVCTypeDefuatVC;
+    [self.navigationController pushViewController:forgetpasswordVC animated:YES];
+    
+}
+- (IBAction)commitBtnClicked:(id)sender {
+    
+    if(_setPwdType == CMTSetPwdTypeRetsetPayPwd){
+        [self loadDataModifyPayPwdWithPhoneNum:[CMT_AccountTool accountModel].mobileNo newPayPwd:_curentPassword];
+    }else if(_setPwdType == CMTSetPwdTypeForgetPwd){
+        [self loadDataResetPayPwdWithPhoneNum:_phoneNumStr newPayPwd:_curentPassword];
+    }
+    
+   }
+
+- (void)nextVC{
+
+    NSString *vcClassName = @"";
+    if(_forgetVCType == CMTEnterForgetVCTypeDefuatVC){//修改支付密码 －－忘记密码
+        vcClassName = @"CMT_AccountAndPasswordViewController";
+    }else if(_forgetVCType == CMTEnterForgetVCTypeChongZhiOrTiXianVC){//修改支付密码 －－ 充值提现  （充值提现）－－忘记密码
+        vcClassName = @"CMT_ChongZhIAndTiXIanViewController";
+    }else if(_forgetVCType == CMTEnterForgetVCTypeOrderVC){//修改支付密码 －－  订单页 （立即投资）－－忘记密码
+        vcClassName = @"CMT_makeSureViewController";
+    }else if(_forgetVCType == CMTEnterForgetVCTypeProductDetailVC){//修改支付密码 －－  产品详情（立即预约） －－忘记密码
+        vcClassName = @"CMT_makeSureViewController";
+    }
+    for (UIViewController *subVC in self.navigationController.viewControllers) {
+        if([subVC isKindOfClass:NSClassFromString(vcClassName)]){
+            [self.navigationController popToViewController:subVC animated:YES];
+        }
+    }
+
+}
+//- (void)confirmPayPasswordNextVC{
+//        CMT_ModifyPaymentPasswordViewController *modifyPaymentPasswordVC = [[CMT_ModifyPaymentPasswordViewController alloc]init];
+//        modifyPaymentPasswordVC.title = @"修改支付密码";
+//        modifyPaymentPasswordVC.passWord = _passWord;
+//        modifyPaymentPasswordVC.setPwdType = CMTSetPwdTypeRetsetPayPwd;
+//        modifyPaymentPasswordVC.modifyPaymentPasswordType = CMTModifyPaymentPasswordTypeEnterNewPassword;
+//        [self.navigationController pushViewController:modifyPaymentPasswordVC animated:YES];
+//        UIAlertView *alert = [[UIAlertView alloc]initWithTitle:@"输入的密码不正确" message:_passWord delegate:nil cancelButtonTitle:@"完成" otherButtonTitles:nil, nil];
+//        [alert show];
+//}
+
+
+#pragma mak -- 忘记密码
+- (void)loadDataResetPayPwdWithPhoneNum:(NSString *)phoneNum newPayPwd:(NSString *)newPayPwd {
+    [self showHudInView:self.view hint:CMT_LoadDataWaiting];
+    
+    [CMT_ProcessTheDataTool resetPayPwdWithPhoneNum:phoneNum resetPayPwd:newPayPwd andBlock:^(CMT_BaseModel *baseModel, NSError *error) {
+        [self hideHud];
+        if(!error){
+            if([[NSString stringWithFormat:@"%@",baseModel.status] isEqualToString:@"1"]){
+                [self showHint:CMT_LoadDataModifyPayPwdSuccessful];
+                [self nextVC];
+            }else if ([[NSString stringWithFormat:@"%@",baseModel.status] isEqualToString:CMT_SinglePointCode]){
+                [CMT_SinglePointLoginTool addSinglePointLoginWithSelfVC:self];
+            }else{
+                [self showHint:baseModel.msg];
+            }
+        }else{
+            [self showHint:CMT_Error_NotNetWork];
+        }
+        
+    }];
+}
+#pragma mark -- 验证输入的密码是否正确
+- (void)loadDataConfirmPayPasswordWithPhoneNum:(NSString *)phoneNum andOldPassword:(NSString *)oldPassword{
+    [self showHudInView:self.view hint:CMT_LoadDataWaitingPwdOK];
+    
+    [CMT_ProcessTheDataTool confirmPayPasswordWithPhoneNum:phoneNum andOldPassword:oldPassword  andBlock:^(CMT_BaseModel *baseModel, NSError *error) {
+        [self hideHud];
+        if(!error){
+            
+            if([[NSString stringWithFormat:@"%@",baseModel.status] isEqualToString:@"1"]){
+                CMT_ModifyPaymentPasswordViewController *modifyPaymentPasswordVC = [[CMT_ModifyPaymentPasswordViewController alloc]init];
+                modifyPaymentPasswordVC.title = @"修改支付密码";
+                modifyPaymentPasswordVC.setPwdType = CMTSetPwdTypeRetsetPayPwd;
+                modifyPaymentPasswordVC.modifyPaymentPasswordType = CMTModifyPaymentPasswordTypeEnterNewPassword;
+                [self.navigationController pushViewController:modifyPaymentPasswordVC animated:YES];
+            }else if ([[NSString stringWithFormat:@"%@",baseModel.status] isEqualToString:CMT_SinglePointCode]){
+                [CMT_SinglePointLoginTool addSinglePointLoginWithSelfVC:self];
+            }else{
+                [self showHint:baseModel.msg];
+            }
+        }else{
+            [self showHint:CMT_Error_NotNetWork];
+        }
+        
+    }];
+
+}
+#pragma mark -- 修改支付密码
+- (void)loadDataModifyPayPwdWithPhoneNum:(NSString *)phoneNum newPayPwd:(NSString *)newPayPwd{
+    [self showHudInView:self.view hint:CMT_LoadDataWaitingModifyPwd];
+    
+    [CMT_ProcessTheDataTool modifyPayPwdWithPhoneNum:phoneNum andNewsPayPwd:newPayPwd andBlock:^(CMT_BaseModel *baseModel, NSError *error) {
+        [self hideHud];
+        if(!error){
+            if([[NSString stringWithFormat:@"%@",baseModel.status] isEqualToString:@"1"]){
+                [self showHint:CMT_LoadDataModifyPayPwdSuccessful];
+                [self nextVC];
+            }else if ([[NSString stringWithFormat:@"%@",baseModel.status] isEqualToString:CMT_SinglePointCode]){
+                [CMT_SinglePointLoginTool addSinglePointLoginWithSelfVC:self];
+            }else{
+                [self showHint:baseModel.msg];
+            }
+        }else{
+            [self showHint:CMT_Error_NotNetWork];
+        }
+        
+    }];
+
+}
+- (void)didReceiveMemoryWarning {
+    [super didReceiveMemoryWarning];
+    // Dispose of any resources that can be recreated.
+}
+
+/*
+#pragma mark - Navigation
+
+// In a storyboard-based application, you will often want to do a little preparation before navigation
+- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
+    // Get the new view controller using [segue destinationViewController].
+    // Pass the selected object to the new view controller.
+}
+*/
+
+@end

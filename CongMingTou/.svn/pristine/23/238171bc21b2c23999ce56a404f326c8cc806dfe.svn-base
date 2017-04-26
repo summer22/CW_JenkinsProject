@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="10116" systemVersion="15B42" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES">
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="10085"/>
+        <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
+    </dependencies>
+    <customFonts key="customFonts">
+        <mutableArray key="Aileron-Light.otf">
+            <string>Aileron-Light</string>
+        </mutableArray>
+    </customFonts>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <tableViewCell contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" id="KGk-i7-Jjw" customClass="CMT_InvestmentEarningsTableViewCell">
+            <rect key="frame" x="0.0" y="0.0" width="320" height="125"/>
+            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+            <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="KGk-i7-Jjw" id="H2p-sc-9uM">
+                <rect key="frame" x="0.0" y="0.0" width="320" height="124"/>
+                <autoresizingMask key="autoresizingMask"/>
+                <subviews>
+                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="－" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="GrP-9d-3z9">
+                        <rect key="frame" x="60" y="38" width="200" height="35"/>
+                        <constraints>
+                            <constraint firstAttribute="width" constant="200" id="TTx-GA-21D"/>
+                            <constraint firstAttribute="height" constant="35" id="VRL-iC-cHz"/>
+                        </constraints>
+                        <fontDescription key="fontDescription" name="Aileron-Light" family="Aileron" pointSize="36"/>
+                        <color key="textColor" red="0.27450980390000002" green="0.79607843140000001" blue="0.99607843139999996" alpha="1" colorSpace="calibratedRGB"/>
+                        <nil key="highlightedColor"/>
+                    </label>
+                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="预约投资可享受交易提成" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="gLD-bL-vCO">
+                        <rect key="frame" x="60" y="88" width="200" height="15"/>
+                        <constraints>
+                            <constraint firstAttribute="width" constant="200" id="X7V-E4-j6J"/>
+                            <constraint firstAttribute="height" constant="15" id="sB2-Fh-1u4"/>
+                        </constraints>
+                        <fontDescription key="fontDescription" type="system" pointSize="12"/>
+                        <color key="textColor" red="0.20392156859999999" green="0.28627450980000002" blue="0.36862745099999999" alpha="1" colorSpace="calibratedRGB"/>
+                        <nil key="highlightedColor"/>
+                    </label>
+                </subviews>
+                <constraints>
+                    <constraint firstItem="gLD-bL-vCO" firstAttribute="centerX" secondItem="H2p-sc-9uM" secondAttribute="centerX" id="09Z-Gx-afO"/>
+                    <constraint firstItem="GrP-9d-3z9" firstAttribute="top" secondItem="H2p-sc-9uM" secondAttribute="topMargin" constant="30" id="9jI-fC-JSC"/>
+                    <constraint firstItem="GrP-9d-3z9" firstAttribute="centerX" secondItem="H2p-sc-9uM" secondAttribute="centerX" id="Qhk-la-Np7"/>
+                    <constraint firstItem="gLD-bL-vCO" firstAttribute="top" secondItem="GrP-9d-3z9" secondAttribute="bottom" constant="15" id="tr1-6X-ZYf"/>
+                </constraints>
+            </tableViewCellContentView>
+            <connections>
+                <outlet property="addRateLab" destination="GrP-9d-3z9" id="81J-kB-MX1"/>
+            </connections>
+        </tableViewCell>
+    </objects>
+</document>

@@ -1,0 +1,210 @@
+//
+//  CMT_MyInverstmentTableViewCell.m
+//  CongMingTou
+//
+//  Created by wzh on 16/5/20.
+//  Copyright © 2016年 QiYuan. All rights reserved.
+//
+
+#import "CMT_MyInverstmentTableViewCell.h"
+//字体颜色
+//#define MyDesLabTextColor [CMT_Tools colorWithHexString:@"#ff603e"]
+//先息后本方式
+//#define MyXianXIHouBenDesTextColor [CMT_Tools colorWithHexString:@"#46cbfe"]
+//到期还本付息方式
+#define MyDaoQiHuanBenFuXiDesTextColor [CMT_Tools colorWithHexString:@"#ffa33e"]
+
+@implementation CMT_MyInverstmentTableViewCell
+
+- (void)awakeFromNib {
+    // Initialization code
+    [_yuYueOrQuXiaoOrHeTongBtn styteWithCornerRadius:_yuYueOrQuXiaoOrHeTongBtn.height/2 shadowColor:ThemeBackgroundColor shadowOffset:CGSizeMake(0, 2) shadowOpacity:0.6 shadowRadius:5];
+}
++ (CMT_MyInverstmentTableViewCell *)cellWithTablebView:(UITableView *)tableView{
+    static NSString *indent = @"CMT_MyInverstmentTableViewCell";
+    [tableView registerNib:[UINib nibWithNibName:@"CMT_MyInverstmentTableViewCell" bundle:nil] forCellReuseIdentifier:indent];
+    CMT_MyInverstmentTableViewCell  *cell = [tableView dequeueReusableCellWithIdentifier:indent];
+    cell.selectionStyle = UITableViewCellSelectionStyleNone;
+    cell.contentView.backgroundColor = [UIColor clearColor];
+    cell.backgroundColor = [UIColor clearColor];
+    return cell;
+    
+}
+- (void)setModel:(CMT_MyInverstmentListModel *)model{
+    _model = model;
+//    CMT_Log(@"%d",_model.currentIndex);
+    NSString *yuanStr = @"元";
+    /**
+     *   设置默认状态
+     */
+    [self setDefautUI];
+    if(_model.currentIndex == 0){//持有中
+        
+        _tenderTypeView.hidden = NO;
+        /**
+         *  设置标的类型及文字
+         */
+        [_tenderTypeView chiYouZhongTenderStr:_model.bidTitle numStr:_model.bidNumber andTenderType:[_model.bidType intValue]];
+        /**
+         *  设置投资金额
+         */
+        NSString *touZiMoneyTotalStr =  [NSString stringWithFormat:@"%@%@",_model.amount,yuanStr];
+        _touZiOrYuYueMoneyLab.attributedText = [NSMutableAttributedString attributeWithTotalStr:touZiMoneyTotalStr subStr:yuanStr subStrFont:UIFont30];
+        /**
+         *  设置投资金额描述
+         */
+        _touZiOrYuYueDesLab.text = @"投资金额";
+        /**
+         *  设置剩余期限
+         */
+        NSString *shengYuDayStr = [NSString stringWithFormat:@"%@天",_model.expireDays];
+        _qiXianOrGeiShouYiLab.attributedText = [NSMutableAttributedString attributeWithTotalStr:[NSString stringWithFormat:@"剩余期限%@", shengYuDayStr] subStr:shengYuDayStr subStrFont:UIFont40 andSubStrColor:CommonYellowTextColor];
+        /**
+         *   设置还息方式
+         */
+        int bitType = [_model.bidType intValue];
+        if(bitType == 0 || bitType == 1 || bitType == 2){//新手标:0,    30天计划:1，   90天计划:2
+            _huoDeShouYiOrHuanXiFangShiLab.textColor = MyDaoQiHuanBenFuXiDesTextColor;
+            [_huoDeShouYiOrHuanXiFangShiLab styleWithCornerRadius:_huoDeShouYiOrHuanXiFangShiLab.height/2 borderColor:MyDaoQiHuanBenFuXiDesTextColor borderWidth:0.5];
+
+        }else{
+            _huoDeShouYiOrHuanXiFangShiLab.textColor = ThemeBackgroundColor;
+            [_huoDeShouYiOrHuanXiFangShiLab styleWithCornerRadius:_huoDeShouYiOrHuanXiFangShiLab.height/2 borderColor:ThemeBackgroundColor borderWidth:0.5];
+        }
+        _huoDeShouYiOrHuanXiFangShiLab.text = _model.repaymentType;
+        /**
+         *  设置预约按钮
+         */
+        if([_model.bidType isEqualToString:@"0"]){//新手标不可预约
+//            [_yuYueOrQuXiaoOrHeTongBtn setTitle:@"不能预约" forState:UIControlStateNormal];
+            _yuYueOrQuXiaoOrHeTongBtn.hidden = YES;
+        }else{
+            _yuYueOrQuXiaoOrHeTongBtn.hidden = NO;
+            if([_model.preInvestFlag isEqualToString:@"1"]){
+                [_yuYueOrQuXiaoOrHeTongBtn setTitle:@"已预约" forState:UIControlStateNormal];
+                _yuYueOrQuXiaoOrHeTongBtn.alpha =0.5;
+                
+            }else{
+                [_yuYueOrQuXiaoOrHeTongBtn setTitle:@"立即预约" forState:UIControlStateNormal];
+            }
+        }
+        
+    }else if (_model.currentIndex == 1){//预约中
+        _tenderTypeNoNperView.hidden = NO;
+        /**
+         *  设置标的类型及文字
+         */
+        [_tenderTypeNoNperView yuYueAndShuHuiTenderStr:_model.bidTitle andTenderType:[_model.bidType intValue]];
+        /**
+         *  设置预约金额
+         */
+        NSString *yuYueMoneyTotalStr =  [NSString stringWithFormat:@"%@%@",_model.amount,yuanStr];
+        _touZiOrYuYueMoneyLab.attributedText = [NSMutableAttributedString attributeWithTotalStr:yuYueMoneyTotalStr subStr:yuanStr subStrFont:UIFont30];
+        /**
+         *  设置预约金额描述
+         */
+        _touZiOrYuYueDesLab.text = @"预约金额";
+        /**
+         *  设置剩余期限
+         */
+        NSString *shengYuDayStr = [NSString stringWithFormat:@"%@天",_model.period];
+        _qiXianOrGeiShouYiLab.attributedText = [NSMutableAttributedString attributeWithTotalStr:[NSString stringWithFormat:@"投资期限%@", shengYuDayStr] subStr:shengYuDayStr subStrFont:UIFont40 andSubStrColor:CommonYellowTextColor];
+        /**
+         *   设置还息方式
+         */
+        int bitType = [_model.bidType intValue];
+        if(bitType == 0 || bitType == 1 || bitType == 2){//新手标:0,    30天计划:1，   90天计划:2
+            _huoDeShouYiOrHuanXiFangShiLab.textColor = MyDaoQiHuanBenFuXiDesTextColor;
+            [_huoDeShouYiOrHuanXiFangShiLab styleWithCornerRadius:_huoDeShouYiOrHuanXiFangShiLab.height/2 borderColor:MyDaoQiHuanBenFuXiDesTextColor borderWidth:0.5];
+            
+        }else{
+            _huoDeShouYiOrHuanXiFangShiLab.textColor = ThemeBackgroundColor;
+            [_huoDeShouYiOrHuanXiFangShiLab styleWithCornerRadius:_huoDeShouYiOrHuanXiFangShiLab.height/2 borderColor:ThemeBackgroundColor borderWidth:0.5];
+        }
+        _huoDeShouYiOrHuanXiFangShiLab.text = _model.repaymentType;
+        /**
+         *  设置预约按钮 是否可以取消预约的状态
+         */
+        [_yuYueOrQuXiaoOrHeTongBtn setTitle:@"取消预约" forState:UIControlStateNormal];
+        if([_model.cancelPreInvestFlag isEqualToString:@"1"]){
+            _yuYueOrQuXiaoOrHeTongBtn.alpha =0.5;
+        }
+    }else if (_model.currentIndex == 2){//已赎回
+        _tenderTypeView.hidden = NO;
+        /**
+         *  设置标的类型及文字
+         */
+//        [_tenderTypeNoNperView yuYueAndShuHuiTenderStr:_model.bidTitle andTenderType:[_model.bidType intValue]];
+        [_tenderTypeView chiYouZhongTenderStr:_model.bidTitle numStr:_model.bidNumber andTenderType:[_model.bidType intValue]];
+
+        /**
+         *  设置投资金额
+         */
+        NSString *touZiMoneyTotalStr =  [NSString stringWithFormat:@"%@%@",_model.amount,yuanStr];
+        _touZiOrYuYueMoneyLab.attributedText = [NSMutableAttributedString attributeWithTotalStr:touZiMoneyTotalStr subStr:yuanStr subStrFont:UIFont30];
+   
+        /**
+         *  设置投资金额描述
+         */
+        _touZiOrYuYueDesLab.text = @"投资金额";
+        /**
+         *  设置收益金额
+         */
+        _qiXianOrGeiShouYiLab.textColor = CommonYellowTextColor;
+        _qiXianOrGeiShouYiLab.font = UIFont48;
+        NSString *shouYiMoneyTotalStr = [NSString stringWithFormat:@"%@%@",_model.receiveInterest,yuanStr];
+        _qiXianOrGeiShouYiLab.attributedText = [NSMutableAttributedString attributeWithTotalStr:shouYiMoneyTotalStr subStr:yuanStr subStrFont:UIFont30];
+        /**
+         *  设置收益描述
+         */
+        _huoDeShouYiOrHuanXiFangShiLab.text = [NSString stringWithFormat:@"%@",@"获得收益"];
+        
+        /**
+         *  设置查看合同按钮
+         */
+        [_yuYueOrQuXiaoOrHeTongBtn setTitle:@"查看合同" forState:UIControlStateNormal];
+     }
+    
+    
+
+    
+}
+- (void)setDefautUI{
+    _tenderTypeView.hidden = YES;
+    _tenderTypeNoNperView.hidden = YES;
+    _yuYueOrQuXiaoOrHeTongBtn.userInteractionEnabled = YES;
+    _yuYueOrQuXiaoOrHeTongBtn.hidden = NO;
+    _yuYueOrQuXiaoOrHeTongBtn.alpha =1;
+    _huoDeShouYiOrHuanXiFangShiLab.textColor = CommonImpTextColor;
+    
+    _qiXianOrGeiShouYiLab.textColor = CommonImpTextColor;
+    _qiXianOrGeiShouYiLab.font = UIFont24;
+    [_huoDeShouYiOrHuanXiFangShiLab styleWithDefaut];
+}
+
+- (void)layoutSubviews{
+    [super layoutSubviews];
+    
+    CGFloat w = [CMT_Tools boundingRectWithStrW:_huoDeShouYiOrHuanXiFangShiLab.text labStrH:_huoDeShouYiOrHuanXiFangShiLab.height andFont:_huoDeShouYiOrHuanXiFangShiLab.font];
+    _fangShiW.constant = w + 20;
+    
+   
+    if(_model.currentIndex == 0 || _model.currentIndex == 2){
+         _tenderW.constant = 160;
+    }else{
+        _tenderW.constant = 110;
+    }
+    _lineViewH.constant = 0.5;
+    
+//    if(CMT_6pAnd6ps){
+//        _lineTopY.constant = 42 *CMT_ProportionX;
+//    }
+}
+
+- (void)setSelected:(BOOL)selected animated:(BOOL)animated {
+    [super setSelected:selected animated:animated];
+
+    // Configure the view for the selected state
+}
+
+@end

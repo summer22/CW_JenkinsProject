@@ -1,0 +1,250 @@
+//
+//  CMT_StrMacro.h
+//  CongMingTou
+//
+//  Created by wzh on 16/5/24.
+//  Copyright © 2016年 QiYuan. All rights reserved.
+//
+
+#ifndef CMT_StrMacro_h
+#define CMT_StrMacro_h
+///**
+// *  验证码长度
+// */
+//#define CMT_VerificationCodeLenght 6
+///**
+// *  手机号限制长度
+// */
+//#define CMT_PhoneNumLenght 11
+///**
+// *  邀请码长度
+// */
+//#define CMT_InviteCodeLenght 8
+///**
+// *  银行卡长度限制
+// */
+//#define CMT_BankNumLenght 19
+///**
+// *  支付密码长度
+// */
+//#define CMT_PayPwdLenght 6
+///**
+// *  提现最低限额
+// */
+//#define CMT_WithdrawalMaxLowLimit 100
+///**
+// *  充值最低限额
+// */
+//#define CMT_TopUpMaxLowLimit 50
+//
+//
+//
+//
+//
+//
+///**
+// *  网络等待: 正在加载。。。
+// */
+//#define CMT_LoadDataWaiting @"正在加载..."
+///**
+// *   正在登陆： 正在登陆
+// */
+//#define CMT_LoadDataWaitingLoging @"正在登陆..."
+///**
+// * 网络等待: 正在支付密码是否正确
+// */
+//#define CMT_LoadDataWaitingPwdOK @"正在验证密码..."
+///**
+// * 网络等待: 正在修改支付密码
+// */
+//#define CMT_LoadDataWaitingModifyPwd @"正在修改支付密码..."
+///**
+// *  实名认证邦卡：正在实名认证及设置密码。。。
+// */
+//#define CMT_LoadDataRealNameAuthenticateSuccessful @"正在实名认证及设置密码..."
+///**
+// *  正在生成订单号：正在生成订单号
+// */
+//#define CMT_LoadDataGenerateOrderNumber @"正在生成充值订单号..."
+///**
+// *  正在申请支付； 正在申请支付
+// */
+//#define CMT_LoadDataApplyForTopUp @"正在申请充值..."
+///**
+// *  正在申请提现；正在申请提现
+// */
+//#define CMT_LoadDataWithdrawalIng @"正在申请提现..."
+///**
+// *  正在支付； 正在支付
+// */
+//#define CMT_LoadDataPaying @"正在充值..."
+//
+//
+//
+///**
+// *  登陆成功
+// */
+//#define CMT_LoadDataLoginSuccessful @"登陆成功"
+//
+///**
+// *  充值 ：充值成功
+// */
+//#define CMT_LoadDataPaySuccessful @"充值成功"
+//
+///**
+// *  指纹验证成功体式：指纹验证成功
+//*/
+//#define CMT_FingerprintValidationSuccessful @"指纹验证成功"
+//
+///**
+// *  获取验证码 ：获取验证码成功
+// */
+//#define CMT_LoadDataGetCodeSuccessful @"获取验证码成功"
+///**
+// *   注册 :注册成功
+// */
+//#define CMT_LoadDataRegisteredSuccessful @"注册成功"
+///**
+// *  修改秘密啊 ：修改密码成功
+// */
+//#define CMT_LoadDataModifyPayPwdSuccessful @"修改密码成功"
+///**
+// *  验证验证码成功 ：验证验证码成功
+// */
+//#define CMT_LoadDataValidationCodeSuccessful @"验证验证码成功"
+///**
+// *  提现成功 :提现成功
+// */
+//#define CMT_LoadDataWithdrawalSuccessful @"提现成功"
+///**
+// *  取消预约成功:取消预约成功
+// */
+//#define CMT_LoadDataWithCanccelYuYueSuccessful @"取消预约成功"
+//
+//
+//
+///**
+// *  没有更多数据提示 :没有更多数据了
+// */
+//#define CMT_LoadDataNoMoreData @"没有更多数据了"
+///**
+// *  无网络：请检查网络连接
+// */
+//#define CMT_Error_NotNetWork @"请检查网络连接"
+///**
+// *  手机号输入错误：请输入正确手机号
+// */
+//#define CMT_Error_PhoneNum @"请输入正确手机号"
+///**
+// *  短信验证码输入错误：验证码输入错误
+// */
+//#define CMT_Error_VerificationCode @"验证码输入错误"
+///**
+// *  银行卡号输入错误：请输入正确银行卡号
+// */
+//#define CMT_Error_BankCrad @"请输入正确银行卡号"
+///**
+// *  身份证号输入错误：请输入正确身份证号码
+// */
+//#define CMT_Error_IDCrad @"请输入正确身份证号码"
+///**
+// *  姓名输入错误：请输入正确姓名
+// */
+//#define CMT_Error_Name @"请输入正确姓名"
+///**
+// * 充值：请输入正确金额 提现：请输入正确金额
+// */
+//#define CMT_Error_Money @"请输入正确金额"
+///**
+// * 邀请码： 请输入正确的邀请码
+// */
+//#define CMT_Error_InvitationCode @"请输入正确的邀请码"
+///**
+// *  协议三个：聪明投注册协议，聪明投投资协议，聪明投风险揭示书
+// *           协议为勾选提示：请您勾选同意协议
+// */
+//#define CMT_Error_NoAgreement @"请您勾选同意协议"
+//
+///**
+// * 两次输入的密码不相同： 两次输入的密码不相同
+// */
+//#define CMT_Error_TwoPwdNoSame @" 两次输入的密码不相同"
+///**
+// *  充值 ：充值取消
+// */
+//#define CMT_LoadDataPayCancel @"充值取消"
+///**
+// *  充值 ：充值失败
+// */
+//#define CMT_LoadDataPayError @"充值失败"
+///**
+// *  取消了指纹验证 :取消了指纹验证
+// */
+//#define CMT_FingerprintValidationCancel @"取消了指纹验证"
+///**
+// *  指纹验证失败，请重新验证: 指纹验证失败，请重新验证
+// */
+//#define CMT_Error_FingerprintValidation @"指纹验证失败，请重新验证"
+///**
+// *  当前设备不支持指纹验证 :当前设备不支持指纹验证
+// */
+//#define CMT_Error_DeviceErrorFingerprintValidation @"当前设备不支持指纹验证"
+///**
+// *  未登陆或没有打开手机指纹验证
+// */
+//#define CMT_Error_DeviceErrorNOOpenOrNoLogin @"用户未登陆或没有打开手机指纹验证"
+///**
+// *  没有设置指纹密码
+// */
+//#define CMT_Error_DeviceErrorNOSetFingerprint @"没有设置指纹密码"
+///**
+// *  授权失败
+// */
+//#define CMT_Error_DeviceErrorAuthorizationError @"授权失败"
+//
+//
+///**
+// *  预约中的没有产品详情哦   提示
+// */
+//#define CMT_Error_YuYueNoDetail @"预约中的没有产品详情哦"
+///**
+// * 已经预约了哦   提示
+// */
+//#define CMT_Error_DidYuYue @"已经预约了哦"
+///**
+// *  新手标不能预约 新手标不能预约哦
+// */
+//#define CMT_Error_NewBidType @"新手标不能预约哦"
+//
+///**
+// * 不能取消预约了哦   提示
+// */
+//#define CMT_Error_NoCancelYuYue @"该预约不可以取消了哦"
+//
+///**
+// *  注册成功或登陆跳出手势密码key
+// */
+//#define GesturesAndLoginPasswordPresentVCKey @"GesturesPasswordPresentVC"
+//
+///**
+// *  点击立即投资弹出登陆登录成功后发送通知的Key
+// */
+//#define CMT_ImmediateInvestmentLogingSuccessfulPresentKey @"CMT_LogingSuccessfulPresentKey"
+//
+///**
+// *  持有中立即预约成功后回调通知名字
+// */
+//#define CMT_NotifReloadKey @"CMT_NotifReload"
+//
+//
+///**
+// *  启动app的通知
+// *
+// */
+//#define CMT_StartAppJumpGesturesPasswordVCKey @"StartAppJumpGesturesPasswordVCKey"
+///**
+// *  分享保存的key  1点击了分享
+// */
+//#define CMT_Share_key @"share"
+
+#endif /* CMT_StrMacro_h */

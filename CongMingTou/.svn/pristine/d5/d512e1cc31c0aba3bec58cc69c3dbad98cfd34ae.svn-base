@@ -1,0 +1,25 @@
+//
+//  CMT_ServiceAgreementView.h
+//  CongMingTou
+//
+//  Created by wzh on 16/5/23.
+//  Copyright © 2016年 QiYuan. All rights reserved.
+//
+
+#import <UIKit/UIKit.h>
+
+@protocol CMT_ServiceAgreementViewDelegate <NSObject>
+
+- (void)didServiceAgreementBtn:(UIButton *)button;
+
+- (void)didIsReadBtnClicked:(UIButton *)button;
+
+@end
+
+
+@interface CMT_ServiceAgreementView : UIView
+@property (nonatomic, weak) __weak id<CMT_ServiceAgreementViewDelegate>delegate;
+@property (strong, nonatomic) IBOutlet UIButton *isReadbtn;
+@property (strong, nonatomic) IBOutlet UIButton *agreementBtn;
+
+@end

@@ -1,0 +1,242 @@
+//
+//  CMT_HttpTool.m
+//  CongMingTou
+//
+//  Created by wzh on 16/5/9.
+//  Copyright © 2016年 QiYuan All rights reserved.
+//
+
+#import "CMT_HttpTool.h"
+#import <AdSupport/AdSupport.h>
+
+@implementation CMT_HttpTool
+
++ (NSString *)advertisingOpenState{
+    return [NSString stringWithFormat:@"%@%@",CMT_SERVER_URL,CMT_AdvertisingOpenState];
+}
+
++ (NSString *)getVerificationcodeWithPhonNum:(NSString *)phoneNum andType:(NSString *)type{
+    return [NSString stringWithFormat:@"%@%@%@-%@",CMT_SERVER_URL,CMT_GetVerificationcode,phoneNum,type];
+}
++ (NSString *)registeredWithPhoneNum:(NSString *)phoneNum verificatonCode:(NSString *)verificatonCode andInvitationCode:(NSString *)invitationCode mobileType:(NSString *)mobileType channelNumber:(NSString *)channelNumber downLodType:(NSString *)downLoadType{
+    if(!invitationCode || [invitationCode isEqualToString:@""]){
+        invitationCode = @"000000";
+    }
+    CMT_Log(@"注册%@",[NSString stringWithFormat:@"%@%@%@-%@-%@-%@&%@&%@",CMT_SERVER_URL,CMT_Registered,phoneNum,verificatonCode,invitationCode,mobileType,channelNumber,downLoadType]);
+    return [NSString stringWithFormat:@"%@%@%@-%@-%@-%@&%@&%@",CMT_SERVER_URL,CMT_Registered,phoneNum,verificatonCode,invitationCode,mobileType,channelNumber,downLoadType];
+}
++(NSString *)loginWithPhoneNum:(NSString *)phoneNum verificatonCode:(NSString *)verificatonCode{
+    return [NSString stringWithFormat:@"%@%@%@-%@",CMT_SERVER_URL,CMT_Longin,phoneNum,verificatonCode];
+}
++ (NSString *)myFuLiListWithUserId:(NSString *)userId andType:(NSString *)type investAmount:(NSString *)investAmount bid:(NSString *)bid bidpre:(NSString *)bidpre{
+    CMT_Log(@"我的福利列表url%@%@",[NSString stringWithFormat:@"%@%@%@-%@-%@?bid=%@&bidpre=%@",CMT_SERVER_URL,CMT_MyFuLi,userId,type,investAmount,bid,bidpre], @"        type：0:获取所有加息券和本金券    1，所有可用加息券    2，所有可用本金券");
+
+    return [NSString stringWithFormat:@"%@%@%@-%@-%@?bid=%@&bidpre=%@",CMT_SERVER_URL,CMT_MyFuLi,userId,type,investAmount,bid,bidpre];
+}
++ (NSString *)getJiaoYiJiLuListWithUserId:(NSString *)userId page:(int)page size:(int)size type:(int)type{
+    CMT_Log(@"交易记录%@",[NSString stringWithFormat:@"%@%@%@-%d-%d-%d",CMT_SERVER_URL,CMT_MyJiaoYiJiLu,userId,page,size,type+1]);
+    return [NSString stringWithFormat:@"%@%@%@-%d-%d-%d",CMT_SERVER_URL,CMT_MyJiaoYiJiLu,userId,page,size,type+1];
+}
+
++ (NSString *)realNameAuthenticateWithUserId:(NSString *)userId userIdentity:(NSString *)userIdentity userName:(NSString *)userName bankCardNum:(NSString *)bankCardNum userMobile:(NSString *)userMobile mobileSmsCode:(NSString *)mobileSmsCode rePassword:(NSString *)rePassword{
+    return [NSString stringWithFormat:@"%@%@%@-%@-%@-%@-%@-%@-%@",CMT_SERVER_URL,CMT_RealNameAuthenticateAndTiedCard,userId,userIdentity,userName,bankCardNum,userMobile,mobileSmsCode,rePassword,rePassword];
+}
++ (NSString *)confirmPayPasswordWithPhoneNum:(NSString *)phoneNum andOldPassword:(NSString *)oldPassword{
+    return [NSString stringWithFormat:@"%@%@%@-%@",CMT_SERVER_URL,CMT_ConfirmPayPassword,phoneNum,oldPassword];
+}
+
++ (NSString *)modifyPayPwdWithPhoneNum:(NSString *)phoneNum andNewsPayPwd:(NSString *)newPayPwd{
+    return [NSString stringWithFormat:@"%@%@%@-%@",CMT_SERVER_URL,CMT_ModifyPayPassword,phoneNum,newPayPwd];
+
+}
+
++ (NSString *)resetPayPwdWithPhoneNum:(NSString *)phoneNum resetPayPwd:(NSString *)resetPayPwd{
+    CMT_Log(@"设置和重置支付密码url－%@",[NSString stringWithFormat:@"%@%@%@-%@-%@",CMT_SERVER_URL,CMT_ResetPayPwd,phoneNum,resetPayPwd,resetPayPwd]);
+    return [NSString stringWithFormat:@"%@%@%@-%@-%@",CMT_SERVER_URL,CMT_ResetPayPwd,phoneNum,resetPayPwd,resetPayPwd];
+}
+
++ (NSString *)modifyPayPwdWithPhoneNum:(NSString *)phoneNum oldPayPwd:(NSString *)oldPayPwd andNewPayPwd:(NSString *)newPayPwd{
+    return [NSString stringWithFormat:@"%@%@%@-%@-%@",CMT_SERVER_URL,CMT_ModifyPayPwd,phoneNum,oldPayPwd,newPayPwd];
+}
++ (NSString *)getUserInforWithUserId:(NSString *)userId{
+    return [NSString stringWithFormat:@"%@%@%@",CMT_SERVER_URL,CMT_My,userId];
+}
+//理财列表
++ (NSString *)getFinaciallDataList:(NSString *)startStr pageCount:(NSString *)endStr defaultIdStr:(NSString *)typeStr{
+    return [NSString stringWithFormat:@"%@%@-%@-%@",CMT_FinancialListInterface,startStr,endStr,typeStr];
+}
+//产品详情
++ (NSString *)getProductDetileDataList:(NSString *)bidIdStr userID:(NSString *)userIdStr{
+    
+    return [NSString stringWithFormat:@"%@%@-%@",CMT_ProductDetailInterface,bidIdStr,userIdStr];
+}
+//获取投资记录列表数据
++ (NSString *)getProductInvestRecordDataList:(NSString *)bidIdStr start:(NSString *)pageStr{
+    return [NSString stringWithFormat:@"%@%@-%@-%@",CMT_InvestRecordListInterface,bidIdStr,pageStr,@"10"];
+}
+
+//预约投资列表
++ (NSString *)getPreInvestDataList:(NSString *)pageCountStr{
+    return [NSString stringWithFormat:@"%@%@-%@-%@",CMT_PreInvestInterface,pageCountStr,@"10",@"1"];
+}
+
++ (NSString *)getNewsListWithUserId:(NSString *)userId start:(int)start end:(int)end{
+    CMT_Log(@"消息列表url－%@",[NSString stringWithFormat:@"%@%@-%d-%d",CMT_NewsList,userId,start,end]);
+    return [NSString stringWithFormat:@"%@%@-%d-%d",CMT_NewsList,userId,start,end];
+}
++ (NSString *)getNewsDetailWithId:(NSString *)newsId{
+    return [NSString stringWithFormat:@"%@%@%@",CMT_SERVER_URL,CMT_NewsDetail,newsId];
+}
++ (NSString *)allReadWithUserId:(NSString *)userId{
+    CMT_Log(@"消息全部标记已读url－%@", [NSString stringWithFormat:@"%@%@%@",CMT_SERVER_URL,CMT_AllRead,userId]);
+    return [NSString stringWithFormat:@"%@%@%@",CMT_SERVER_URL,CMT_AllRead,userId];
+}
+
++ (NSString *)getIDCardInforWithUserId:(NSString *)userId{
+    CMT_Log(@"的银行卡信息url == %@",[NSString stringWithFormat:@"%@%@",CMT_IDCardInfor,userId]);
+    return [NSString stringWithFormat:@"%@%@",CMT_IDCardInfor,userId];
+}
++ (NSString *)myInvestmentWithUserId:(NSString *)userId page:(int)page size:(int)size andType:(int)type{
+    CMT_Log(@"我的投资url ==%@",[NSString stringWithFormat:@"%@%@%@-%d-%d-%d",CMT_SERVER_URL,CMT_MyInvestment,userId,page,size,type]);
+    return [NSString stringWithFormat:@"%@%@%@-%d-%d-%d",CMT_SERVER_URL,CMT_MyInvestment,userId,page,size,type];
+}
++ (NSString *)investmentWithInvestId:(NSString *)investId andType:(NSString *)type{
+    CMT_Log(@"标得详细信息url ==%@",[NSString stringWithFormat:@"%@%@%@-%@",CMT_SERVER_URL,CMT_BidProgressInforDetail,investId,type]);
+    return [NSString stringWithFormat:@"%@%@%@-%@",CMT_SERVER_URL,CMT_BidProgressInforDetail,investId,type];
+}
++ (NSString *)cancelYuYueInvestmentWithUserId:(NSString *)userId investId:(NSString *)investId{
+    CMT_Log(@"取消预约投资url ==%@",[NSString stringWithFormat:@"%@%@%@-%@",CMT_SERVER_URL,CMT_CancelYuYueInvestment,userId,investId]);
+    return [NSString stringWithFormat:@"%@%@%@-%@",CMT_SERVER_URL,CMT_CancelYuYueInvestment,userId,investId];
+}
+
++ (NSString *)myShouYiMingXiWithUserId:(NSString *)userId pageIndex:(int)pageIndex pageSize:(int)pageSize{
+    CMT_Log(@"收益明细url ==%@",[NSString stringWithFormat:@"%@%@%@-%d-%d",CMT_SERVER_URL,CMT_MyShouYiMingXi,userId,pageIndex,pageSize]);
+    return [NSString stringWithFormat:@"%@%@%@-%d-%d",CMT_SERVER_URL,CMT_MyShouYiMingXi,userId,pageIndex,pageSize];
+}
++ (NSString *)getRechargeUserInforWithUserId:(NSString *)userId{
+    CMT_Log(@"银生支付获取用户信息＝＝＝%@",[NSString stringWithFormat:@"%@%@%@",CMT_SERVER_URL,CMT_Pay_RechargeUserInfor,userId]);
+    return [NSString stringWithFormat:@"%@%@%@",CMT_SERVER_URL,CMT_Pay_RechargeUserInfor,userId];
+}
++ (NSString *)getRechargeRequestWithUserId:(NSString *)userId amount:(NSString *)amount{
+    CMT_Log(@"充值申请＝＝＝%@",[NSString stringWithFormat:@"%@%@%@-%@",CMT_SERVER_URL,CMT_Pay_RechargeRequest,userId,amount]);
+    return [NSString stringWithFormat:@"%@%@%@-%@",CMT_SERVER_URL,CMT_Pay_RechargeRequest,userId,amount];
+}
++ (NSString *)topUpApplicationVerificationCodeWithUserId:(NSString *)userId amount:(NSString *)amount orderNoThird:(NSString *)orderNoThird payToken:(NSString *)payToken orderNo:(NSString *)orderNo captch:(NSString *)captch{
+    CMT_Log(@"充值申请验证码确认＝＝＝%@",[NSString stringWithFormat:@"%@%@%@&%@&%@&%@&%@&%@",CMT_SERVER_URL,CMT_TopUpApplicationVerificationCodeIsOk,userId,amount,orderNoThird,payToken,orderNo,captch]);
+    return [NSString stringWithFormat:@"%@%@%@&%@&%@&%@&%@&%@",CMT_SERVER_URL,CMT_TopUpApplicationVerificationCodeIsOk,userId,amount,orderNoThird,payToken,orderNo,captch];
+}
+
++ (NSString *)getWithdrawalRequestWithUserId:(NSString *)userId amount:(NSString *)amount bankId:(NSString *)bankId payPassword:(NSString *)payPassword type:(NSString *)type{
+    CMT_Log(@"提现申请＝＝＝%@",[NSString stringWithFormat:@"%@%@%@-%@-%@-%@-%@",CMT_SERVER_URL,CMT_WithdrawalRequest,userId,amount,bankId,payPassword,type]);
+    return [NSString stringWithFormat:@"%@%@%@-%@-%@-%@-%@",CMT_SERVER_URL,CMT_WithdrawalRequest,userId,amount,bankId,payPassword,type];
+}
+//投资确认
++ (NSString *)getinvestConfirm:(NSString *)bidId pageCount:(NSString *)amount userIdStr:(NSString *)userId{
+    return [NSString stringWithFormat:@"%@%@-%@-%@",CMT_InvestConfirmInterface,bidId,amount,userId];
+}
+
++ (NSString *)resetGesturePasswordWithPhoneNum:(NSString *)phoneNum andCaptch:(NSString *)captch{
+    return [NSString stringWithFormat:@"%@%@%@-%@",CMT_SERVER_URL,CMT_ResetGesturePassword,phoneNum,captch];
+}
+
+//立即投资
++ (NSString *)atOnceToInvest:(NSString *)userId bidIdStr:(NSString *)bidStr investAmount:(NSString *)investAmountStr cashId:(NSString *)cashIdStr rateStr:(NSString *)jrateId token:(NSString *)investToken
+{
+    CMT_Log(@"立即投资%@",[NSString stringWithFormat:@"%@%@-%@-%@&%@&%@?%@",CMT_AtOnceToInvestInterface,bidStr,userId,investAmountStr,jrateId,cashIdStr,investToken]);
+    return [NSString stringWithFormat:@"%@%@-%@-%@&%@&%@?investToken=%@",CMT_AtOnceToInvestInterface,bidStr,userId,investAmountStr,jrateId,cashIdStr,investToken];
+}
+
+//预约投资
++ (NSString *)preinvestInvest:(NSString *)userId preInvestAmount:(NSString *)preInvestAmountStr period:(NSString *)periodStr investId:(NSString *)investIdStr rateStr:(NSString *)rateId
+{
+    CMT_Log(@"预约投资%@",[NSString stringWithFormat:@"%@%@-%@-%@-%@&%@",CMT_PreInvestmentInterface,userId,preInvestAmountStr,periodStr,investIdStr,rateId]);
+    return [NSString stringWithFormat:@"%@%@-%@-%@-%@&%@",CMT_PreInvestmentInterface,userId,preInvestAmountStr,periodStr,investIdStr,rateId];
+}
+
+//预约金额
++ (NSString *)preinvestInvest:(NSString *)investIdStr
+{
+    return [NSString stringWithFormat:@"%@%@",CMT_PreAmountInterface,investIdStr];
+}
+
+//确认预约接口
++ (NSString *)preinvestInvest:(NSString *)userId period:(NSString *)periodStr investId:(NSString *)investIdStr apr:(NSString *)aprStr
+{
+    CMT_Log(@"确认预约接口%@",[NSString stringWithFormat:@"%@%@-%@-%@-%@",CMT_FirmPreInvestInfoInterface,investIdStr,periodStr,aprStr,userId]);
+    return [NSString stringWithFormat:@"%@%@-%@-%@-%@",CMT_FirmPreInvestInfoInterface,investIdStr,periodStr,aprStr,userId];
+}
++ (NSString *)getShareFirendContentWithUserId:(NSString *)userId{
+    return [NSString stringWithFormat:@"%@%@%@",CMT_SERVER_URL,CMT_GetShareFirendContent,userId];
+}
++ (NSString *)getShareFriendBeforeGetShareContentWithUserId:(NSString *)userId type:(NSString *)type{
+    CMT_Log(@"标记是否分享 %@",[NSString stringWithFormat:@"%@%@%@-%@",CMT_SERVER_URL,CMT_GetShareFriendBeforeGetShareContent,userId,type]);
+
+    return [NSString stringWithFormat:@"%@%@%@-%@",CMT_SERVER_URL,CMT_GetShareFriendBeforeGetShareContent,userId,type];
+}
+
++ (NSString *)getShareContentWithUserId:(NSString *)userId{
+    return [NSString stringWithFormat:@"%@%@%@",CMT_SERVER_URL,CMT_GetShareContent,userId];
+}
++ (NSString *)shareSuccessAddRatesWithPhoneNum:(NSString *)phoneNum bitId:(NSString *)bitId investId:(NSString *)investId amount:(NSString *)amount{
+    CMT_Log(@"分享加息接口%@",[NSString stringWithFormat:@"%@%@%@-%@-%@-%@",CMT_SERVER_URL, CMT_ShareSuccessAddRates,phoneNum,bitId,investId,amount]);
+
+    return [NSString stringWithFormat:@"%@%@%@-%@-%@-%@",CMT_SERVER_URL, CMT_ShareSuccessAddRates,phoneNum,bitId,investId,amount];
+}
+
++ (NSString *)verificationCodeIsOkWithPhoneNum:(NSString *)phoneNum verificationCode:(NSString *)verificationCode{
+    CMT_Log(@"验证验证码是否正确接口%@",[NSString stringWithFormat:@"%@%@%@-%@",CMT_SERVER_URL,CMT_VerificationCodeIsOk,phoneNum,verificationCode]);
+    return [NSString stringWithFormat:@"%@%@%@-%@",CMT_SERVER_URL,CMT_VerificationCodeIsOk,phoneNum,verificationCode];
+}
+
+//应用雷达激活接口
++ (NSString *)liveModelIdfi
+{
+    NSString *adid = [[[ASIdentifierManager sharedManager] advertisingIdentifier] UUIDString];
+    return [NSString stringWithFormat:@"%@%@%@/%@",CMT_SERVER_URL,CMT_LiveMobileIdfi,@"0",adid];
+}
+
+//版本更新
++ (NSString *)updateVersion
+{
+    NSString *versionKey = @"CFBundleShortVersionString";
+    // 获得当前打开软件的版本号
+    NSString *currentVersion = [NSBundle mainBundle].infoDictionary[versionKey];
+    return [NSString stringWithFormat:@"%@%@%@&%@",CMT_SERVER_URL,CMT_UpdateVersion,currentVersion,@"2"];
+}
+
++ (NSString *)getContractInforWithInvestId:(NSString *)investId period:(NSString *)period{
+    CMT_Log(@"合同信息接口%@",[NSString stringWithFormat:@"%@%@%@-%@.htm",CMT_H5SERVEr_URL,CMT_ContractInfor,investId,period]);
+    return [NSString stringWithFormat:@"%@%@%@-%@.htm",CMT_H5SERVEr_URL,CMT_ContractInfor,investId,period];
+}
+
+//债券列表
++ (NSString *)getCreditors:(NSString *)markNumb
+{
+
+    CMT_Log(@"债权列表%@",[NSString stringWithFormat:@"%@%@%@",CMT_CREDICTOR_URL,CMT_CreditorsRightsList,markNumb]);
+    
+    return [NSString stringWithFormat:@"%@%@%@",CMT_CREDICTOR_URL,CMT_CreditorsRightsList,markNumb];
+}
+
++ (NSString *)getFinalCreditors:(NSString *)creditorNumb
+{
+//    return [NSString stringWithFormat:@"%@%@%@",CMT_CREDICTOR_URL,CMT_FinalCreditorsRightsList,creditorNumb];
+    return [NSString stringWithFormat:@"%@%@",@"http://192.168.6.112:7777/service/rpcAssetDebtService/httpGettSonCredits/",creditorNumb];
+}
+
++ (NSString *)getBanklist{
+    return [NSString stringWithFormat:@"%@%@",CMT_SERVER_URL,CMT_BankList];
+}
++ (NSString *)getActivityShareContentWithActivityId:(NSString *)activityId userId:(NSString *)userId{
+    CMT_Log(@"获取活动分享的分享内容 ＝＝%@",[NSString stringWithFormat:@"%@%@%@-%@",CMT_SERVER_URL,CMT_ActivityShareContent,activityId,userId]);
+
+    return [NSString stringWithFormat:@"%@%@%@-%@",CMT_SERVER_URL,CMT_ActivityShareContent,activityId,userId];
+}
+
+//首页banner接口
++ (NSString *)getFinacialBanner{
+    
+    return [NSString stringWithFormat:@"%@%@",CMT_FinancialBannerInterface,@"0"];
+}
+
+@end

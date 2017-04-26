@@ -1,0 +1,199 @@
+//
+//  CMT_MyWelfareViewController.m
+//  CongMingTou
+//
+//  Created by wzh on 16/5/11.
+//  Copyright © 2016年 wzh. All rights reserved.
+//
+
+#import "CMT_MyWelfareViewController.h"
+#import "CMT_MyFuLiTableViewCell.h"
+#import "CMT_CouponViewController.h"
+#import "CMT_productDetViewController.h"
+#define ListOneNum 10
+
+@interface CMT_MyWelfareViewController ()<UITableViewDataSource,UITableViewDelegate>
+@property (nonatomic, strong) UITableView *tableView;
+@property (nonatomic, strong) NSMutableArray *dataArray;
+@end
+
+@implementation CMT_MyWelfareViewController
+
+- (UITableView *)tableView{
+    if(!_tableView){
+        _tableView = [[UITableView alloc ]initWithFrame:CGRectMake(0, 0, CMT_ScreenWidth, CMT_ScreenHeight - CMT_NAV_Height) style:UITableViewStylePlain];
+        _tableView.dataSource = self;
+        _tableView.rowHeight = 135;
+        _tableView.delegate = self;
+        _tableView.showsHorizontalScrollIndicator = NO;
+        _tableView.showsVerticalScrollIndicator = NO;
+        _tableView.separatorColor = [UIColor clearColor];
+        _tableView.backgroundColor = [UIColor clearColor];
+        
+    }
+    return _tableView;
+}
+- (NSMutableArray *)dataArray{
+    if(!_dataArray){
+        _dataArray = [NSMutableArray array];
+    }
+    return _dataArray;
+}
+- (void)viewDidLoad {
+    [super viewDidLoad];
+    self.title = @"我的福利";
+    [self.view addSubview:self.tableView];
+    self.netBtn.hidden = NO;
+    // Do any additional setup after loading the view from its nib.
+    
+    if(!_investAmount ){
+        _investAmount = @"no";
+    }
+    if(!_bidIdStr){
+        _bidIdStr = @"";
+    }
+    if(!_bidTimeLimit){
+        _bidTimeLimit = @"";
+    }
+    [self lodaDataList];
+    [self createRefreshing];
+    [[UIDevice currentDevice]userInterfaceIdiom];
+}
+
+- (void)netReloadData{
+    [self lodaDataList];
+
+}
+- (void)lodaDataList{
+    //type：0:获取所有加息券和本金和体验金    1，所有可用加息券    2，所有可用本金券 3.所有可用体验金
+    if(_enterMyWelfareType == CMTEnterMyWelfareTypeBrowseAllList){
+        self.title = @"我的福利";
+        [self loadDataMyFuLiListWithType:@"0"];
+    }else if (_enterMyWelfareType == CMTEnterMyWelfareTypeChooseRateIncreaseVolumeList){
+        self.title = @"我的加息券";
+        [self loadDataMyFuLiListWithType:@"1"];
+    }else if (_enterMyWelfareType == CMTEnterMyWelfareTypeChoosePrincipalVolumeList){
+        self.title = @"我的本金券";
+        [self loadDataMyFuLiListWithType:@"2"];
+
+    }
+}
+#pragma mark -- createRefreshing
+- (void)createRefreshing{
+    // 下拉刷新
+    _tableView.mj_header= [MJRefreshNormalHeader headerWithRefreshingBlock:^{
+        [self lodaDataList];
+        
+    }];
+    
+    // 设置自动切换透明度(在导航栏下面自动隐藏)
+    _tableView.mj_header.automaticallyChangeAlpha = YES;
+    
+//    // 上拉刷新
+//    _tableView.mj_footer = [MJRefreshBackNormalFooter footerWithRefreshingBlock:^{
+//        [self loadDataNewList];
+//        
+//    }];
+}
+- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView{
+    return 1;
+}
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section{
+    return _dataArray.count;
+}
+
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath{
+    CMT_MyFuLiTableViewCell *cell = [CMT_MyFuLiTableViewCell cellWithTablebView:tableView];
+    cell.model = _dataArray[indexPath.row];
+    [cell.shiYongStateBtn addTarget:self action:@selector(shiYongStateBtnClicked:andEvent:) forControlEvents:UIControlEventTouchUpInside];
+    return cell;
+}
+
+
+- (void)loadDataMyFuLiListWithType:(NSString *)type{
+    [self showHudInView:self.view hint:CMT_LoadDataWaiting];
+    NSLog(@"%@",_investAmount);
+    [CMT_ProcessTheDataTool myFuLiWithUserId:[CMT_AccountTool accountModel].userId type:type investAmount:_investAmount bid:_bidIdStr bidpre:_bidTimeLimit block:^(CMT_MyWelfareModel *model, NSError *error) {
+        [self hideHud];
+        if(!error){
+            if([[NSString stringWithFormat:@"%@",model.status] isEqualToString:@"1"]){
+                if(_tableView.mj_header.isRefreshing){
+                    [self.dataArray removeAllObjects];
+                }
+                [self.dataArray addObjectsFromArray:model.listArray];
+                [_tableView reloadData];
+                self.netBtn.hidden = self.dataArray.count > 0 ? YES : NO;
+                if (self.dataArray.count == 0) {
+                    [self changeStatusBtn];
+                }
+           
+            }else if ([[NSString stringWithFormat:@"%@",model.status] isEqualToString:CMT_SinglePointCode]){
+                [CMT_SinglePointLoginTool addSinglePointLoginWithSelfVC:self];
+            }else{
+                [self showHint:model.msg];
+            }
+        }else{
+            [self showHint:CMT_Error_NotNetWork];
+        }
+        [_tableView.mj_footer endRefreshing];
+        [_tableView.mj_header endRefreshing];
+    }];
+    
+}
+
+- (void)shiYongStateBtnClicked:(UIButton *)button andEvent:(UIEvent *)event{
+    NSSet *touches = [event allTouches];
+    UITouch *touch = [touches anyObject];
+    // 获取点击在tableView上的位置
+    CGPoint currentTouchPosition = [touch locationInView:_tableView];
+    NSIndexPath *indexPath = [_tableView indexPathForRowAtPoint: currentTouchPosition];
+    CMT_MyWelfareListModel *model = _dataArray[indexPath.row];
+
+    if(_enterMyWelfareType == CMTEnterMyWelfareTypeBrowseAllList){//我的所有福利
+        
+        if([model.type isEqualToString:@"14"]){
+            if([model.experienceGoldId isEqualToString:@"no"]){
+                return;
+            }else{
+                CMT_productDetViewController *productDetViewControllerVC = [[CMT_productDetViewController alloc]init];
+                productDetViewControllerVC.markIdStr = model.experienceGoldId;
+                productDetViewControllerVC.markType =  0;//是否是新手标
+                productDetViewControllerVC.fromType = 4;//来自我的福利
+                productDetViewControllerVC.markState = [model.experienceGoldStatus  isEqual: @"2"] ? 0 : 1;//状态
+                [self.navigationController pushViewController:productDetViewControllerVC animated:YES];
+            }
+        }else{
+            CMT_CouponViewController *couponVC = [[CMT_CouponViewController alloc]init];
+            CMT_Log(@"===%@",model.type);
+            couponVC.listFromType = [model.type isEqualToString:@"11"] ? 0 : 1;
+            couponVC.ticketIdStr = model.id;
+            [self.navigationController pushViewController:couponVC animated:YES];
+        }
+    }else{
+        self.backBlock(_dataArray[indexPath.row]);
+        [self.navigationController popViewControllerAnimated:YES];
+    }
+  
+}
+- (void)viewDidLayoutSubviews{
+    [super viewDidLayoutSubviews];
+    if(CMT_6pAnd6ps){
+        _tableView.rowHeight = 135 *CMT_ProportionX;
+    }
+}
+- (void)didReceiveMemoryWarning {
+    [super didReceiveMemoryWarning];
+    // Dispose of any resources that can be recreated.
+}
+
+/*
+#pragma mark - Navigation
+
+// In a storyboard-based application, you will often want to do a little preparation before navigation
+- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
+    // Get the new view controller using [segue destinationViewController].
+    // Pass the selected object to the new view controller.
+}
+*/
+
+@end

@@ -1,0 +1,174 @@
+//
+//  CMT_BankCardViewController.m
+//  CongMingTou
+//
+//  Created by wzh on 16/5/16.
+//  Copyright © 2016年 QiYuan. All rights reserved.
+//
+
+#import "CMT_BankCardViewController.h"
+#import "CMT_AccountAndSecurityViewController.h"
+#import "TTTAttributedLabel.h"
+@interface CMT_BankCardViewController () <TTTAttributedLabelDelegate,UIAlertViewDelegate>
+@property (strong, nonatomic) IBOutlet UILabel *IDcardNumLab;
+@property (strong, nonatomic) IBOutlet UILabel *nameLab;
+@property (strong, nonatomic) IBOutlet UILabel *bankTypeLab;
+@property (strong, nonatomic) IBOutlet UILabel *bankNameLab;
+@property (strong, nonatomic) IBOutlet UIImageView *bankLogoImageView;
+@property (strong, nonatomic) IBOutlet TTTAttributedLabel *desBottomLab;
+@property (strong, nonatomic) IBOutlet NSLayoutConstraint *bankH;
+@property (strong, nonatomic) IBOutlet NSLayoutConstraint *bankNameW;
+
+@end
+
+@implementation CMT_BankCardViewController
+
+- (void)viewDidLoad {
+    [super viewDidLoad];
+    // Do any additional setup after loading the view from its nib.
+    _desBottomLab.text = [NSString stringWithFormat:@"为了您的资金安全，每个帐号只能绑定一张有效银行卡。如需修改银行卡请咨询客服：%@（工作日9:00 - 18:00）",CMT_CustomerServicePhonNum];
+    [self setDefautUI];
+    [self loadDataIDCardInforWithUserId:[CMT_AccountTool accountModel].userId];
+    
+
+}
+
+- (void)setDefautUI{
+    [_bankLogoImageView styleWithCornerRadius:_bankLogoImageView.height/2];
+    //点击类型
+    _desBottomLab.enabledTextCheckingTypes = NSTextCheckingTypePhoneNumber;
+    //对齐方式
+    _desBottomLab.verticalAlignment = TTTAttributedLabelVerticalAlignmentCenter;
+    // Delegate
+    _desBottomLab.delegate = self;
+    //    _desBottomLab.attributedText = [NSMutableAttributedString attributeWithTotalStr:_desBottomLab.text subStr:@"400-800-8888" andSubStrColor:CommonYellowTextColor];
+    //NO 不显示下划线
+    _desBottomLab.linkAttributes = [NSDictionary dictionaryWithObject:[NSNumber numberWithBool:NO] forKey:(NSString *)kCTUnderlineStyleAttributeName];
+    
+    
+    //    [_desBottomLab setTextAlignment:NSTextAlignmentLeft];
+    //    [_desBottomLab setLineBreakMode:NSLineBreakByWordWrapping];
+    //    NSMutableAttributedString *mutStr = [[NSMutableAttributedString alloc] initWithString:_desBottomLab.text];
+    //    NSRange range = [[mutStr string] rangeOfString:@"400-800-8888" options:NSCaseInsensitiveSearch];
+    //    [mutStr addAttribute:(NSString *)kCTForegroundColorAttributeName value:(id)[CommonYellowTextColor CGColor] range:range];
+    //    _desBottomLab.textColor = CommonGrayTextColor;
+    //    [_desBottomLab setText:mutStr];
+    [_desBottomLab setText:_desBottomLab.text afterInheritingLabelAttributesAndConfiguringWithBlock:^ NSMutableAttributedString *(NSMutableAttributedString*mutableAttributedString){
+        NSRange boldRange = [[mutableAttributedString string] rangeOfString:CMT_CustomerServicePhonNum options:NSCaseInsensitiveSearch];
+        [mutableAttributedString addAttribute:(NSString*)kCTForegroundColorAttributeName value:(id)[CommonYellowTextColor CGColor] range:boldRange];
+        return mutableAttributedString;
+    }];
+}
+#pragma mark -- TTTAttributedLabelDelegate 点击电话
+- (void)attributedLabel:(TTTAttributedLabel *)label didSelectLinkWithPhoneNumber:(NSString *)phoneNumber{
+    //调用 电话phone
+    NSString *phoneUrl = [NSString stringWithFormat:@"tel://%@",phoneNumber];
+    NSString *message = @"是否拨打客服热线";
+    if(iOS8){
+        UIAlertController *alertVC = [UIAlertController alertControllerWithTitle:phoneNumber message:message preferredStyle:UIAlertControllerStyleAlert];
+        UIAlertAction *okAction = [UIAlertAction actionWithTitle:@"是" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+            [[UIApplication sharedApplication]openURL:[NSURL URLWithString:phoneUrl]];
+        }];
+        [alertVC addAction:okAction];
+        UIAlertAction *noAction = [UIAlertAction actionWithTitle:@"否" style:UIAlertActionStyleCancel handler:^(UIAlertAction * _Nonnull action) {
+            [self dismissViewControllerAnimated:YES completion:nil];
+        }];
+        [alertVC addAction:noAction];
+        [self presentViewController:alertVC animated:YES completion:nil];
+
+    }else{
+        UIAlertView *alert = [[UIAlertView alloc]initWithTitle:phoneNumber message:message delegate:self cancelButtonTitle:@"否" otherButtonTitles:@"是", nil];
+        [alert show];
+    }
+//       [label setText:_desBottomLab.text afterInheritingLabelAttributesAndConfiguringWithBlock:^ NSMutableAttributedString *(NSMutableAttributedString*mutableAttributedString){
+//        NSRange boldRange = [[mutableAttributedString string] rangeOfString:phoneNumber options:NSCaseInsensitiveSearch];
+//        [mutableAttributedString addAttribute:(NSString*)kCTForegroundColorAttributeName value:(id)[CommonYellowTextColor CGColor] range:boldRange];
+//        return mutableAttributedString;
+//    }];
+
+}
+#pragma  mark -- alertViewDelegate
+- (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex{
+    if(buttonIndex == 1){//是
+        [[UIApplication sharedApplication]openURL:[NSURL URLWithString:[NSString stringWithFormat:@"tel://%@",alertView.title]]];
+    }
+}
+- (void)back{
+    for (UIViewController *subVc in self.navigationController.viewControllers) {
+        if([subVc isKindOfClass:[CMT_AccountAndSecurityViewController class]]){
+            [self.navigationController popToViewController:subVc animated:YES];
+        }
+    }  
+}
+- (void)loadDataIDCardInforWithUserId:(NSString *)userId{
+    [self showHudInView:self.view hint:CMT_LoadDataWaiting];
+    [CMT_ProcessTheDataTool getIDCardInforWithUserId:userId andBlock:^(CMT_IDCardInforModel *model, NSError *error) {
+        [self hideHud];
+        if(!error){
+            if([[NSString stringWithFormat:@"%@",model.code ] isEqualToString:@"1"]){
+                [self setUILoadModel:model.dataModel];
+            }else if ([[NSString stringWithFormat:@"%@",model.code] isEqualToString:CMT_SinglePointCode]){
+                [CMT_SinglePointLoginTool addSinglePointLoginWithSelfVC:self];
+            }else{
+                [self showHint:model.message];
+            }
+        }else{
+            [self showHint:CMT_Error_NotNetWork];
+        }
+    }];
+}
+- (void)setUILoadModel:(CMT_IDCardInforDataModel *)model{
+
+    if(model){
+        if(model.accountFull.length - 8 > 0){
+            NSRange range = NSMakeRange(4,  model.accountFull.length - 8);
+            NSMutableString *str = [NSMutableString stringWithFormat:@"%@",model.accountFull];
+            [str replaceCharactersInRange:range withString:@"**** ****"];
+            _IDcardNumLab.text = [NSString stringWithFormat:@"%@",str];
+            _nameLab.text = [NSString stringWithFormat:@"%@",model.accountName];
+            _bankTypeLab.text = [NSString stringWithFormat:@"%@",@"储蓄卡"];
+            _bankNameLab.text = [NSString stringWithFormat:@"%@",model.bankStr];
+            [_bankLogoImageView sd_setImageWithURL:[NSURL URLWithString:model.bankIconAdress] placeholderImage:[UIImage imageNamed:@"default_image"]];
+        }
+    }
+    
+    /*
+    else{
+        if([CMT_AccountTool accountModel].idCardNumber.length - 8 > 0){
+            NSRange range = NSMakeRange(4, [CMT_AccountTool accountModel].idCardNumber.length - 8);
+            NSMutableString *str = [NSMutableString stringWithFormat:@"%@",[CMT_AccountTool accountModel].idCardNumber];
+            [str replaceCharactersInRange:range withString:@"**** ****"];
+            _IDcardNumLab.text = [NSString stringWithFormat:@"%@",str];
+            _nameLab.text = [NSString stringWithFormat:@"%@",[CMT_AccountTool accountModel].realName];
+            _bankTypeLab.text = [NSString stringWithFormat:@"%@",@"储蓄卡"];
+            _bankNameLab.text = [NSString stringWithFormat:@"%@",[CMT_AccountTool accountModel].bankCardName];
+            _bankLogoImageView.image = [UIImage imageNamed:@"default_image"];
+        }
+//        [self showHint:CMT_Error_NotNetWork];
+    }
+     */
+    
+}
+- (void)viewDidLayoutSubviews{
+    [super viewDidLayoutSubviews];
+    _bankNameW.constant  =  [CMT_Tools boundingRectWithStrW:_bankNameLab.text labStrH:_bankNameLab.height andFont:_bankNameLab.font];
+    if(CMT_6pAnd6ps){
+        _bankH.constant = CMT_ProportionX * 140;
+    }
+}
+- (void)didReceiveMemoryWarning {
+    [super didReceiveMemoryWarning];
+    // Dispose of any resources that can be recreated.
+}
+
+/*
+#pragma mark - Navigation
+
+// In a storyboard-based application, you will often want to do a little preparation before navigation
+- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
+    // Get the new view controller using [segue destinationViewController].
+    // Pass the selected object to the new view controller.
+}
+*/
+
+@end

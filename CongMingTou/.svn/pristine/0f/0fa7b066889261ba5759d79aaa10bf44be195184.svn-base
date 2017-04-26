@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="10116" systemVersion="15D21" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES">
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="10085"/>
+        <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
+    </dependencies>
+    <customFonts key="customFonts">
+        <mutableArray key="Aileron-Light.otf">
+            <string>Aileron-Light</string>
+            <string>Aileron-Light</string>
+        </mutableArray>
+    </customFonts>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <tableViewCell contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" id="KGk-i7-Jjw" customClass="CMT_CapitalSubsidiaryOtherTableViewCell">
+            <rect key="frame" x="0.0" y="0.0" width="320" height="74"/>
+            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+            <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="KGk-i7-Jjw" id="H2p-sc-9uM">
+                <rect key="frame" x="0.0" y="0.0" width="320" height="73"/>
+                <autoresizingMask key="autoresizingMask"/>
+                <subviews>
+                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="聪明头30天计划收益" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ijE-hW-rbB">
+                        <rect key="frame" x="15" y="15" width="250" height="21"/>
+                        <constraints>
+                            <constraint firstAttribute="height" constant="21" id="Q6g-U1-Hfb"/>
+                            <constraint firstAttribute="width" constant="250" id="RcH-j1-Xah"/>
+                        </constraints>
+                        <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                        <color key="textColor" red="0.20392156859999999" green="0.28627450980000002" blue="0.36862745099999999" alpha="1" colorSpace="calibratedRGB"/>
+                        <nil key="highlightedColor"/>
+                    </label>
+                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="2016-04-20 12:20:38" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="fkW-In-KkG">
+                        <rect key="frame" x="15" y="38" width="150" height="20"/>
+                        <constraints>
+                            <constraint firstAttribute="width" constant="150" id="Hl9-Ry-bx3"/>
+                            <constraint firstAttribute="height" constant="20" id="doG-Sz-199"/>
+                        </constraints>
+                        <fontDescription key="fontDescription" name="Aileron-Light" family="Aileron" pointSize="12"/>
+                        <color key="textColor" red="0.55686274509803924" green="0.63137254901960782" blue="0.70588235294117641" alpha="1" colorSpace="calibratedRGB"/>
+                        <nil key="highlightedColor"/>
+                    </label>
+                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="＋100.00" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="x8n-nc-LBd">
+                        <rect key="frame" x="225" y="27" width="80" height="20"/>
+                        <constraints>
+                            <constraint firstAttribute="width" constant="80" id="7jU-yS-qyi"/>
+                            <constraint firstAttribute="height" constant="20" id="jh2-8Y-ZuK"/>
+                        </constraints>
+                        <fontDescription key="fontDescription" name="Aileron-Light" family="Aileron" pointSize="14"/>
+                        <color key="textColor" red="1" green="0.37647058820000001" blue="0.24313725489999999" alpha="1" colorSpace="calibratedRGB"/>
+                        <nil key="highlightedColor"/>
+                    </label>
+                </subviews>
+                <constraints>
+                    <constraint firstItem="ijE-hW-rbB" firstAttribute="top" secondItem="H2p-sc-9uM" secondAttribute="topMargin" constant="7" id="CYT-Qq-JxL"/>
+                    <constraint firstItem="x8n-nc-LBd" firstAttribute="centerY" secondItem="H2p-sc-9uM" secondAttribute="centerY" id="Eqd-zj-WX4"/>
+                    <constraint firstItem="ijE-hW-rbB" firstAttribute="leading" secondItem="H2p-sc-9uM" secondAttribute="leadingMargin" constant="7" id="IvK-qu-Cs8"/>
+                    <constraint firstAttribute="trailingMargin" secondItem="x8n-nc-LBd" secondAttribute="trailing" constant="7" id="Zpb-MP-Ik1"/>
+                    <constraint firstItem="fkW-In-KkG" firstAttribute="leading" secondItem="H2p-sc-9uM" secondAttribute="leadingMargin" constant="7" id="ayp-1I-IWC"/>
+                    <constraint firstAttribute="bottomMargin" secondItem="fkW-In-KkG" secondAttribute="bottom" constant="7" id="c94-2e-Jbq"/>
+                </constraints>
+            </tableViewCellContentView>
+            <connections>
+                <outlet property="datalab" destination="fkW-In-KkG" id="Llq-Zn-blV"/>
+                <outlet property="moneyDesLab" destination="x8n-nc-LBd" id="4aS-t1-obB"/>
+                <outlet property="titleLab" destination="ijE-hW-rbB" id="HjE-9F-3XL"/>
+            </connections>
+        </tableViewCell>
+    </objects>
+</document>

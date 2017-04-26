@@ -1,0 +1,6 @@
+framework module HNAPayMobileSDK_iOS {
+  umbrella header "HNAPayMobileSDK_iOS.h"
+
+  export *
+  module * { export * }
+}

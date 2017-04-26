@@ -1,0 +1,48 @@
+//
+//  CMT_ProductDetModel.h
+//  CongMingTou
+//
+//  Created by summer on 16/5/24.
+//  Copyright © 2016年 QiYuan. All rights reserved.
+//
+
+#import <Foundation/Foundation.h>
+
+@interface CMT_ProductDetModel : NSObject
+/** 年收益利率 */
+@property (nonatomic,copy)NSString *apr;
+/** 总金额 */
+@property (nonatomic,copy)NSString *amount;
+/** 状态 */
+@property (nonatomic,copy)NSString *status;
+/** 标的id */
+@property (nonatomic,copy)NSString *bidId;
+/** 余金额 */
+@property (nonatomic,copy)NSString *leftAmount;
+/** 名称 */
+@property (nonatomic,copy)NSString *bidTitle;
+/** 起投金额 */
+@property (nonatomic,copy)NSString *minInvestAmount;
+/** 付款方式 */
+@property (nonatomic,copy)NSString *repayType;
+/** 限期 */
+@property (nonatomic,copy)NSString *period;
+/** 第几期 */
+@property (nonatomic,copy)NSString *bidNumber;
+/** 标类型 */
+@property (nonatomic,copy)NSString *bidType;
+/** 进度值 */
+@property (nonatomic,copy)NSString *loanSchedule;
+/**结束时间*/
+@property (nonatomic,copy)NSString *endDate;
+/** 描述 */
+@property (nonatomic,copy)NSString *descption;
+/** 体验金 */
+@property (nonatomic,copy)NSString *cashInvestAmount;
+/** 新手标最低可投实际金额 */
+@property (nonatomic,copy)NSString *minNewInvestAmount;
+/** 新手标最高可投实际金额 */
+@property (nonatomic,copy)NSString *maxNewInvestAmount;
+
+
+@end

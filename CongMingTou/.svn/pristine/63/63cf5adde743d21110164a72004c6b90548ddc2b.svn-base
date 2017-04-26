@@ -1,0 +1,16 @@
+//
+//  ZHInputView.h
+//  InputView
+//
+//  Created by wzh on 16/5/10.
+//  Copyright © 2016年 wzh. All rights reserved.
+//
+
+#import <UIKit/UIKit.h>
+
+@interface ZHInputView : UIView
+
+@property (nonatomic, strong) UIColor *midLineColor;
+@property (nonatomic ,assign) CGFloat midLineBorderWidth;
+@property (nonatomic, strong) UIColor *inputItemBackColor;
+@end

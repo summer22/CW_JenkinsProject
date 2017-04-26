@@ -1,0 +1,403 @@
+//
+//  CMT_ProductMaskSubView.m
+//  CongMingTou
+//
+//  Created by summer on 16/5/16.
+//  Copyright © 2016年 QiYuan. All rights reserved.
+//
+
+#import "CMT_ProductMaskSubView.h"
+#import "AppDelegate.h"
+#import "IQKeyboardManager.h"
+#import "CMT_PayMaskView.h"
+
+@interface CMT_ProductMaskSubView()
+/** 投资 */
+@property (nonatomic,strong) UIView *bgView;
+/** 可投金额 */
+@property (nonatomic,strong)UILabel *availableAmountLabel;
+/** 可用余额 */
+@property (nonatomic,strong)UILabel * availableBalanceLabel;
+/** 预期收益 */
+@property (nonatomic,strong)UILabel *expectedGet;
+/** 输入框 */
+@property (nonatomic,strong)UITextField *inputView;
+/** 提示view */
+@property (nonatomic,strong)UIView *tsView;
+/** 年收益率 */
+@property (nonatomic,copy)NSString *yearRate;
+/** 加息率 */
+@property (nonatomic,copy)NSString *addRate ;
+/** 投资天数 */
+@property (nonatomic,copy)NSString *investDay;
+/** 立即投资button */
+@property (nonatomic,strong)UIButton *toInvestBtn;
+/** 协议btn */
+@property (nonatomic,strong)UIButton *proBtn;
+/** 起投金额 */
+@property (nonatomic,copy)NSString *startInvestAmount;
+/** 提示tsLabel */
+@property (nonatomic,strong)UILabel *tsLabel;
+/** 可投金额 */
+@property (nonatomic,copy)NSString *availableAmount;
+/** 可用余额 */
+@property (nonatomic,copy)NSString *availableBalance;
+
+@end
+
+@implementation CMT_ProductMaskSubView
+
+- (instancetype)initWithFrame:(CGRect)frame
+{
+    if (self = [super initWithFrame:frame])
+    {
+        [self creatSubView];
+        self.backgroundColor = CMT_RGBACOLOR(0.2392, 0.1333, 0.1294, 0.5);
+    }
+    return self;
+}
+
+- (void)creatSubView
+{
+    //隐藏第三方键盘控制的toolbar出现
+    IQKeyboardManager *manager =  [IQKeyboardManager sharedManager];
+    [manager setEnableAutoToolbar:NO];
+    manager.shouldResignOnTouchOutside = NO;
+    
+    //控件的父view
+    UIView *bgView = [CMT_Tools getUiviewWithFrame:CMT_CGRECTMAKE(0, CMT_ScreenHeight - 250 * CMT_6PERCENTY, CMT_ScreenWidth, 250 * CMT_6PERCENTY) BackGroudColor:CommonWhiteColor];
+    self.bgView = bgView;
+    [self addSubview:bgView];
+    
+    //萌版处点击按钮
+    UIButton *button = [UIButton buttonWithType:UIButtonTypeCustom];
+    button.backgroundColor = [UIColor clearColor];
+    button.frame = CMT_CGRECTMAKE(0, 0, CMT_ScreenWidth,CMT_ScreenHeight - 250 * CMT_6PERCENTY);
+    [button addTarget:self action:@selector(hideBtnClick:) forControlEvents:UIControlEventTouchUpInside];
+    [self addSubview:button];
+    
+    //可投金额
+    CGSize topLableSize = [CMT_Tools getStrSize:@"可投金额：" fontSize:14];
+    UILabel *topLable  = [CMT_Tools getLabel:@"可投金额:" textFont:14 viewFrame:CMT_CGRECTMAKE(15 * CMT_6PERCENTY, (43 * CMT_6PERCENTY - topLableSize.height)/2, topLableSize.width, topLableSize.height) textAlignments:NSTextAlignmentLeft textColors:customColor(@"#34495E")];
+    [bgView addSubview:topLable];
+    
+    //可投金额数字
+    CGSize topRightLableSize = [CMT_Tools getStrSize:@"100,000,00.00元" fontSize:14];
+    UILabel *topRightLable  = [CMT_Tools getLabel:@"100,000,00.00元" textFont:14 viewFrame:CMT_CGRECTMAKE(bgView.right - 15 *CMT_6PERCENTY - topRightLableSize.width, 0, topRightLableSize.width, topRightLableSize.height) textAlignments:NSTextAlignmentRight textColors:customColor(@"#8EA1B4")];
+    topRightLable.centerY = topLable.centerY;
+    self.availableAmountLabel = topRightLable;
+    [bgView addSubview:topRightLable];
+    
+    //线条
+    UIView *oneLine = [CMT_Tools getUiviewWithFrame:CMT_CGRECTMAKE(15 * CMT_6PERCENTY, 43 * CMT_6PERCENTY, CMT_ScreenWidth - 15 * CMT_6PERCENTY, 0.5) BackGroudColor:CommonLineColor];
+    [bgView addSubview:oneLine];
+    
+    //可用余额文字
+    UILabel *bottomLeftLable  = [CMT_Tools getLabel:@"可用余额:" textFont:14 viewFrame:CMT_CGRECTMAKE(15 * CMT_6PERCENTY, oneLine.bottom + (43 * CMT_6PERCENTY - topLableSize.height)/2, topLableSize.width, topLableSize.height) textAlignments:NSTextAlignmentLeft textColors:customColor(@"#34495E")];
+    [bgView addSubview:bottomLeftLable];
+    
+    //可用余额金额
+    CGSize bottomRightLableSize = [CMT_Tools getStrSize:@"1,000,000,00.0元" fontSize:16];
+    UILabel *bottomRightLable  = [CMT_Tools getLabel:@"0.00元" textFont:14 viewFrame:CMT_CGRECTMAKE(bgView.width - bottomRightLableSize.width - 40 * CMT_6PERCENTY - 15 * CMT_6PERCENTY - 5, 0, bottomRightLableSize.width, bottomRightLableSize.height) textAlignments:NSTextAlignmentRight textColors:customColor(@"#8EA1B4")];
+    bottomRightLable.centerY = bottomLeftLable.centerY;
+    self.availableBalanceLabel = bottomRightLable;
+    [bgView addSubview:bottomRightLable];
+    
+    //充值按钮
+    UIButton *chargeBtn = [CMT_Tools getButtonWithFrame:CMT_CGRECTMAKE(bottomRightLable.right + 5, 0, 50 * CMT_6PERCENTY, 20 * CMT_6PERCENTY) BackGroudColor:nil Title:@"充值" TitleColor:customColor(@"#FF603E") textFont:13];
+    [chargeBtn addTarget:self action:@selector(rechargeBtn:) forControlEvents:UIControlEventTouchUpInside];
+    chargeBtn.centerY = bottomRightLable.centerY;
+    UIImage *image = [UIImage imageNamed:@"Investment_select"];
+    [chargeBtn setImage:image forState:UIControlStateNormal];
+    CGSize imageSize = chargeBtn.imageView.frame.size;
+    //先算出两边的间距
+    CGFloat abc = (chargeBtn.frame.size.width - chargeBtn.titleLabel.frame.size.width - imageSize.width ) / 2;
+    [chargeBtn setTitleEdgeInsets:UIEdgeInsetsMake(0, - 10, 0, imageSize.width + 5)];
+    [chargeBtn setImageEdgeInsets:UIEdgeInsetsMake(0, abc  + chargeBtn.titleLabel.frame.size.width, 0, 0)];
+    [bgView addSubview:chargeBtn];
+    
+    //线条
+    UIView *twoLine = [CMT_Tools getUiviewWithFrame:CMT_CGRECTMAKE(15 * CMT_6PERCENTY, 86 * CMT_6PERCENTY, CMT_ScreenWidth - 15 * CMT_6PERCENTY, 0.5) BackGroudColor:CommonLineColor];
+    [bgView addSubview:twoLine];
+    
+    //预期收益
+    UILabel *LeftLable  = [CMT_Tools getLabel:@"预期收益:" textFont:14 viewFrame:CMT_CGRECTMAKE(15 * CMT_6PERCENTY, twoLine.bottom + (43 * CMT_6PERCENTY - topLableSize.height)/2, topLableSize.width, topLableSize.height) textAlignments:NSTextAlignmentLeft textColors:customColor(@"#34495E")];
+    [bgView addSubview:LeftLable];
+    
+    //预期收益额度
+    UILabel *expectGetLable  = [CMT_Tools getLabel:@"0.00元" textFont:14 viewFrame:CMT_CGRECTMAKE(CMT_ScreenWidth - 15 * CMT_6PERCENTY -  180 * CMT_6PERCENTY, 0, 180 * CMT_6PERCENTY, LeftLable.height)  textAlignments:NSTextAlignmentRight textColors:customColor(@"#FF603E")];
+    expectGetLable.centerY = LeftLable.centerY;
+    self.expectedGet = expectGetLable;
+    [bgView addSubview:expectGetLable];
+    
+    UIView *threeLine = [CMT_Tools getUiviewWithFrame:CMT_CGRECTMAKE(0, 129 * CMT_6PERCENTY, CMT_ScreenWidth, 1) BackGroudColor:CommonLineColor];
+    [bgView addSubview:threeLine];
+    
+    //输入框背景图
+    UIImageView *textFieldBgView = [[UIImageView alloc] initWithFrame:CMT_CGRECTMAKE(15 * CMT_6PERCENTY, threeLine.bottom + 10 * CMT_6PERCENTY, 230 * CMT_6PERCENTY, 38 * CMT_6PERCENTY)];
+    textFieldBgView.image = [UIImage imageNamed:@"CMT_ProductTextFieldBgView"];
+    textFieldBgView.userInteractionEnabled = YES;
+    [bgView addSubview:textFieldBgView];
+    
+    //输入框
+    UITextField *inputView = [[UITextField alloc] initWithFrame:CMT_CGRECTMAKE(20 * CMT_6PERCENTY, 0, 200 * CMT_6PERCENTY, 38 * CMT_6PERCENTY)];
+    inputView.placeholder = @"100的整数倍递增";
+    inputView.keyboardType = UIKeyboardTypeNumberPad;
+    inputView.clearButtonMode = UITextFieldViewModeWhileEditing;
+    [inputView addTarget:self action:@selector(inputTextStr:) forControlEvents:UIControlEventEditingChanged];
+    inputView.font = [UIFont systemFontOfSize:14];
+    self.inputView = inputView;
+    [textFieldBgView addSubview:inputView];
+    
+    UIButton *rightBtn = [CMT_Tools getButtonWithFrame:CMT_CGRECTMAKE(textFieldBgView.right + 15 * CMT_6PERCENTY, 0, 100 * CMT_6PERCENTY, 38 * CMT_6PERCENTY) BackGroudColor:customColor(@"#FF603E") Title:@"立即投资" TitleColor:CommonWhiteColor textFont:15];
+    [rightBtn styteWithCornerRadius:19 * CMT_6PERCENTY shadowColor:customColor(@"#FF603E") shadowOffset:CGSizeMake(0, 2) shadowOpacity:0.5 shadowRadius:5];
+    rightBtn.centerY = textFieldBgView.centerY;
+    [rightBtn addTarget:self action:@selector(rightBtnClick:) forControlEvents:UIControlEventTouchUpInside];
+    [rightBtn addTarget:self action:@selector(rightBtnTouchDown) forControlEvents:UIControlEventTouchDown];
+    [rightBtn addTarget:self action:@selector(rightBtnTouchDragOutside) forControlEvents:UIControlEventTouchDragOutside];
+    
+    rightBtn.titleLabel.textAlignment = NSTextAlignmentCenter;
+    rightBtn.layer.borderWidth = 1.5;
+    rightBtn.layer.borderColor = customColor(@"#FF603E").CGColor;
+    self.toInvestBtn = rightBtn;
+    [bgView addSubview:rightBtn];
+    
+    UIView *bottomLine = [CMT_Tools getUiviewWithFrame:CMT_CGRECTMAKE(0, rightBtn.bottom + 10, CMT_ScreenWidth, 0.5) BackGroudColor:CommonLineColor];
+    [bgView addSubview:bottomLine];
+    
+    UIButton *bottmRightBtn = [UIButton buttonWithType:UIButtonTypeCustom];
+    CMT_BTN_NORMAL(bottmRightBtn, @"isRead_Normal");
+    CMT_BTN_SELECT(bottmRightBtn, @"isRead_Select");
+    [bottmRightBtn addTarget:self action:@selector(agreeBtnAction:) forControlEvents:UIControlEventTouchUpInside];
+    bottmRightBtn.frame = CGRectMake(15, bottomLine.bottom + 18, 30, 30);
+    self.proBtn = bottmRightBtn;
+    [self agreeBtnAction:bottmRightBtn];
+    [bgView addSubview:bottmRightBtn];
+    
+    CGSize procolLableSize = [CMT_Tools getStrSize:@"阅读并同意" fontSize:13];
+    UILabel *procolLable  = [CMT_Tools getLabel:@"阅读并同意" textFont:13 viewFrame:CMT_CGRECTMAKE(bottmRightBtn.right, 0, procolLableSize.width, procolLableSize.height) textAlignments:NSTextAlignmentCenter textColors:CommonGrayTextColor];
+    procolLable.centerY = bottmRightBtn.centerY;
+    [bgView addSubview:procolLable];
+    
+    CGSize procolBtnSize = [CMT_Tools getStrSize:@"《聪明投投资协议》" fontSize:13];
+    UIButton *procolBtn = [CMT_Tools getButtonWithFrame:CMT_CGRECTMAKE(procolLable.right + 5, 0, procolBtnSize.width, procolBtnSize.height) BackGroudColor:nil Title:@"《聪明投投资协议》" TitleColor:ThemeBackgroundColor textFont:13];
+    [procolBtn addTarget:self action:@selector(procolBtnClick:) forControlEvents:UIControlEventTouchUpInside];
+    procolBtn.centerY = procolLable.centerY;
+    procolBtn.titleLabel.textAlignment = NSTextAlignmentCenter;
+    [bgView addSubview:procolBtn];
+    
+    UIView *bottomLineView = [CMT_Tools getUiviewWithFrame:CMT_CGRECTMAKE(0 , 249 * CMT_6PERCENTY, CMT_ScreenWidth, 0.5) BackGroudColor:CommonLineColor];
+    [bgView addSubview:bottomLineView];
+    
+    [self registerForKeyboardNotifications];
+    
+    //提示view
+    UIView *tsView = [[UIView alloc] initWithFrame:CMT_CGRECTMAKE(0, 0, CMT_ScreenWidth, 40 * CMT_6PERCENTY)];
+    tsView.centerY = procolBtn.centerY;
+    
+    UILabel *tsLable  = [CMT_Tools getLabel:@"已超出可投金额，请重新输入" textFont:14 viewFrame:CMT_CGRECTMAKE(15 * CMT_6PERCENTY, 0, tsView.width, tsView.height) textAlignments:NSTextAlignmentLeft textColors:CommonWhiteColor];
+    tsView.backgroundColor = ThemeBackgroundColor;
+    tsView.hidden = YES;
+    self.tsLabel = tsLable;
+    [tsView addSubview:tsLable];
+    self.tsView = tsView;
+    [bgView addSubview:tsView];
+}
+
+#pragma mark --- 监听键盘输入的字符串
+- (void)inputTextStr:(UITextField *)textFiled
+{
+    NSInteger startInvest = [self.startInvestAmount integerValue];
+    NSInteger inputValue = [textFiled.text integerValue];
+    
+    //1、动态判断预期收益保留两位小数
+    self.expectedGet.text = [CMT_Tools apr:[self.yearRate floatValue] addPercent:[self.addRate floatValue] amount:[textFiled.text floatValue] investDay:[self.investDay integerValue]];
+    //判断提示框出现和相应提示文字
+    if (([textFiled.text doubleValue] > [self.availableAmount doubleValue] || textFiled.text.length == 0) || [textFiled.text doubleValue] > [self.availableBalance doubleValue] || (inputValue % startInvest) != 0 || [self.inputView.text doubleValue] <= 0) {
+        
+        if ((inputValue % startInvest) != 0 || textFiled.text.length == 0 || [self.inputView.text doubleValue] <= 0) {
+            self.tsLabel.text = @"请输入正确的投资金额";
+        }
+        //        else if (self.proBtn.selected == NO){
+        //            self.tsLabel.text = @"请勾选投资协议";
+        //        }
+        else if ([textFiled.text doubleValue] > [self.availableAmount doubleValue]){
+            self.tsLabel.text = @"超过剩余可投金额";
+        }else if([textFiled.text doubleValue] > [self.availableBalance doubleValue]){
+            self.tsLabel.text = @"可用余额不足";
+        }
+        [self showStatus:NO];
+        
+    }else{
+        
+        if (self.proBtn.selected == NO) {
+            //2、动态判断输入金额的正确性
+            [UIView animateWithDuration:0.3 animations:^{
+                self.tsView.hidden = YES;
+                self.toInvestBtn.userInteractionEnabled = NO;
+                self.toInvestBtn.alpha = 0.5;
+            }];
+            
+        }else{
+            [self showStatus:YES];
+        }
+    }
+}
+
+- (void)showStatus:(BOOL)isHide
+{
+    //2、动态判断输入金额的正确性
+    [UIView animateWithDuration:0.3 animations:^{
+        self.tsView.hidden = isHide;
+        self.toInvestBtn.userInteractionEnabled = isHide;
+        self.toInvestBtn.alpha = isHide == YES ? 1 : 0.5;
+    }];
+}
+
+- (void)hideBtnClick:(UIButton *)sender
+{
+    [[NSNotificationCenter defaultCenter]  removeObserver:self name:UIKeyboardWillChangeFrameNotification object:nil];
+    [self.superview resignFirstResponder];
+    [self removeFromSuperview];
+    
+}
+
+- (void)registerForKeyboardNotifications
+{
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(keyboardChangeFrame:)
+                                                 name:UIKeyboardWillChangeFrameNotification object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(deleteSelf)
+                                                 name:@"removeView" object:nil];
+}
+
+- (void)dealloc
+{
+    [[NSNotificationCenter defaultCenter]  removeObserver:self name:@"removeView" object:nil];
+    [[NSNotificationCenter defaultCenter]  removeObserver:self name:UIKeyboardWillChangeFrameNotification object:nil];
+
+}
+
+- (void)deleteSelf
+{
+    if (self) {
+        [self removeSelf];
+    }
+}
+
+- (void)keyboardChangeFrame:(NSNotification *)note
+{
+    // 0.取出键盘动画的时间
+    CGFloat duration = [note.userInfo[UIKeyboardAnimationDurationUserInfoKey] doubleValue];
+    
+    // 1.取得键盘最后的frame
+    CGRect keyboardFrame = [note.userInfo[UIKeyboardFrameEndUserInfoKey] CGRectValue];
+    
+    // 2.计算控制器的view需要平移的距离
+    CGFloat transformY = keyboardFrame.origin.y - self.frame.size.height;
+    
+    // 3.执行动画
+    [UIView animateWithDuration:duration animations:^{
+        self.transform = CGAffineTransformMakeTranslation(0, transformY);
+    }];
+}
+
++ (void)showWithDelegate:(id)target toPayCount:(NSString *)toPayCount availableBalance:(NSString *)availableBalanceStr apr:(NSString *)aprStr addPercent:(NSString *)percentStr investDay:(NSString *)days startInvestAmountStr:(NSString *)startInvestAmount;
+{
+    CMT_ProductMaskSubView *productMaskView = [[CMT_ProductMaskSubView alloc] initWithFrame:CMT_CGRECTMAKE(0, 0, CMT_ScreenWidth, CMT_ScreenHeight)];
+    productMaskView.delegate = target;
+    productMaskView.availableAmountLabel.text = [NSString stringWithFormat:@"%@元",toPayCount];//可投金额
+    productMaskView.availableAmount = toPayCount;
+    productMaskView.availableBalanceLabel.text = [NSString stringWithFormat:@"%@元",availableBalanceStr];//可用余额
+    productMaskView.availableBalance = availableBalanceStr;
+    productMaskView.addRate = percentStr;//加息率
+    productMaskView.yearRate = aprStr;//年收益率
+    productMaskView.investDay = days;//投资天数
+    productMaskView.startInvestAmount = startInvestAmount;//起投金额
+    productMaskView.inputView.placeholder = [startInvestAmount stringByAppendingString:@"的整数倍递增"];
+    [productMaskView.inputView becomeFirstResponder];
+    
+    AppDelegate *appDel = (AppDelegate *)[UIApplication sharedApplication].delegate;
+    [appDel.window addSubview:productMaskView];
+}
+
++ (void)removeMySelf
+{
+    CMT_ProductMaskSubView *productMaskView = [[CMT_ProductMaskSubView alloc] initWithFrame:CMT_CGRECTMAKE(0, 0, CMT_ScreenWidth, CMT_ScreenHeight)];
+    
+    [[NSNotificationCenter defaultCenter]  removeObserver:productMaskView name:UIKeyboardWillChangeFrameNotification object:nil];
+    [productMaskView.superview resignFirstResponder];
+    [productMaskView removeFromSuperview];
+}
+
+- (void)removeSelf
+{
+    [[NSNotificationCenter defaultCenter]  removeObserver:self name:UIKeyboardWillChangeFrameNotification object:nil];
+    [[NSNotificationCenter defaultCenter]  removeObserver:self name:@"removeView" object:nil];
+
+    [self.superview resignFirstResponder];
+    [self removeFromSuperview];
+    
+}
+
+#pragma mark -- 立即投资点击事件
+- (void)rightBtnClick:(UIButton *)sender
+{
+    self.toInvestBtn.backgroundColor = CommonYellowTextColor;
+    
+    [self inputTextStr:self.inputView];
+    
+    if (self.delegate && [self.delegate respondsToSelector:@selector(productMaskSubViewNumTextField:)]) {
+        [self.delegate productMaskSubViewNumTextField:self.inputView.text];
+    }
+    
+    [self removeSelf];
+}
+
+- (void)rightBtnTouchDragOutside
+{
+    self.toInvestBtn.backgroundColor = CommonYellowTextColor;
+}
+
+- (void)rightBtnTouchDown
+{
+    self.toInvestBtn.backgroundColor = CommonLoginBtnTouchDownBackColor;
+}
+
+#pragma mark - 充值点击事件
+- (void)rechargeBtn:(UIButton *)sender
+{
+    CMT_Log(@"充值");
+    if (self.delegate && [self.delegate respondsToSelector:@selector(productMaskSubViewRechargeBtnClick)]) {
+        [self.delegate productMaskSubViewRechargeBtnClick];
+    }
+    [self removeSelf];
+}
+
+#pragma mark -- 投资保障协议点击事件
+- (void)procolBtnClick:(UIButton *)sender
+{
+    CMT_Log(@"投资保障协议");
+    if (self.delegate && [self.delegate respondsToSelector:@selector(productMaskSubViewAgreeBtnClick)]) {
+        [self.delegate productMaskSubViewAgreeBtnClick];
+    }
+    
+    [self removeSelf];
+    
+}
+
+#pragma mark -- 是否同意协议
+- (void)agreeBtnAction:(UIButton *)sender
+{
+    sender.selected = !sender.selected;
+    self.proBtn.selected = sender.selected;
+    
+    [self inputTextStr:self.inputView];
+    
+    if (self.delegate && [self.delegate respondsToSelector:@selector(productMaskSubViewSelectBtnClick:)]) {
+        [self.delegate productMaskSubViewSelectBtnClick:sender.selected];
+    }
+}
+
+@end

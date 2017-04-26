@@ -1,0 +1,253 @@
+//
+//  CMT_CouponTableViewCell.m
+//  CongMingTou
+//
+//  Created by summer on 16/5/11.
+//  Copyright © 2016年 wzh. All rights reserved.
+//
+
+#import "CMT_CouponTableViewCell.h"
+#import "markImageView.h"
+
+@interface CMT_CouponTableViewCell()
+/** 状态ImageView */
+@property (nonatomic,strong)markImageView *topLeftView;
+/** 已售罄状态ImageView */
+@property (nonatomic,strong)UIImageView *toprightView;
+/** 图片上的文字分期label */
+@property (nonatomic,strong) UILabel *stageLabel;
+/** 投标类型的label */
+@property (nonatomic,strong) UILabel *markLabel;
+/** 投资期限label */
+@property (nonatomic,strong) UILabel *dayLabel;
+/** 投资状态类型按钮 */
+@property (nonatomic,strong)UIButton *backStyleBtn;
+/** 投资收益率label */
+@property (nonatomic,strong) UILabel *profitLabel;
+/** 预期年化收益率label */
+@property (nonatomic,strong) UILabel *expectProfitLabel;
+/** 加息百分比 */
+@property (nonatomic,strong)UILabel *addPercentLabel;
+
+@end
+
+@implementation CMT_CouponTableViewCell
+
+- (void)awakeFromNib {
+    // Initialization code
+   
+}
+
+- (instancetype)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier
+{
+    self = [super initWithStyle:style reuseIdentifier:reuseIdentifier];
+    if (self) {
+        
+        [self creatUI];
+        
+    }
+    return self;
+}
+
+- (void)creatUI
+{
+    //右上角已售罄的状态图片
+    UIImageView *toprightView = [CMT_Tools getImageViewWithFrame:CMT_CGRECTMAKE(CMT_ScreenWidth - 40 , 0, 40 , 40 ) BackGroudColor:nil];
+    toprightView.hidden = YES;
+    toprightView.image = [UIImage imageNamed:@"Financial_SQMark"];
+    self.toprightView = toprightView;
+    [self.contentView addSubview:toprightView];
+    
+    //左上角的状态图片view
+    markImageView *topLeftView = [[markImageView alloc] initWithFrame:CMT_CGRECTMAKE(15 , 10 , 161, 22 )];
+    self.topLeftView = topLeftView;
+    [self.contentView addSubview:topLeftView];
+    
+    UIView *lineView = [CMT_Tools getUiviewWithFrame:CMT_CGRECTMAKE(15  , 44 , CMT_ScreenWidth - 15 , 0.5) BackGroudColor:CommonLineColor];
+    [self.contentView addSubview:lineView];
+    
+    UIView *leftBgView = [[UIView alloc] initWithFrame:CMT_CGRECTMAKE(0, lineView.bottom, CMT_ScreenWidth/2, 75 )];
+    [self.contentView addSubview:leftBgView];
+    
+    //预期年化收益率15%
+    CGSize profitLabelSize = [CMT_Tools getStrSize:@"15.0%" fontSize:36];
+    UILabel *profitLabel = [CMT_Tools getLabel:@"15.0%" textFont:36 viewFrame:CMT_CGRECTMAKE(0, 0, profitLabelSize.width,profitLabelSize.height) textAlignments:NSTextAlignmentCenter textColors:customColor(@"#FF603E")];
+    profitLabel.centerX = leftBgView.centerX - 10;
+    profitLabel.centerY = leftBgView.centerY - profitLabel.height - 15;
+    profitLabel.attributedText = [CMT_Tools HeadAttributedString:@"15.0" backAttributedString:@"%" NSheadForegroundColorAttributeName:customColor(@"#FF603E") NSbackForegroundColorAttributeName:customColor(@"#FF603E")NSheadFontAttributeName:36 NSbackFontAttributeName:16];
+    self.profitLabel = profitLabel;
+    [leftBgView addSubview:profitLabel];
+
+    //加息率
+    CGSize rateLabelSize = [CMT_Tools getStrSize:@"＋0.05%" fontSize:18];
+    UILabel *addRateLabel = [CMT_Tools getLabel:@"＋0.5%" textFont:18 viewFrame:CMT_CGRECTMAKE(profitLabel.right - 5, 0, rateLabelSize.width,rateLabelSize.height) textAlignments:NSTextAlignmentLeft textColors:customColor(@"#FF603E")];
+    addRateLabel.centerY = profitLabel.centerY+5;
+    addRateLabel.attributedText = [CMT_Tools HeadAttributedString:@"＋0.5" backAttributedString:@" %" NSheadForegroundColorAttributeName:ThemeBackgroundColor NSbackForegroundColorAttributeName:ThemeBackgroundColor  NSheadFontAttributeName:18 NSbackFontAttributeName:11];
+    self.addPercentLabel = addRateLabel;
+    [leftBgView addSubview:addRateLabel];
+    
+    //预期年化收益率
+    CGSize profitBottomLabelSize = [CMT_Tools getStrSize:@"预期年化收益率" fontSize:12 ];
+    UILabel *profitBottomLabel = [CMT_Tools getLabel:@"预期年化收益率" textFont:12  viewFrame:CMT_CGRECTMAKE(0, 0, profitBottomLabelSize.width,profitBottomLabelSize.height) textAlignments:NSTextAlignmentLeft textColors:customColor(@"#34495E")];
+    profitBottomLabel.centerX = leftBgView.centerX;
+    profitBottomLabel.centerY = profitLabel.bottom + 10;
+    self.expectProfitLabel = profitBottomLabel;
+    [leftBgView addSubview:profitBottomLabel];
+    
+    UIView *rightBgView = [[UIView alloc] initWithFrame:CMT_CGRECTMAKE(CMT_ScreenWidth/2, lineView.bottom, CMT_ScreenWidth/2, 75)];
+    [self.contentView addSubview:rightBgView];
+    
+    //投资期限7天
+    CGSize dayLabelSize = [CMT_Tools getStrSize:@"投资期限360天" fontSize:18];
+    UILabel *dayLabel = [CMT_Tools getLabel:@"投资期限360天" textFont:18 viewFrame:CMT_CGRECTMAKE((CMT_ScreenWidth/2 - dayLabelSize.width)/2, 8, dayLabelSize.width,dayLabelSize.height) textAlignments:NSTextAlignmentCenter textColors:customColor(@"#34495E")];
+    dayLabel.attributedText = [CMT_Tools strHeadAttributedString:@"投资期限" midAttributedString:@"360" backAttributedString:@"天" NSheadForegroundColorAttributeName:customColor(@"#34495E") NSbackForegroundColorAttributeName:customColor(@"#FF603E") NSbackForegroundColorAttributeName:customColor(@"#FF603E") NSheadFontAttributeName:12 NSbackFontAttributeName:18 NSbackFontAttributeName:16];
+    dayLabel.centerY = profitLabel.centerY;
+    self.dayLabel = dayLabel;
+    [rightBgView addSubview:dayLabel];
+    
+    //到期还本付息
+    CGSize profitStyleSize = [CMT_Tools getStrSize:@"到期还本付息" fontSize:12];
+    UIButton *profitStyleBtn = [CMT_Tools getButtonWithFrame:CMT_CGRECTMAKE(0, dayLabel.bottom + 10, profitStyleSize.width + 10, profitStyleSize.height + 5) BackGroudColor:nil Title:@"到期还本付息" TitleColor:customColor(@"#FFA33E") textFont:12];
+    profitStyleBtn.layer.cornerRadius = (profitStyleSize.height + 5)/2;
+    profitStyleBtn.layer.masksToBounds = YES;
+    profitStyleBtn.layer.borderColor = customColor(@"#FFA33E").CGColor;
+    profitStyleBtn.layer.borderWidth = 0.5;
+    profitStyleBtn.centerX = dayLabel.centerX;
+    self.backStyleBtn = profitStyleBtn;
+    [rightBgView addSubview:profitStyleBtn];
+}
+
+//加息率的赋值
+- (void)setPercentStr:(NSString *)percentStr
+{
+    _percentStr = percentStr;
+    self.addPercentLabel.attributedText = [CMT_Tools HeadAttributedString:_percentStr backAttributedString:@" %" NSheadForegroundColorAttributeName:ThemeBackgroundColor NSbackForegroundColorAttributeName:ThemeBackgroundColor  NSheadFontAttributeName:18 NSbackFontAttributeName:11];
+}
+
+//根据数据的变化改变控件的状态和cell的交互状态
+/**
+ * 已售罄、已截标和正在进行三种状态  （已售罄和已截标的状态统一）
+ * 2 进行中
+ * 3 已售罄
+ * 4 已截标
+ */
+- (void)setModel:(CMT_financialModel *)model
+{
+    if (self.listFromType == TICKETCLASS) {
+        self.addPercentLabel.hidden = YES;
+    }else{
+        self.addPercentLabel.hidden = NO;
+    }
+
+    _model = model;
+    //部分控件的不同状态和类型的变化
+    [self getOtherViewStyle:_model];
+    //处理不同类型的图片
+    self.topLeftView.model = _model;
+    //处理不同类型标和不同状态的样式
+    [self getCustomStyleBtn:_model];
+    
+}
+
+//部分控件的不同状态和类型的变化
+- (void)getOtherViewStyle:(CMT_financialModel *)btnStatuModel
+{
+    //状态
+    NSString *statuStr = btnStatuModel.status;
+    
+    //进行中的状态样式
+    if ([statuStr isEqualToString:@"2"]) {
+        
+        self.toprightView.hidden = YES;
+        self.backStyleBtn.layer.borderColor = customColor(@"#FFA33E").CGColor;
+        [self.backStyleBtn setTitleColor:customColor(@"#FFA33E") forState:UIControlStateNormal];
+        self.expectProfitLabel.textColor = customColor(@"#34495E");
+        
+        self.dayLabel.attributedText = [CMT_Tools strHeadAttributedString:@"投资期限" midAttributedString:btnStatuModel.period backAttributedString:@"天" NSheadForegroundColorAttributeName:customColor(@"#34495E") NSbackForegroundColorAttributeName:customColor(@"#FF603E") NSbackForegroundColorAttributeName:customColor(@"#FF603E") NSheadFontAttributeName:12  NSbackFontAttributeName:18 NSbackFontAttributeName:16 ];
+        
+        self.profitLabel.attributedText = [CMT_Tools HeadAttributedString:btnStatuModel.apr backAttributedString:@"%" NSheadForegroundColorAttributeName:customColor(@"#FF603E") NSbackForegroundColorAttributeName:customColor(@"#FF603E")NSheadFontAttributeName:36  NSbackFontAttributeName:16];
+        
+    }else{
+        
+        self.toprightView.hidden = NO;
+        self.backStyleBtn.layer.borderColor = customColor(@"#8EA1B4").CGColor;
+        [self.backStyleBtn setTitleColor:customColor(@"#8EA1B4") forState:UIControlStateNormal];
+        self.expectProfitLabel.textColor = customColor(@"#8EA1B4");
+        
+        self.dayLabel.attributedText = [CMT_Tools strHeadAttributedString:@"投资期限" midAttributedString:btnStatuModel.period backAttributedString:@"天" NSheadForegroundColorAttributeName:customColor(@"#8EA1B4") NSbackForegroundColorAttributeName:customColor(@"#8EA1B4")  NSbackForegroundColorAttributeName:customColor(@"#8EA1B4") NSheadFontAttributeName:12 NSbackFontAttributeName:18  NSbackFontAttributeName:16];
+        
+        self.profitLabel.attributedText = [CMT_Tools HeadAttributedString:btnStatuModel.apr backAttributedString:@"%" NSheadForegroundColorAttributeName:customColor(@"#8EA1B4") NSbackForegroundColorAttributeName:customColor(@"#8EA1B4")NSheadFontAttributeName:36 NSbackFontAttributeName:16];
+    }
+    
+}
+
+/**
+ * 7天的   到期还本付息 ＃FFA33E    0
+ 30天的  到期还本付息 ＃FFA33E     1
+ 90天的  到期还本付息 ＃FFA33E       2
+ 180天的 先息后本 #46CBFE             3
+ 360天的 按月付息 到期还本 #46CBFE       4
+ */
+- (void)getCustomStyleBtn:(CMT_financialModel *)btnStatuModel
+{
+    //状态 是否进行中
+    NSString *status = btnStatuModel.status;
+    //标类型
+    NSString *markStyle = btnStatuModel.bidType;
+    //返息类型
+    [self.backStyleBtn setTitle:btnStatuModel.repayType forState:UIControlStateNormal];
+    
+    if ([status isEqualToString:@"2"]) {
+        //新手表
+        if ([markStyle isEqualToString:@"0"]) {
+            self.backStyleBtn.layer.borderColor = customColor(@"#FFA33E").CGColor;
+            [self.backStyleBtn setTitleColor:customColor(@"#FFA33E") forState:UIControlStateNormal];
+            //            [self.backStyleBtn setTitle:@"到期还本付息" forState:UIControlStateNormal];
+            
+            //30
+        }else if([markStyle isEqualToString:@"1"]){
+            self.backStyleBtn.layer.borderColor = customColor(@"#FFA33E").CGColor;
+            [self.backStyleBtn setTitleColor:customColor(@"#FFA33E") forState:UIControlStateNormal];
+            //            [self.backStyleBtn setTitle:@"到期还本付息" forState:UIControlStateNormal];
+            
+            // 90
+        }else if([markStyle isEqualToString:@"2"]){
+            self.backStyleBtn.layer.borderColor = customColor(@"#FFA33E").CGColor;
+            [self.backStyleBtn setTitleColor:customColor(@"#FFA33E") forState:UIControlStateNormal];
+            //            [self.backStyleBtn setTitle:@"到期还本付息" forState:UIControlStateNormal];
+            
+            //180
+        }else if([markStyle isEqualToString:@"3"]){
+            self.backStyleBtn.layer.borderColor = customColor(@"#46CBFE").CGColor;
+            [self.backStyleBtn setTitleColor:customColor(@"#46CBFE") forState:UIControlStateNormal];
+            //            [self.backStyleBtn setTitle:@"先息后本" forState:UIControlStateNormal];
+            
+            //360
+        }else if([markStyle isEqualToString:@"4"]){
+            self.backStyleBtn.layer.borderColor = customColor(@"#46CBFE").CGColor;
+            [self.backStyleBtn setTitleColor:customColor(@"#46CBFE") forState:UIControlStateNormal];
+            //            [self.backStyleBtn setTitle:@"按月付息 到期还本" forState:UIControlStateNormal];
+        }
+        
+    }else{
+        self.backStyleBtn.layer.borderColor =  customColor(@"#8EA1B4").CGColor;
+        [self.backStyleBtn setTitleColor:customColor(@"#8EA1B4") forState:UIControlStateNormal];
+    }
+    
+    CGSize profitStyleSize = [CMT_Tools getStrSize:btnStatuModel.repayType fontSize:14];
+    self.backStyleBtn.layer.cornerRadius = (profitStyleSize.height + 5)/2;
+    self.backStyleBtn.width = profitStyleSize.width + 5;
+    self.backStyleBtn.centerX = self.dayLabel.centerX;
+    self.backStyleBtn.layer.masksToBounds = YES;
+
+    [self layoutSubviews];
+}
+
+- (void)setSelected:(BOOL)selected animated:(BOOL)animated {
+    [super setSelected:selected animated:animated];
+
+    // Configure the view for the selected state
+}
+
+
+@end

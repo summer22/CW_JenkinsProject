@@ -1,0 +1,26 @@
+//
+//  CMT_ShouYiMingXIModel.m
+//  CongMingTou
+//
+//  Created by wzh on 16/5/26.
+//  Copyright © 2016年 QiYuan. All rights reserved.
+//
+
+#import "CMT_ShouYiMingXIModel.h"
+
+@implementation CMT_ShouYiMingXIModel
+
++ (CMT_ShouYiMingXIModel *)shouYiMingXiModelWithDic:(NSDictionary *)dic{
+    return [[self alloc]initWithDic:dic];
+}
+
+- (void)setValue:(id)value forUndefinedKey:(NSString *)key{
+    [super setValue:value forUndefinedKey:key];
+    if([key isEqualToString:@"data"]){
+        CMT_ShouYiMingXiDataModel *dataModel = [CMT_ShouYiMingXiDataModel shouYiMingXiDataModelWithDic:value];
+        _dataModel = dataModel;
+    }
+
+}
+
+@end

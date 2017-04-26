@@ -1,0 +1,67 @@
+//
+//  CMT_UserInfo.m
+//  CongMingTou
+//
+//  Created by summer on 16/5/10.
+//  Copyright © 2016年 wzh. All rights reserved.
+//
+
+#import "CMT_UserInfo.h"
+
+@implementation CMT_UserInfo
+
+//userInfo 单例
++ (instancetype)info{
+    static CMT_UserInfo *info = nil;
+    if (!info) {
+        info = [[self alloc]init];
+    }
+    return info;
+}
+
+- (id)init{
+    if (self = [super init])
+    {
+        self.defaults = [NSUserDefaults standardUserDefaults];
+        self.userId   = [self getString:[_defaults objectForKey:@"LoginInfoID"]];
+    }
+    return self;
+}
+
+- (NSString *)getString:(id)object {
+    
+    NSString * string = [NSString stringWithFormat:@"%@",object];
+    if (!string || [string isEqualToString:@"null"] || [string isEqualToString:@"(null)"] || [string isEqualToString:@""])
+    {
+        string = @"";
+    }
+    return string;
+}
+
+//存userId
+- (void)setUserId:(NSString *)userId {
+    
+    if (userId != _userId && userId)
+    {
+        _userId = [userId copy];
+        [_defaults setObject:[self getString:_userId] forKey:@"LoginInfoID"];
+    }
+    else if (!userId)
+    {
+        _userId = nil;
+        [_defaults setObject:@"" forKey:@"LoginInfoID"];
+    }
+    [_defaults synchronize];
+}
+
+//用户退出销毁对象
+- (void)destory{
+    
+    self.userId = nil;
+}
+
+//打印信息
+- (NSString *)description{
+    return nil;
+}
+@end

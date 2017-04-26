@@ -1,0 +1,33 @@
+//
+//  CMT_GetShareFirendInforAfterModel.h
+//  CongMingTou
+//
+//  Created by wzh on 16/7/11.
+//  Copyright © 2016年 QiYuan. All rights reserved.
+//
+
+#import "CMT_BaseModel.h"
+
+@interface CMT_GetShareFirendInforAfterModel : CMT_BaseModel
+/**
+ *  分享金额（当type=0时，已经分享过，返回此字段）
+ */
+@property (nonatomic, copy) NSString *shareAmt;
+/**
+ *  分享所剩次数
+ */
+@property (nonatomic, copy) NSString *shareNum;
+/**
+ *  分享金额状态（0：没领取，1：已领取）
+ */
+@property (nonatomic, copy) NSString *amtStatus;
+/**
+ *  二维码 （生成用户二维码路径）
+ */
+@property (nonatomic, copy) NSString *twoCodePath;
+
+
+
++ (CMT_GetShareFirendInforAfterModel *)getShareFirendInforModelWithDic:(NSDictionary *)dic;
+
+@end

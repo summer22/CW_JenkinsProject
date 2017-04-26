@@ -1,0 +1,14 @@
+//
+//  NSString+Category.h
+//  IZhuJia
+//
+//  Created by 买买提 on 15/12/14.
+//  Copyright © 2015年 com.firstcare.product. All rights reserved.
+//
+
+#import <Foundation/Foundation.h>
+
+@interface NSString (Category)
++(NSString *)convertNull:(id)object;
+
+@end

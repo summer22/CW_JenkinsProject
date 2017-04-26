@@ -1,0 +1,81 @@
+//
+//  CMT_IDCardInforModel.h
+//  CongMingTou
+//
+//  Created by wzh on 16/5/24.
+//  Copyright © 2016年 QiYuan. All rights reserved.
+//
+
+#import <Foundation/Foundation.h>
+#import "CMT_CodeBaseModel.h"
+@class CMT_IDCardInforDataModel;
+@interface CMT_IDCardInforModel : CMT_CodeBaseModel
+
+
+//@property (copy, nonatomic) NSString *code;
+//@property (copy, nonatomic) NSString *message;
+@property (strong, nonatomic) CMT_IDCardInforDataModel *dataModel;
++ (CMT_IDCardInforModel *)IDCardInforModelWithDic:(NSDictionary *)dic;
+
+@end
+
+
+
+@interface CMT_IDCardInforDataModel : NSObject
+/**
+ *  余额
+ */
+@property (copy, nonatomic) NSString *balance;
+/**
+ *  账户持有人姓名
+ */
+@property (copy, nonatomic) NSString *accountName;
+/**
+ *  单笔限额
+ */
+@property (copy, nonatomic) NSString *danE;
+/**
+ *  单笔限额
+ */
+@property (copy, nonatomic) NSString *dayE;
+/**
+ *  银行卡名称
+ */
+@property (copy, nonatomic) NSString *bankStr;
+/**
+ *  身份证号码
+ */
+@property (copy, nonatomic) NSString *idNumber;
+/**
+ *  银行ID
+ */
+@property (copy, nonatomic) NSString *bankId;
+/**
+ *  银行卡尾号
+ */
+@property (copy, nonatomic) NSString *endNumber;
+/**
+ *  银行卡账号
+ */
+@property (copy, nonatomic) NSString *accountFull;
+/**
+ *  银行卡图标
+ */
+@property (copy, nonatomic) NSString *bankIconAdress;
+
+/**
+ *  银行卡预留手机号
+ */
+@property (copy, nonatomic) NSString *phone;
+/**
+ *  支付类型 1：新生 2：闪豆
+ */
+@property (copy, nonatomic) NSString *paytype;
+/**
+ *  支付类型名称
+ */
+@property (copy, nonatomic) NSString *payname;
+
++ (CMT_IDCardInforDataModel *)IDCardInforDataModelWithDic:(NSDictionary *)dic;
+@end
+

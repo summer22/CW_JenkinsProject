@@ -1,0 +1,236 @@
+//
+//  CMT_MyTenderDetailsViewController.m
+//  CongMingTou
+//
+//  Created by wzh on 16/5/17.
+//  Copyright © 2016年 QiYuan. All rights reserved.
+//
+
+#import "CMT_MyTenderDetailsViewController.h"
+#import "CMT_TenderRecordTableViewCell.h"
+#import "CMT_FinancialTableViewCell.h"
+#import "CMT_ComStyleView.h"
+#import "CMT_productDetViewController.h"
+#import "CMT_CreditorsRightsListViewController.h"
+#import "CMT_LookContractViewController.h"
+@interface CMT_MyTenderDetailsViewController ()<UITableViewDataSource,UITableViewDelegate>
+@property (strong, nonatomic) IBOutlet UITableView *tableView;
+@property (nonatomic, strong) NSMutableArray *dataArray;
+/** 头部视图 */
+@property (nonatomic,strong)CMT_ComStyleView *tableListHeadView;
+
+/**
+ *  合同按钮
+ */
+@property (nonatomic,strong) UIButton *contractBtn;
+
+@property (nonatomic, strong) CMT_BitInforModel *bitInforModel;
+
+@end
+
+@implementation CMT_MyTenderDetailsViewController
+
+
+- (UIButton *)contractBtn{
+    if(!_contractBtn){
+        _contractBtn = [UIButton buttonWithType:UIButtonTypeCustom];
+        CGFloat btnWAndH = 50;
+        CGFloat leftAndBottomMid = 20;
+        _contractBtn.frame = CGRectMake(CMT_ScreenWidth - leftAndBottomMid - btnWAndH, CMT_ScreenHeight - leftAndBottomMid - btnWAndH -CMT_NAV_Height, btnWAndH, btnWAndH);
+        _contractBtn.backgroundColor = ThemeBackgroundColor;
+        [_contractBtn styleWithCornerRadius:btnWAndH/2];
+        _contractBtn.titleLabel.font = UIFont28;
+        [_contractBtn setTitle:@"合同" forState:UIControlStateNormal];
+        [_contractBtn addTarget:self action:@selector(chectcontractBtnClicked:) forControlEvents:UIControlEventTouchUpInside];
+    }
+    return _contractBtn;
+}
+-(CMT_ComStyleView *)tableListHeadView
+{
+    if (!_tableListHeadView) {
+        _tableListHeadView = [[CMT_ComStyleView alloc] initWithFrame:CMT_CGRECTMAKE(0, 0, CMT_ScreenWidth, 120)];
+        _tableListHeadView.index = _index;
+        [_tableListHeadView.nextBtn addTarget:self action:@selector(touZiDetail:) forControlEvents:UIControlEventTouchUpInside];
+    }
+    return _tableListHeadView;
+}
+
+- (NSMutableArray *)dataArray{
+    if(!_dataArray){
+        _dataArray = [NSMutableArray array];
+    }
+    return _dataArray;
+}
+
+/**
+ *  设置导航栏内容
+ */
+- (void)setupNav
+{
+    UIButton *rightBtn = [UIButton buttonWithType:UIButtonTypeCustom];
+    rightBtn.frame = CGRectMake(0, 0, 65, 20);
+    rightBtn.titleLabel.font = UIFont30;
+    [rightBtn setTitle:@"债权列表" forState:UIControlStateNormal];
+    [rightBtn setTitleEdgeInsets:UIEdgeInsetsMake(0, 0, 0, -20)];
+    [rightBtn sizeToFit];
+    [rightBtn addTarget:self action:@selector(creditorsRightsListBtnClicked:) forControlEvents:UIControlEventTouchUpInside];
+    UIBarButtonItem *rightBtnItem = [[UIBarButtonItem alloc]initWithCustomView:rightBtn];
+    self.navigationItem.rightBarButtonItem = rightBtnItem;
+
+}
+
+- (void)viewDidLoad {
+    [super viewDidLoad];
+    // Do any additional setup after loading the view from its nib.
+    [self setDefaultUI];
+    [self loadDataList];
+    [self createRefreshing];
+    if(_index != 1){
+        [self.view addSubview:self.contractBtn];
+        [self setupNav];
+    }
+}
+- (void)createRefreshing{
+    // 下拉刷新
+    _tableView.mj_header= [MJRefreshNormalHeader headerWithRefreshingBlock:^{
+        [self loadDataList];
+        
+    }];
+    
+}
+- (void)setDefaultUI{
+    _tableView.separatorColor = [UIColor clearColor];
+    _tableView.backgroundColor = [UIColor clearColor];
+    _tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
+    _tableView.showsVerticalScrollIndicator = NO;
+    _tableView.tableHeaderView.height = 120;
+    self.title = _model.bidTitle;
+    
+}
+- (void)loadDataList{
+    //(持有中和已赎回传0，预约中传1)
+    if(_index == 1){
+        [self loadDataWithInvestId:_model.preInvestId andType:@"1"];
+    }else{
+        [self loadDataWithInvestId:_model.investId andType:@"0"];
+    }
+
+}
+
+- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView{
+    return 1;
+}
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section{
+    return _dataArray.count;
+}
+
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath{
+
+    CMT_TenderRecordTableViewCell *cell = [CMT_TenderRecordTableViewCell cellWithTablebView:tableView];
+    cell.topView.hidden = indexPath.row == 0 ? YES : NO;
+    cell.bottomView.hidden = indexPath.row == _dataArray.count - 1  ? YES : NO;
+    cell.model = _dataArray[indexPath.row];
+    return cell;
+}
+
+- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath{
+    return 50;
+}
+
+- (void)touZiDetail:(UIButton *)button{
+    
+    if (!_tableListHeadView.model) {
+        [self showHint:CMT_Error_NotNetWork];
+        return;
+    }
+    CMT_productDetViewController *productDetVC = [[CMT_productDetViewController alloc]init];
+    productDetVC.markIdStr =  _tableListHeadView.model.bidId;
+    productDetVC.markType = 0;
+    productDetVC.fromType = 0;
+    
+    CMT_Log(@"标的状态＝%@",_tableListHeadView.model.status);
+    
+    productDetVC.markState = [_tableListHeadView.model.status isEqual:@"2"] ? 0 : 1 ;
+    [self.navigationController pushViewController:productDetVC animated:YES];
+}
+
+
+#pragma mark -- lodaData
+- (void)loadDataWithInvestId:(NSString *)investId andType:(NSString *)type{
+    [self showHudInView:self.view hint:CMT_LoadDataWaiting];
+    [CMT_ProcessTheDataTool investmentWithInvestId:investId type:type andBlock:^(CMT_BitAndInvestModel *model, NSError *error) {
+       [self hideHud];
+        if(!error){
+            if([[NSString stringWithFormat:@"%@",model.status] isEqualToString:@"1"]){
+                _bitInforModel = model.bitInforModel;
+                if(_tableView.mj_header.isRefreshing){
+                    [self.dataArray removeAllObjects];
+                }
+//                _tableView.tableHeaderView = self.tableListHeadView;
+                [self.dataArray  addObjectsFromArray:model.investInforListArray];
+                _tableListHeadView.model = model.bitInforModel;
+                [_tableView reloadData];
+            }else if ([[NSString stringWithFormat:@"%@",model.status] isEqualToString:CMT_SinglePointCode]){
+                [CMT_SinglePointLoginTool addSinglePointLoginWithSelfVC:self];
+            }else{
+                [self showHint:model.msg];
+            }
+        }else{
+            [self showHint:CMT_Error_NotNetWork];
+        }
+        [_tableView.mj_header endRefreshing];
+    }];
+}
+#pragma btnClicked
+//查看合同
+- (void)chectcontractBtnClicked:(UIButton *)button{
+    if(_bitInforModel){
+        
+        [self showHudInView:self.view hint:CMT_LoadDataWaiting];
+        [CMT_ProcessTheDataTool getContractInforWithInvestId:_model.investId period:_bitInforModel.period block:^(id jsonObject, NSError *error) {
+            CMT_Log(@"%@",jsonObject);
+            [self hideHud];
+            if(jsonObject[@"msg"] && ![jsonObject[@"msg"] isEqual:@""]){
+                CMT_LookContractViewController *lookContractVC = [[CMT_LookContractViewController alloc]init];
+                lookContractVC.contractUrl = jsonObject[@"msg"];
+                [self.navigationController pushViewController:lookContractVC animated:YES];
+            }
+        }];
+    }else{
+        [self showHint:CMT_Error_NotNetWork];
+    }
+   
+}
+- (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section{
+    return self.tableListHeadView.height;
+}
+
+- (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section{
+    return self.tableListHeadView;
+}
+//债卷列表
+- (void)creditorsRightsListBtnClicked:(UIButton *)button{
+    
+    if (self.bitInforModel) {
+        CMT_CreditorsRightsListViewController *creditorsRightsListVC = [[CMT_CreditorsRightsListViewController alloc]init];
+        creditorsRightsListVC.perid = self.bitInforModel.period;
+        creditorsRightsListVC.bidNo = self.bitInforModel.bidNo;
+        [self.navigationController pushViewController:creditorsRightsListVC animated:YES];
+    }
+}
+- (void)didReceiveMemoryWarning {
+    [super didReceiveMemoryWarning];
+    // Dispose of any resources that can be recreated.
+}
+
+/*
+#pragma mark - Navigation
+
+// In a storyboard-based application, you will often want to do a little preparation before navigation
+- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
+    // Get the new view controller using [segue destinationViewController].
+    // Pass the selected object to the new view controller.
+}
+*/
+
+@end

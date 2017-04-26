@@ -1,0 +1,13 @@
+//
+//  CMT_AccountAndSecurityViewController.h
+//  CongMingTou
+//
+//  Created by wzh on 16/5/16.
+//  Copyright © 2016年 QiYuan. All rights reserved.
+//
+
+#import "CMT_BaseVIewController.h"
+
+@interface CMT_AccountAndSecurityViewController : CMT_BaseVIewController
+
+@end

@@ -1,0 +1,23 @@
+
+//  CMT_CapitalSubsidiaryOtherTableViewCell.h
+//  CongMingTou
+//
+//  Created by wzh on 16/5/17.
+//  Copyright © 2016年 QiYuan. All rights reserved.
+//
+
+#import <UIKit/UIKit.h>
+#import "CMT_ShouYiMingXIListModel.h"
+
+@interface CMT_CapitalSubsidiaryOtherTableViewCell : CMT_BaseTableViewCell
+//@property (strong, nonatomic) IBOutlet UIView *bottomLineView;
+//@property (strong, nonatomic) IBOutlet UIView *topLineView;
+@property (strong, nonatomic) IBOutlet UILabel *titleLab;
+@property (strong, nonatomic) IBOutlet UILabel *datalab;
+@property (strong, nonatomic) IBOutlet UILabel *moneyDesLab;
+
+@property (nonatomic, strong) CMT_ShouYiMingXIListModel *model;
+
+//@property (strong, nonatomic) IBOutlet NSLayoutConstraint *bottomX;
++ (CMT_CapitalSubsidiaryOtherTableViewCell *)cellWithTablebView:(UITableView *)tableView;
+@end

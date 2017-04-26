@@ -1,0 +1,69 @@
+//
+//  CMT_ProductXmTableListFooterView.m
+//  CongMingTou
+//
+//  Created by summer on 16/5/23.
+//  Copyright © 2016年 QiYuan. All rights reserved.
+//
+
+#import "CMT_ProductXmTableListFooterView.h"
+#import "CMT_Label.h"
+
+@interface CMT_ProductXmTableListFooterView()
+/** contenLable */
+@property (nonatomic,strong)CMT_Label *contentLabs;
+@end
+
+@implementation CMT_ProductXmTableListFooterView
+
+- (instancetype)initWithFrame:(CGRect)frame
+{
+    if (self = [super initWithFrame:frame])
+    {
+        [self creatBottomSubView];
+        self.backgroundColor = [UIColor clearColor];
+    }
+    return self;
+}
+//265
+- (void)creatBottomSubView
+{
+    UIView *bgView =[CMT_Tools getUiviewWithFrame:CMT_CGRECTMAKE(0, 10, self.width, self.height - 10) BackGroudColor:CommonWhiteColor];
+    [self addSubview:bgView];
+    //产品说明
+    CGSize productLabelSize = [CMT_Tools getStrSize:@"产品说明" fontSize:12 * CMT_6PERCENTY];
+    UILabel *productLabel = [CMT_Tools getLabel:@"产品说明" textFont:12 * CMT_6PERCENTY viewFrame:CMT_CGRECTMAKE(15 * CMT_6PERCENTY, (30 *CMT_6PERCENTY - productLabelSize.height)/2, productLabelSize.width + 30,productLabelSize.height) textAlignments:NSTextAlignmentLeft textColors:CommonGrayTextColor];
+    [bgView addSubview:productLabel];
+    
+    //线条
+    UIView *lineView = [CMT_Tools getUiviewWithFrame:CMT_CGRECTMAKE(15 * CMT_6PERCENTY, 30 *CMT_6PERCENTY, CMT_ScreenWidth - 15 * CMT_6PERCENTY, 0.5) BackGroudColor:CommonLineColor];
+    [bgView addSubview:lineView];
+    
+    CMT_Label *contentLab = [[CMT_Label alloc] init];
+    contentLab.text = [self textStr:@"30"];
+    //使用自定义字体
+    contentLab.font = [UIFont systemFontOfSize:12*CMT_6PERCENTY];
+    //设置字体颜色
+    contentLab.textColor = CommonImpTextColor;
+    contentLab.lineBreakMode = NSLineBreakByWordWrapping;
+    contentLab.numberOfLines = 0;
+    contentLab.frame = CMT_CGRECTMAKE(15 * CMT_6PERCENTY, lineView.bottom + 10 * CMT_6PERCENTY, CMT_ScreenWidth - 30 * CMT_6PERCENTY, 260 * CMT_6PERCENTY);
+    [bgView addSubview:contentLab];
+
+}
+
+- (void)setPeriodStr:(NSString *)periodStr
+{
+    _contentLabs.text = [self textStr:periodStr];
+}
+
+- (NSString *)textStr:(NSString *)period
+{
+    NSString *str1 = @"聪明投理财计划是北京乐享财富网络科技有限公司提供的，由第三方支付资金托管，灵活期限、稳健收益的投资服务计划。";
+    NSString *str2 = @"聪明投平台通过多层风控把关、严格项目优选，通过小额分散投标，降低投资风险，最大化用户的资金使用率，保障用户达成预期收益率。";
+    NSString *str = [NSString stringWithFormat:@"%@\n%@",str1,str2];
+
+    return str;
+}
+
+@end

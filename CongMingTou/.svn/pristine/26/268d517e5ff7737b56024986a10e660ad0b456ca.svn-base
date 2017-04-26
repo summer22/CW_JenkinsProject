@@ -1,0 +1,103 @@
+//
+//  CMT_PhoneAndVerificationCodeView.m
+//  CongMingTou
+//
+//  Created by wzh on 16/5/21.
+//  Copyright © 2016年 QiYuan. All rights reserved.
+//
+
+#import "CMT_PhoneAndVerificationCodeView.h"
+#define CountdownTime 60
+@interface CMT_PhoneAndVerificationCodeView (){
+    NSInteger _securityTime;//验证码剩余时间
+    NSTimer *_timer;// 定时器v
+}
+@property (nonatomic, strong) IBOutlet UIView *view;
+/** 时间戳*/
+@property (nonatomic,assign)NSTimeInterval late;
+@end
+@implementation CMT_PhoneAndVerificationCodeView
+- (instancetype)initWithFrame:(CGRect)frame{
+    if(self = [super initWithFrame:frame]){
+//        self =[[[NSBundle mainBundle] loadNibNamed:@"CMT_PhoneAndVerificationCodeView" owner:nil options:nil]lastObject];
+        [self setUI];
+    }
+    return self;
+}
+
+- (instancetype)initWithCoder:(NSCoder *)aDecoder{
+    
+    if (self = [super initWithCoder:aDecoder]) {
+        [self setUI];
+    }
+    return self;
+}
+
+- (void)setUI{
+    [[NSBundle mainBundle] loadNibNamed:@"CMT_PhoneAndVerificationCodeView" owner:self options:nil];
+    [self addSubview:self.view];
+    [_getVerificationCodeBtn styteWithCornerRadius:_getVerificationCodeBtn.height / 2 shadowColor:ThemeBackgroundColor shadowOffset:CGSizeMake(0, 2) shadowOpacity:0.6 shadowRadius:5];
+    _getVerificationCodeBtn.titleLabel.font = UIFont30;
+
+
+}
+- (void)layoutSubviews{
+    [super layoutSubviews];
+    [self sendSubviewToBack:self.view];
+    self.view.frame = self.bounds;
+    _midLIneH.constant = 0.5;
+
+}
+- (IBAction)getVerificationCode:(UIButton *)sender {
+    sender.backgroundColor = ThemeBackgroundColor;
+    if([CMT_Tools isMobileNumber:_phonetextField.text]){
+        _securityTime = CountdownTime;
+        [_getVerificationCodeBtn setTitle:[NSString stringWithFormat:@"%lds后重发",(long)_securityTime] forState:UIControlStateNormal];
+        _getVerificationCodeBtn.enabled=NO;
+        _getVerificationCodeBtn.alpha = 0.5;
+        _timer = [NSTimer scheduledTimerWithTimeInterval:1.0 target:self selector:@selector(securityTimerAction) userInfo:Nil repeats:YES];
+        [self setTimerStr];
+        if(self.delegate && [self.delegate respondsToSelector:@selector(didGetVerificationCodeBtn:)]){
+            [self.delegate performSelector:@selector(didGetVerificationCodeBtn:) withObject:sender];
+        }//外面响应代理
+    }else{
+        [CMT_Tools showInfoAlert:CMT_Error_PhoneNum];
+    }
+}
+
+- (IBAction)getVerificationCodeDragOutSide:(UIButton *)sender {
+    sender.backgroundColor = ThemeBackgroundColor;
+}
+- (IBAction)getVerificationCodeTouchDown:(UIButton *)sender {
+    sender.backgroundColor = ThemeHighLightedBackgroundColor;
+
+}
+#pragma  -- 计时器
+- (void)securityTimerAction{
+    _securityTime = [CMT_Tools returnUploadTime:self.late];
+    if(_securityTime <= 0){
+        [self destroyTimer];
+        return;
+    }
+    [_getVerificationCodeBtn setTitle:[NSString stringWithFormat:@"%lds后重发",(long)_securityTime] forState:UIControlStateNormal];
+
+}
+
+//记录开始倒计时的时间
+- (void)setTimerStr{
+    NSDate* dat = [NSDate dateWithTimeIntervalSinceNow:0];
+    NSTimeInterval late = [dat timeIntervalSince1970]*1;
+    self.late = late;
+}
+- (void)destroyTimer{
+    [_timer invalidate];
+    _timer = nil;
+    _getVerificationCodeBtn.enabled=YES;
+    _getVerificationCodeBtn.alpha = 1;
+    [_getVerificationCodeBtn setTitle:@"获取验证码" forState:UIControlStateNormal];
+}
+- (void)resignFirstResponderWithTextFieldAndTextFieldView{
+    [_phonetextField resignFirstResponder];
+    [_verificationCodeTextField resignFirstResponder];
+}
+@end

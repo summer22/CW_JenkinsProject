@@ -1,0 +1,12 @@
+//
+//  CMT_MyInvestmentViewController.h
+//  CongMingTou
+//
+//  Created by wzh on 16/5/18.
+//  Copyright © 2016年 QiYuan. All rights reserved.
+//
+
+#import "CMT_BaseVIewController.h"
+
+@interface CMT_MyInvestmentViewController : CMT_BaseVIewController
+@end

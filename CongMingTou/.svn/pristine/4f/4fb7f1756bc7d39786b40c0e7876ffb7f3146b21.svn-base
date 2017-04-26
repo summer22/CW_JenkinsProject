@@ -1,0 +1,19 @@
+//
+//  CMT_BitAndInvestModel.h
+//  CongMingTou
+//
+//  Created by wzh on 16/6/1.
+//  Copyright © 2016年 QiYuan. All rights reserved.
+//
+
+#import "CMT_BaseModel.h"
+#import "CMT_BitInforModel.h"
+#import "CMT_InvestInforModel.h"
+@interface CMT_BitAndInvestModel : CMT_BaseModel
+
+@property (nonatomic, strong) CMT_BitInforModel *bitInforModel;
+@property (nonatomic, strong) NSArray *investInforListArray;
+
+
++ (CMT_BitAndInvestModel *)bitAndInvestModelWithDic:(NSDictionary *)dic;
+@end

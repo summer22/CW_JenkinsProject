@@ -1,0 +1,276 @@
+//
+//  CMT_ComStyleView.m
+//  CongMingTou
+//
+//  Created by summer on 16/5/26.
+//  Copyright © 2016年 QiYuan. All rights reserved.
+//
+
+#import "CMT_ComStyleView.h"
+#import "markImageView.h"
+#import "CMT_NavigationController.h"
+#import "CMT_productDetViewController.h"
+#import "CMT_TenderTypeView.h"
+#import "CMT_TenderTypeNoNperView.h"
+@interface CMT_ComStyleView()
+/** 状态ImageView */
+@property (nonatomic,strong)CMT_TenderTypeView *topLeftView;
+@property (nonatomic,strong)CMT_TenderTypeNoNperView *topLeftNoNumView;
+
+/** 图片上的文字分期label */
+@property (nonatomic,strong) UILabel *stageLabel;
+/** 投标类型的label */
+@property (nonatomic,strong) UILabel *markLabel;
+/** 投资期限label */
+@property (nonatomic,strong) UILabel *dayLabel;
+/** 投资状态类型按钮 */
+@property (nonatomic,strong)UIButton *backStyleBtn;
+/** 投资收益率label */
+@property (nonatomic,strong) UILabel *profitLabel;
+/** 预期年化收益率label */
+@property (nonatomic,strong) UILabel *expectProfitLabel;
+/** 总加息率 */
+@property (nonatomic,strong)UILabel *addPercentLabel;
+@end
+
+@implementation CMT_ComStyleView
+
+- (instancetype)initWithFrame:(CGRect)frame
+{
+    if (self = [super initWithFrame:frame])
+    {
+        [self getSubViews];
+        self.backgroundColor = CommonWhiteColor;
+    }
+    return self;
+}
+
+//初始化控件
+
+- (void)getSubViews
+{
+    //左上角的状态图片view
+    CMT_TenderTypeView *topLeftView = [[CMT_TenderTypeView alloc] initWithFrame:CMT_CGRECTMAKE(15, 10, 161, 22)];
+    topLeftView.hidden = NO;
+    self.topLeftView = topLeftView;
+    [self addSubview:topLeftView];
+    
+    CMT_TenderTypeNoNperView *topLeftNoNumView = [[CMT_TenderTypeNoNperView alloc] initWithFrame:CMT_CGRECTMAKE(15, 10, 110, 22)];
+    self.topLeftNoNumView = topLeftNoNumView;
+    topLeftNoNumView.hidden = NO;
+    [self addSubview:topLeftNoNumView];
+    
+    //查看详情
+    UIButton *topRightBtn = [CMT_Tools getButtonWithFrame:CMT_CGRECTMAKE(self.right - 80  - 15 , 0, 80 , 12 ) BackGroudColor:CommonWhiteColor Title:@"查看详情" TitleColor:CommonYellowTextColor textFont:13];
+    topRightBtn.centerY = topLeftView.centerY;
+    [topRightBtn setImage:[UIImage imageNamed:@"Investment_select"] forState:UIControlStateNormal];
+    [topRightBtn setTitleEdgeInsets:UIEdgeInsetsMake(0, -topRightBtn.titleLabel.size.width, 0, topRightBtn.imageView.size.width)];
+    [topRightBtn setImageEdgeInsets:UIEdgeInsetsMake(0, topRightBtn.titleLabel.size.width + topRightBtn.imageView.size.width * 3, 0, 0)];
+    [topRightBtn addTarget:self action:@selector(lookBtn) forControlEvents:UIControlEventTouchUpInside];
+    [self addSubview:topRightBtn];
+    _checkDetailsBtn = topRightBtn;
+    
+    UIView *lineView = [CMT_Tools getUiviewWithFrame:CMT_CGRECTMAKE(15  , 44 , CMT_ScreenWidth - 15 , 0.5) BackGroudColor:CommonLineColor];
+    [self addSubview:lineView];
+    
+    UIView *leftBgView = [[UIView alloc] initWithFrame:CMT_CGRECTMAKE(0, lineView.bottom, CMT_ScreenWidth/2, 75 )];
+    [self addSubview:leftBgView];
+    
+    //预期年化收益率15%
+    CGSize profitLabelSize = [CMT_Tools getStrSize:@"——%" fontSize:36];
+    UILabel *profitLabel = [CMT_Tools getLabel:@"——%" textFont:36 viewFrame:CMT_CGRECTMAKE(0, 0, 100,profitLabelSize.height) textAlignments:NSTextAlignmentCenter textColors:customColor(@"#FF603E")];
+    profitLabel.centerX = leftBgView.centerX - 10;
+    profitLabel.centerY = leftBgView.centerY - profitLabel.height - 15;
+    profitLabel.attributedText = [CMT_Tools HeadAttributedString:@"——" backAttributedString:@"－" NSheadForegroundColorAttributeName:customColor(@"#FF603E") NSbackForegroundColorAttributeName:customColor(@"#FF603E")NSheadFontAttributeName:36 NSbackFontAttributeName:16];
+    self.profitLabel = profitLabel;
+    [leftBgView addSubview:profitLabel];
+    
+    //加息率
+    CGSize rateLabelSize = [CMT_Tools getStrSize:@"＋0.05%" fontSize:24];
+    UILabel *addRateLabel = [CMT_Tools getLabel:@"——" textFont:24 viewFrame:CMT_CGRECTMAKE(profitLabel.right - 10, 0, rateLabelSize.width,rateLabelSize.height) textAlignments:NSTextAlignmentLeft textColors:ThemeBackgroundColor];
+    addRateLabel.bottom = profitLabel.bottom - 2;
+//    addRateLabel.attributedText = [CMT_Tools HeadAttributedString:@"＋0.5" backAttributedString:@" %" NSheadForegroundColorAttributeName:ThemeBackgroundColor NSbackForegroundColorAttributeName:ThemeBackgroundColor  NSheadFontAttributeName:20 NSbackFontAttributeName:14];
+    self.addPercentLabel = addRateLabel;
+    [leftBgView addSubview:addRateLabel];
+    
+    //预期年化收益率
+    CGSize profitBottomLabelSize = [CMT_Tools getStrSize:@"预期年化收益率" fontSize:12];
+    UILabel *profitBottomLabel = [CMT_Tools getLabel:@"预期年化收益率" textFont:12 viewFrame:CMT_CGRECTMAKE(0, 0, profitBottomLabelSize.width,profitBottomLabelSize.height) textAlignments:NSTextAlignmentLeft textColors:customColor(@"#34495E")];
+    profitBottomLabel.centerX = leftBgView.centerX;
+    profitBottomLabel.centerY = profitLabel.bottom + 10;
+    self.expectProfitLabel = profitBottomLabel;
+    [leftBgView addSubview:profitBottomLabel];
+    
+    UIView *rightBgView = [[UIView alloc] initWithFrame:CMT_CGRECTMAKE(CMT_ScreenWidth/2, lineView.bottom, CMT_ScreenWidth/2, 75 *CMT_6PERCENTY)];
+    [self addSubview:rightBgView];
+    
+    //投资期限7天
+    CGSize dayLabelSize = [CMT_Tools getStrSize:@"————————————" fontSize:18];
+    UILabel *dayLabel = [CMT_Tools getLabel:@"————————————" textFont:18 viewFrame:CMT_CGRECTMAKE((CMT_ScreenWidth/2 - dayLabelSize.width)/2, 8, dayLabelSize.width,dayLabelSize.height) textAlignments:NSTextAlignmentCenter textColors:customColor(@"#34495E")];
+    dayLabel.attributedText = [CMT_Tools strHeadAttributedString:@"投资期限" midAttributedString:@"—" backAttributedString:@"－" NSheadForegroundColorAttributeName:customColor(@"#34495E") NSbackForegroundColorAttributeName:customColor(@"#FF603E") NSbackForegroundColorAttributeName:CommonYellowTextColor NSheadFontAttributeName:12 NSbackFontAttributeName:18 NSbackFontAttributeName:16];
+    self.dayLabel = dayLabel;
+    [rightBgView addSubview:dayLabel];
+    
+    //到期还本付息
+    CGSize profitStyleSize = [CMT_Tools getStrSize:@"到期还本付息" fontSize:12];
+    UIButton *profitStyleBtn = [CMT_Tools getButtonWithFrame:CMT_CGRECTMAKE(0, dayLabel.bottom + 10, profitStyleSize.width + 10 , profitStyleSize.height + 5 ) BackGroudColor:nil Title:@"到期还本付息" TitleColor:customColor(@"#FFA33E") textFont:12];
+    profitStyleBtn.layer.cornerRadius = (profitStyleSize.height + 5)/2;
+    profitStyleBtn.layer.masksToBounds = YES;
+    profitStyleBtn.layer.borderColor = customColor(@"#FFA33E").CGColor;
+    profitStyleBtn.layer.borderWidth = 0.5;
+    profitStyleBtn.centerX = dayLabel.centerX;
+    self.backStyleBtn = profitStyleBtn;
+    [rightBgView addSubview:profitStyleBtn];
+    
+    
+    UIButton *nextBtn = [UIButton buttonWithType:UIButtonTypeCustom];
+    [nextBtn setFrame:self.bounds];
+    nextBtn.backgroundColor = [UIColor clearColor];
+    [self addSubview:nextBtn];
+    _nextBtn = nextBtn;
+}
+
+- (void)setIndex:(int)index{
+    _index = index;
+    _checkDetailsBtn.hidden = _index == 1 ? YES : NO;
+    _nextBtn.enabled = _index == 1 ? NO : YES;
+    
+    _topLeftView.hidden = _index != 1 ? NO :YES;
+    _topLeftNoNumView.hidden = !_topLeftView.hidden;
+   
+}
+//查看详情按钮点击事件
+- (void)lookBtn
+{
+//    CMT_Log(@"查看详情");
+//    if(_index != 1){
+//        CMT_TabBarController *TabApp = (CMT_TabBarController *)[[[UIApplication sharedApplication].delegate window] rootViewController];
+//        CMT_NavigationController *nav = (CMT_NavigationController *)TabApp.selectedViewController;
+//        
+//        CMT_productDetViewController *productDetVc = [[CMT_productDetViewController alloc] init];
+//        [nav pushViewController:productDetVc animated:YES];
+//
+//    }
+//    else{
+//        
+//        [self showHint:CMT_Error_YuYueNoDetail];
+//    }
+   
+}
+
+#pragma mark --  数据源处理处
+
+//根据数据的变化改变控件的状态和的交互状态
+/**
+ * 已售罄、已截标和正在进行三种状态  （已售罄和已截标的状态统一）
+ * 2 进行中
+ * 3 已售罄
+ * 4 已截标
+ */
+- (void)setModel:(CMT_BitInforModel *)model
+{
+    _model = model;
+//    _checkDetailsBtn.hidden = [_model.holdState isEqualToString:@"1"] ? YES : NO;
+
+    //部分控件的不同状态和类型的变化
+    [self getOtherViewStyle:_model];
+    //处理不同类型的图片
+//    [self.topLeftView chiYouZhongTenderStr:_model.bidTitle numStr:_model.bidNumber andTenderType:[_model.bidType intValue]];
+    if(_index == 0 || _index == 2){
+        [self.topLeftView chiYouZhongTenderStr:_model.bidTitle numStr:_model.bidNumber andTenderType:[_model.bidType intValue]];
+    }else{
+        [self.topLeftNoNumView yuYueAndShuHuiTenderStr:_model.bidTitle andTenderType:[_model.bidType intValue]];
+
+    }
+    //处理不同类型标和不同状态的样式
+    [self getCustomStyleBtn:_model];
+    
+    //设置加息
+    CGFloat addApr_Fl = [model.totalAddApr floatValue];
+    if(addApr_Fl > 0){
+        self.addPercentLabel.hidden = NO;
+        NSString *totalAddAprTotalStr = [NSString stringWithFormat:@"+%@",model.totalAddApr];
+        self.addPercentLabel.attributedText = [CMT_Tools HeadAttributedString:totalAddAprTotalStr backAttributedString:@" %" NSheadForegroundColorAttributeName:ThemeBackgroundColor NSbackForegroundColorAttributeName:ThemeBackgroundColor  NSheadFontAttributeName:20 NSbackFontAttributeName:14];
+
+//        self.addPercentLabel.attributedText = [NSMutableAttributedString attributeWithTotalStr:totalAddAprTotalStr subStr:baiFenStr subStrFont:UIFont28];
+    }else{
+        self.addPercentLabel.hidden = YES;
+    }
+    
+}
+
+//部分控件的不同状态和类型的变化
+- (void)getOtherViewStyle:(CMT_BitInforModel *)btnStatuModel
+{
+    self.backStyleBtn.layer.borderColor = customColor(@"#FFA33E").CGColor;
+    [self.backStyleBtn setTitleColor:customColor(@"#FFA33E") forState:UIControlStateNormal];
+    self.expectProfitLabel.textColor = customColor(@"#34495E");
+    
+//已通知接口添加该字段， 但防治接口再次出现异常，先兼容一下
+    if (btnStatuModel.period) {
+         self.dayLabel.attributedText = [CMT_Tools strHeadAttributedString:@"投资期限" midAttributedString:btnStatuModel.period backAttributedString:@"天" NSheadForegroundColorAttributeName:customColor(@"#34495E") NSbackForegroundColorAttributeName:customColor(@"#FF603E") NSbackForegroundColorAttributeName:customColor(@"#FF603E") NSheadFontAttributeName:12  NSbackFontAttributeName:18 NSbackFontAttributeName:16];
+    }
+    
+    self.profitLabel.attributedText = [CMT_Tools HeadAttributedString:btnStatuModel.apr backAttributedString:@"%" NSheadForegroundColorAttributeName:customColor(@"#FF603E") NSbackForegroundColorAttributeName:customColor(@"#FF603E")NSheadFontAttributeName:36  NSbackFontAttributeName:16 ];
+
+    
+       
+}
+
+/**
+ * 7天的   到期还本付息 ＃FFA33E    0
+ 30天的  到期还本付息 ＃FFA33E     1
+ 90天的  到期还本付息 ＃FFA33E       2
+ 180天的 先息后本 #46CBFE             3
+ 360天的 按月付息 到期还本 #46CBFE       4
+ */
+- (void)getCustomStyleBtn:(CMT_BitInforModel *)btnStatuModel
+{
+    //状态 是否进行中
+    //标类型
+    NSString *markStyle = btnStatuModel.bidType;
+    //返息类型
+    [self.backStyleBtn setTitle:btnStatuModel.repayType forState:UIControlStateNormal];
+    
+        //新手表
+        if ([markStyle isEqualToString:@"0"]) {
+            self.backStyleBtn.layer.borderColor = customColor(@"#FFA33E").CGColor;
+            [self.backStyleBtn setTitleColor:customColor(@"#FFA33E") forState:UIControlStateNormal];
+            //            [self.backStyleBtn setTitle:@"到期还本付息" forState:UIControlStateNormal];
+            
+            //30
+        }else if([markStyle isEqualToString:@"1"]){
+            self.backStyleBtn.layer.borderColor = customColor(@"#FFA33E").CGColor;
+            [self.backStyleBtn setTitleColor:customColor(@"#FFA33E") forState:UIControlStateNormal];
+            //            [self.backStyleBtn setTitle:@"到期还本付息" forState:UIControlStateNormal];
+            
+            // 90
+        }else if([markStyle isEqualToString:@"2"]){
+            self.backStyleBtn.layer.borderColor = customColor(@"#FFA33E").CGColor;
+            [self.backStyleBtn setTitleColor:customColor(@"#FFA33E") forState:UIControlStateNormal];
+            //            [self.backStyleBtn setTitle:@"到期还本付息" forState:UIControlStateNormal];
+            
+            //180
+        }else if([markStyle isEqualToString:@"3"]){
+            self.backStyleBtn.layer.borderColor = customColor(@"#46CBFE").CGColor;
+            [self.backStyleBtn setTitleColor:customColor(@"#46CBFE") forState:UIControlStateNormal];
+            //            [self.backStyleBtn setTitle:@"先息后本" forState:UIControlStateNormal];
+            
+            //360
+        }else if([markStyle isEqualToString:@"4"]){
+            self.backStyleBtn.layer.borderColor = customColor(@"#46CBFE").CGColor;
+            [self.backStyleBtn setTitleColor:customColor(@"#46CBFE") forState:UIControlStateNormal];
+            //            [self.backStyleBtn setTitle:@"按月付息 到期还本" forState:UIControlStateNormal];
+        }
+    
+    
+    CGSize profitStyleSize = [CMT_Tools getStrSize:btnStatuModel.repayType fontSize:14];
+    self.backStyleBtn.layer.cornerRadius = (profitStyleSize.height + 5)/2;
+    self.backStyleBtn.width = profitStyleSize.width + 5;
+    self.backStyleBtn.centerX = self.dayLabel.centerX;
+    
+    [self layoutSubviews];
+}
+
+
+@end

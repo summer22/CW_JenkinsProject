@@ -1,0 +1,31 @@
+//
+//  CMT_TenderTypeView.h
+//  CongMingTou
+//
+//  Created by wzh on 16/5/18.
+//  Copyright © 2016年 QiYuan. All rights reserved.
+//
+
+#import <UIKit/UIKit.h>
+
+@interface CMT_TenderTypeView : UIView
+
+@property (nonatomic, assign) CMTTenderStateType tenderStateType;
+@property (nonatomic, assign) CMTTenderType tenderType;
+@property (strong, nonatomic) IBOutlet UIImageView *backImageView;
+@property (strong, nonatomic) IBOutlet UILabel *titleLab;
+@property (strong, nonatomic) IBOutlet UILabel *numLab;
+
+
+/**
+ *  设置标题
+ *
+ *  @param desStr 描述字符串
+ *  @param dayStr 标的天数
+ *  @param numStr 标的期数
+ *  @param tenderType      标的种类
+ *  @param tenderStateType 标的状态
+ */
+- (void)chiYouZhongTenderStr:(NSString *)tenderStr numStr:(NSString *)numStr andTenderType:(CMTTenderType)tenderType;
+- (void)yuYueAndShuHuiTenderStr:(NSString *)tenderStr andTenderType:(CMTTenderType)tenderType;
+@end

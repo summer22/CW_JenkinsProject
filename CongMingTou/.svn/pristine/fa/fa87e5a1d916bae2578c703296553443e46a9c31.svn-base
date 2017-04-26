@@ -1,0 +1,65 @@
+//
+//  CMT_CustomPushAnimationTransition.m
+//  CongMingTou
+//
+//  Created by wzh on 16/6/12.
+//  Copyright © 2016年 QiYuan. All rights reserved.
+//
+
+#import "CMT_CustomPushAnimationTransition.h"
+#import "CMT_FinancialController.h"
+
+@interface CMT_CustomPushAnimationTransition()
+
+@property (nonatomic ,strong) id <UIViewControllerContextTransitioning> transitionContext;
+@end
+
+@implementation CMT_CustomPushAnimationTransition
+- (NSTimeInterval)transitionDuration:(id <UIViewControllerContextTransitioning>)transitionContext {
+    return CMT_Transform2;
+}
+
+
+- (void)animateTransition:(id <UIViewControllerContextTransitioning>)transitionContext {
+    //通过键值UITransitionContextToViewControllerKey获得需要呈现的试图控制器
+    //通过键值UITransitionContextFromViewControllerKey获得需要退出的试图控制器
+    UIViewController *fromVC = [transitionContext viewControllerForKey:UITransitionContextFromViewControllerKey];
+    UIView* shadowBack = [[UIView alloc]initWithFrame:CGRectMake(0, 0, CMT_ScreenWidth, CMT_ScreenHeight)];
+    shadowBack.backgroundColor = [UIColor blackColor];
+    shadowBack.alpha = 0.8;
+    [[transitionContext containerView] addSubview:shadowBack];
+    
+    CMT_FinancialController *financialVC = (CMT_FinancialController *)fromVC;
+    CGRect financialRect = financialVC.financialTable.frame;
+    financialVC.financialTable.frame = CGRectMake(financialRect.origin.x, financialRect.origin.y, financialRect.size.width, financialRect.size.height + CMT_TAB_Height);
+    CMT_RootVC.tabBar.hidden = YES;
+    
+    
+    UIViewController *toVC = [transitionContext viewControllerForKey:UITransitionContextToViewControllerKey];
+    toVC.view.frame = CGRectMake(0, _didSelecctCellRect.size.height/2 + _didSelecctCellRect.origin.y, _didSelecctCellRect.size.width, _didSelecctCellRect.size.height);
+    [[transitionContext containerView] addSubview:toVC.view];
+    
+    [UIView animateWithDuration:CMT_Transform1 animations:^{
+        
+        fromVC.view.transform = CGAffineTransformMakeScale(0.85, 1);
+        
+    } completion:^(BOOL finished) {
+        [UIView animateWithDuration:CMT_Transform1 + CMT_Transform2 animations:^{
+            //将需要退出的试图控制器移出右侧屏幕外，且大小为原来的0.1倍
+            toVC.view.frame = CGRectMake(0, 0, CMT_ScreenWidth, CMT_ScreenHeight);
+            
+        } completion:^(BOOL finished) {
+            //动画结束后属性设为初始值
+            fromVC.view.transform = CGAffineTransformIdentity;
+            [shadowBack removeFromSuperview];
+            CMT_RootVC.tabBar.hidden = NO;
+            financialVC.financialTable.frame = financialRect;
+            //通知系统动画切换成功
+            [transitionContext completeTransition:YES];
+            
+        }];
+    }];
+}
+
+
+@end

@@ -1,0 +1,117 @@
+//
+//  CMT_BankListViewController.m
+//  CongMingTou
+//
+//  Created by wzh on 16/7/6.
+//  Copyright © 2016年 QiYuan. All rights reserved.
+//
+
+#import "CMT_BankListViewController.h"
+#import "CMT_InvestmentPreCell.h"
+@interface CMT_BankListViewController ()<UITableViewDelegate, UITableViewDataSource>
+@property (strong, nonatomic) IBOutlet UITableView *tableView;
+@property (nonatomic, strong) NSMutableArray *dataArray;
+@end
+
+@implementation CMT_BankListViewController
+
+- (NSMutableArray *)dataArray{
+    if(!_dataArray){
+        _dataArray = [NSMutableArray array];
+    }
+    return _dataArray;
+}
+
+- (void)viewDidLoad {
+    [super viewDidLoad];
+    // Do any additional setup after loading the view from its nib.
+    [self loadDataGetBankList];
+    [self createRefreshing];
+    self.tableView.backgroundColor = [UIColor clearColor];
+    self.tableView.tableHeaderView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, _tableView.bounds.size.width, 10)];
+    self.tableView.tableHeaderView.backgroundColor = [UIColor clearColor];
+    self.tableView.rowHeight = CMT_6pAnd6ps ? 75 *CMT_ProportionX : 75;
+    self.tableView.separatorColor = [UIColor clearColor];
+    
+    switch (_enterBankListType) {
+        case CMTEnterBankListTypeLook:
+            self.navigationItem.title = @"支持银行";
+            break;
+        case CMTEnterBankListTypeChoose:
+            self.navigationItem.title = @"选择银行";
+            break;
+        default:
+            break;
+    }
+}
+
+- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView{
+    return 1;
+}
+
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section{
+   return self.dataArray.count;
+}
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath{
+    CMT_InvestmentPreCell *cell = [CMT_InvestmentPreCell cellWithTablebView:tableView];
+    cell.model = self.dataArray[indexPath.row];
+    cell.lineView.hidden = indexPath.row == self.dataArray.count - 1 ? YES : NO;
+    if(_enterBankListType == CMTEnterBankListTypeLook){
+        cell.selectionStyle = UITableViewCellSelectionStyleNone;
+    }
+    return cell;
+}
+
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
+    if(_enterBankListType == CMTEnterBankListTypeChoose){
+        self.bankInforBlock(self.dataArray[indexPath.row]);
+        [self back];
+    }
+}
+
+#pragma mark -- createRefreshing
+- (void)createRefreshing{
+    // 下拉刷新
+    _tableView.mj_header= [MJRefreshNormalHeader headerWithRefreshingBlock:^{
+        [self loadDataGetBankList];
+        
+    }];
+}
+- (void)loadDataGetBankList{
+    [self showHudInView:self.view hint:CMT_LoadDataWaiting];
+    [CMT_ProcessTheDataTool getBanklistBlock:^(CMT_InvestmentPreBankModel *model, NSError *error) {
+        [self hideHud];
+        if(!error){
+            if([[NSString stringWithFormat:@"%@",model.status] isEqualToString:@"1"]){
+                [self.dataArray removeAllObjects];
+                [self.dataArray addObjectsFromArray:model.bankModelList];
+            }else if ([[NSString stringWithFormat:@"%@",model.status] isEqualToString:CMT_SinglePointCode]){
+                [CMT_SinglePointLoginTool addSinglePointLoginWithSelfVC:self];
+            }else{
+                [self showHint:model.msg];
+            }
+            
+            [self.tableView reloadData];
+        }else{
+            [self showHint:CMT_Error_NotNetWork];
+        }
+        [self.tableView.mj_header endRefreshing];
+    }];
+    
+}
+- (void)didReceiveMemoryWarning {
+    [super didReceiveMemoryWarning];
+    // Dispose of any resources that can be recreated.
+}
+
+/*
+#pragma mark - Navigation
+
+// In a storyboard-based application, you will often want to do a little preparation before navigation
+- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
+    // Get the new view controller using [segue destinationViewController].
+    // Pass the selected object to the new view controller.
+}
+*/
+
+@end

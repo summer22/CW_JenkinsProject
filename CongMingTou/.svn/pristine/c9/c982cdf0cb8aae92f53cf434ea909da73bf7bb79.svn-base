@@ -1,0 +1,372 @@
+//
+//  CMT_JiaoYiJiLuViewController.m
+//  CongMingTou
+//
+//  Created by wzh on 16/5/12.
+//  Copyright © 2016年 wzh. All rights reserved.
+//
+
+#import "CMT_JiaoYiJiLuViewController.h"
+#import "ScrollTitleView.h"
+#import "CMT_ChongZhiOrTixXianTableViewCell.h"
+#import "MBProgressHUD.h"
+#import "CMT_StateView.h"
+#define TitleHeight 37
+#define Cellheight 74
+#define ListOneNum 10
+
+@interface CMT_JiaoYiJiLuViewController ()<UITableViewDataSource, UITableViewDelegate, UIScrollViewDelegate,ScrollViewTitleDelegate>{
+    
+  
+    int _currentIndex;
+    UITableView *_currentTableView;
+    NSMutableArray *_currentDataArray;
+    
+    int _currentPageIndex;
+    int _currentPageSize;
+
+}
+@property (strong, nonatomic) UIScrollView *backScrollView;
+@property (nonatomic, strong)  ScrollTitleView *titleView;
+@property (nonatomic, strong) NSArray *titleArray;
+@property (nonatomic, strong) NSMutableArray *allTableViewArray;
+@property (nonatomic, strong) NSMutableDictionary *allDataMutDic;
+@property (nonatomic, strong) NSMutableDictionary *allPageIndexDic;
+
+@end
+
+@implementation CMT_JiaoYiJiLuViewController
+
+- (NSMutableDictionary *)allPageIndexDic{
+    if(!_allPageIndexDic){
+        _allPageIndexDic = [NSMutableDictionary dictionary];
+    }
+    return _allPageIndexDic;
+}
+
+- (NSMutableArray *)allTableViewArray{
+    if(!_allTableViewArray){
+        _allTableViewArray = [NSMutableArray array];
+    }
+    return _allTableViewArray;
+}
+- (NSMutableDictionary *)allDataMutDic{
+    if(!_allDataMutDic){
+        _allDataMutDic = [NSMutableDictionary dictionary];
+    }
+    return _allDataMutDic;
+}
+- (ScrollTitleView *)titleView{
+    if(!_titleView){
+        _titleView =  [[ScrollTitleView alloc]init];
+        _titleView.frame = CGRectMake(0, 0, CMT_ScreenWidth, TitleHeight);
+        if(CMT_6pAnd6ps){
+            _titleView.height = TitleHeight *CMT_ProportionX;
+        }
+        _titleView.btnTitleArray = self.titleArray;
+        _titleView.titleDelegate = self;
+        [self.view addSubview:_titleView];
+    }
+    return _titleView;
+}
+
+- (UIScrollView *)backScrollView{
+    if(!_backScrollView){
+        _backScrollView = [[UIScrollView alloc]init];
+        _backScrollView.backgroundColor = [UIColor clearColor];
+        _backScrollView.showsHorizontalScrollIndicator = NO;
+        _backScrollView.showsVerticalScrollIndicator = NO;
+        _backScrollView.pagingEnabled = YES;
+        _backScrollView.delegate = self;
+
+    }
+    return _backScrollView;
+}
+
+- (void)viewDidLoad {
+    [super viewDidLoad];
+    
+    
+    [self setDefautUI];
+//    [self createRefreshing];
+}
+
+- (void)setDefautUI{
+    self.title = @"交易记录";
+    self.titleArray = @[@"充值",@"提现"];
+    self.backScrollView.frame = CGRectMake(0, CGRectGetMaxY(self.titleView.frame), CMT_ScreenWidth, CMT_ScreenHeight - CMT_NAV_Height - self.titleView.height);
+    [self.view addSubview:self.backScrollView];
+    //设置当前索引
+    _currentIndex = 0;
+    /**
+     *  设置当前页的数据的页数
+     */
+    _currentPageIndex = 0;
+    _currentPageSize = ListOneNum;
+    [self setSaveCurrentIndex];
+
+    
+    [self createTableView];
+    [self loadDataWithgetJiaoYiJiLuListType:_currentIndex];
+}
+//- (void)netReloadData{
+//    [self loadDataWithgetJiaoYiJiLuListType:_currentIndex];
+//}
+
+- (void)createRefreshing{
+    _currentTableView = _allTableViewArray[_currentIndex];
+
+    //开始或结束的key
+    // 下拉刷新
+    _currentTableView.mj_header= [MJRefreshNormalHeader headerWithRefreshingBlock:^{
+        
+        //存储页书索引
+         _currentPageIndex = 0;
+         _currentPageSize = ListOneNum;
+        [self setSaveCurrentIndex];
+        //加载数据
+        [self loadDataWithgetJiaoYiJiLuListType:_currentIndex];
+        
+    }];
+    
+    // 设置自动切换透明度(在导航栏下面自动隐藏)
+    _currentTableView.mj_header.automaticallyChangeAlpha = YES;
+    // 上拉刷新
+    _currentTableView.mj_footer = [MJRefreshBackNormalFooter footerWithRefreshingBlock:^{
+    
+        [self setSaveCurrentIndex];
+        [self loadDataWithgetJiaoYiJiLuListType:_currentIndex];
+    }];
+}
+
+- (void)createTableView{
+    for (int i = 0 ; i < self.titleArray.count; i ++) {
+        UITableView *tableView = [[UITableView alloc]initWithFrame:CGRectMake(i *CMT_ScreenWidth, 0, CMT_ScreenWidth,_backScrollView.height) style:UITableViewStylePlain];
+        tableView.tag = i;
+        tableView.rowHeight =Cellheight;
+        tableView.separatorColor =CommonLineColor;
+        tableView.delegate = self;
+        tableView.dataSource  =self;
+        tableView.showsHorizontalScrollIndicator = NO;
+        tableView.showsVerticalScrollIndicator = NO;
+        tableView.backgroundColor = [UIColor clearColor];
+        tableView.separatorColor = [UIColor clearColor];
+        tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
+        CMT_StateView *stateView = [[CMT_StateView alloc]initWithFrame:tableView.bounds];
+        [stateView.stateButton addTarget:self action:@selector(stateButtonClicked:) forControlEvents:UIControlEventTouchUpInside];
+        tableView.backgroundView = stateView;
+        
+        // 下拉刷新
+        tableView.mj_header= [MJRefreshNormalHeader headerWithRefreshingBlock:^{
+            //加载数据
+            [self loadDataWithgetJiaoYiJiLuListType:_currentIndex];
+            
+        }];
+        // 设置自动切换透明度(在导航栏下面自动隐藏)
+        tableView.mj_header.automaticallyChangeAlpha = YES;
+        // 上拉刷新
+        tableView.mj_footer = [MJRefreshBackNormalFooter footerWithRefreshingBlock:^{
+            //加载数据
+            [self loadDataWithgetJiaoYiJiLuListType:_currentIndex];
+        }];
+        
+        [self.backScrollView addSubview:tableView];
+        [self.allTableViewArray addObject:tableView];
+    }
+    self.backScrollView.contentSize = CGSizeMake(CMT_ScreenWidth *self.titleArray.count, 1);
+    _currentTableView =  _allTableViewArray[_currentIndex];
+
+}
+
+- (void)stateButtonClicked:(UIButton *)button{
+    [self loadDataWithgetJiaoYiJiLuListType:_currentIndex];
+}
+
+#pragma mark --tableview dataSource and delegate
+- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView{
+    
+
+    return 1;
+}
+
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section{
+
+    return _currentDataArray.count;
+}
+
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath{
+    
+    CMT_ChongZhiOrTixXianTableViewCell *cell = [CMT_ChongZhiOrTixXianTableViewCell cellWithTablebView:tableView];
+    cell.currentIndex = _currentIndex;
+    cell.model = _currentDataArray[indexPath.row];
+    cell.bottomLineView.hidden = indexPath.row == _currentDataArray.count - 1 ? YES : NO;
+    cell.titleLab.font = UIFontBild28;
+    return cell;
+}
+
+#pragma mark -- 滚动条的点击事件
+- (void)willSelectBtnWithIndex:(int)currentIndex andScrollViewTitlView:(ScrollTitleView *)scrollViewTitlView{
+    if(_currentTableView.mj_footer.isRefreshing || _currentTableView.mj_header.isRefreshing || _currentTableView.mj_footer.state == MJRefreshStatePulling || _currentTableView.mj_header.state == MJRefreshStatePulling || _backScrollView.dragging){
+        scrollViewTitlView.isAnimationMobile = NO;
+    }else{
+        scrollViewTitlView.isAnimationMobile = YES;
+    }
+}
+
+- (void)didSelectBtnWithIndex:(int)currentIndex{
+    _currentIndex = currentIndex;[UIView animateWithDuration:0.5 animations:^{
+        _backScrollView.contentOffset = CGPointMake(CMT_ScreenWidth *_currentIndex, 0);
+    }];
+    CMT_Log(@"%d",currentIndex);
+    if([NSRunLoop currentRunLoop].currentMode != UITrackingRunLoopMode){
+        [self loadDataWithgetJiaoYiJiLuListType:_currentIndex];
+    }else{
+        if(!_allDataMutDic[_titleArray[_currentIndex]]){
+            [self showHudInView:self.view hint:CMT_LoadDataWaiting];
+        }
+        [self performSelector:@selector(currentTableViewRespodsToSelectorScrollViewDidEndDeceleratingWithLoadData) withObject:nil afterDelay:[_currentTableView respondsToSelector:@selector(scrollViewDidEndDecelerating:)] inModes:@[NSDefaultRunLoopMode]];
+    }
+}
+- (void)currentTableViewRespodsToSelectorScrollViewDidEndDeceleratingWithLoadData{
+    [self loadDataWithgetJiaoYiJiLuListType:_currentIndex];
+}
+#pragma mark -- scrollView delegate
+- (void)scrollViewDidScroll:(UIScrollView *)scrollView{
+    CMT_Log(@"scrollViewDidScroll");
+    if(scrollView == _backScrollView){
+        // 获得页码
+        CGFloat doublePage = scrollView.contentOffset.x / CMT_ScreenWidth;
+        _currentIndex = (int)(doublePage + 0.5);
+//        _currentIndex = scrollView.contentOffset.x/CMT_ScreenWidth;
+    }
+}
+
+#define Duration 0.2
+- (void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView{
+    CMT_Log(@"scrollViewDidEndDecelerating");
+    [self.titleView addAnimateView:_currentIndex];
+
+    if(scrollView == _backScrollView){
+        [self loadDataWithgetJiaoYiJiLuListType:_currentIndex];
+    }
+}
+
+#pragma mark -－请求
+- (void)loadDataWithgetJiaoYiJiLuListType:(int)type{
+    CMT_Log(@"loadData");
+    
+    //取出当前页当前索引
+    _currentPageIndex = [self.allPageIndexDic[_titleArray[_currentIndex]] intValue];
+    
+    //如果事上拉刷新将开始索引设置0
+    if(_currentTableView.mj_header.isRefreshing){
+        _currentPageIndex= 0;
+    }
+    //取当前页的数据 看是否第一次请求
+    _currentDataArray = _allDataMutDic[_titleArray[_currentIndex]];
+    
+    //第一次请求  下拉刷新  上拉刷新
+    if(!_currentDataArray || _currentDataArray.count == 0 ||  _currentTableView.mj_header.isRefreshing|| _currentTableView.mj_footer.isRefreshing){//没有数据
+        
+        BOOL isAdd = NO; //是否已经add了加载框 NO没有 YES 有
+        for (UIView *subView in self.view.subviews) {
+            if([subView isKindOfClass:[MBProgressHUD class]]){
+                isAdd = YES;
+            }
+        }
+        if(!isAdd){
+            [self showHudInView:self.view hint:CMT_LoadDataWaiting];
+        }
+        [CMT_ProcessTheDataTool getJiaoYiJiLuListWithUserId:[CMT_AccountTool accountModel].userId page:_currentPageIndex size:_currentPageSize type:type  andBlock:^(CMT_ChongZhiTiXianModel *chongZhiTiXianmdoel, NSError *error) {
+            
+            [self hideHud];
+            //防止第一次请求回调没结束已经开始第二次请求
+            if(type != _currentIndex)return ;
+            
+            if(!error){
+                if([[NSString stringWithFormat:@"%@",chongZhiTiXianmdoel.status] isEqualToString:@"1"]){
+                    
+                    if(_currentTableView.mj_header.isRefreshing){//上拉刷新
+                        [self.allDataMutDic setObject: chongZhiTiXianmdoel.listDataArray forKey:_titleArray[_currentIndex]];
+                    }else{//下拉刷新和第一次请求
+                        if(_currentDataArray){
+                            [self.allDataMutDic setObject: [_currentDataArray arrayByAddingObjectsFromArray:chongZhiTiXianmdoel.listDataArray] forKey:_titleArray[_currentIndex]];
+                        }else{
+                            [self.allDataMutDic setObject: chongZhiTiXianmdoel.listDataArray forKey:_titleArray[_currentIndex]];
+                        }
+                    }
+                    
+                    if(chongZhiTiXianmdoel.listDataArray.count == 0){
+                        [self showHint:CMT_LoadDataNoMoreData];
+                    }
+                    //取出当前页当前数据索引
+                    _currentPageIndex = _currentPageIndex + (int) chongZhiTiXianmdoel.listDataArray.count;
+                    //存储当前分页开始的索引
+                    [self setSaveCurrentIndex];
+
+                }else if ([[NSString stringWithFormat:@"%@",chongZhiTiXianmdoel.status] isEqualToString:CMT_SinglePointCode]){
+                    [CMT_SinglePointLoginTool addSinglePointLoginWithSelfVC:self];
+                }else{
+                    [self showHint:chongZhiTiXianmdoel.msg];
+                }
+            }else{
+                [self showHint:CMT_Error_NotNetWork];
+            }
+            
+            //将最新数据给当前页的数据
+            _currentDataArray = _allDataMutDic[_titleArray[_currentIndex]];
+            //取出当前的tableview
+            _currentTableView = _allTableViewArray[_currentIndex];
+            //设置背景状态显示状态
+            ((CMT_StateView *)_currentTableView.backgroundView).dataArray =  _currentDataArray;
+
+        
+            [_currentTableView reloadData];
+            //结束上拉下拉刷新
+            [_currentTableView.mj_footer endRefreshing];
+            [_currentTableView.mj_header endRefreshing];
+            
+        }];
+        
+    }else{
+        //将最新数据给当前页的数据
+        _currentDataArray = _allDataMutDic[_titleArray[_currentIndex]];
+        //取出当前的tableview
+        _currentTableView = _allTableViewArray[_currentIndex];
+        //设置背景状态显示状态
+        ((CMT_StateView *)_currentTableView.backgroundView).dataArray =  _currentDataArray;
+        //刷新tableView
+        [_currentTableView reloadData];
+        [_currentTableView.mj_footer endRefreshing];
+        [_currentTableView.mj_header endRefreshing];
+    }
+
+}
+
+#pragma mark --  保存当前页当前索引
+- (void)setSaveCurrentIndex{
+    [self.allPageIndexDic setObject:[NSNumber numberWithInt:_currentPageIndex] forKey:_titleArray[_currentIndex]];
+}
+
+- (void)viewDidLayoutSubviews{
+    [super viewDidLayoutSubviews];
+    if(CMT_6pAnd6ps){
+        _currentTableView.rowHeight = Cellheight *CMT_ProportionX;
+    }
+}
+- (void)didReceiveMemoryWarning {
+    [super didReceiveMemoryWarning];
+    // Dispose of any resources that can be recreated.
+}
+
+/*
+#pragma mark - Navigation
+
+// In a storyboard-based application, you will often want to do a little preparation before navigation
+- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
+    // Get the new view controller using [segue destinationViewController].
+    // Pass the selected object to the new view controller.
+}
+*/
+
+@end

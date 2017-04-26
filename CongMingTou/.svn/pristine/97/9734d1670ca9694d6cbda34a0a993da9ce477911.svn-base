@@ -1,0 +1,106 @@
+//
+//  CMT_NewPayInforModel.h
+//  CongMingTou
+//
+//  Created by wzh on 16/6/16.
+//  Copyright © 2016年 QiYuan. All rights reserved.
+//
+
+#import "CMT_BaseModel.h"
+
+@interface CMT_NewPayInforModel : CMT_BaseModel
+/**
+ *  商品名称 － 可空
+ */
+@property (nonatomic, copy) NSString *goodsName;
+/**
+ *  商品详情 － 可空
+ */
+@property (nonatomic, copy) NSString *goodsDetail;
+/**
+ *  商户备用信息字段 － 可空
+ */
+@property (nonatomic, copy) NSString *merRemark;
+/**
+ *  电话 － 参与交易的买方的手机号码 － 可空
+ */
+@property (nonatomic, copy) NSString *phone;
+/**
+ *  银行卡号 － 可空
+ */
+@property (nonatomic, copy) NSString *cardNo;
+/**
+ *  收款人账号 － 商户在新生支付平台注册的虚拟 账户账号。 如果为空,新生支付平台将取商户 的默认账户账号 －可空
+ */
+@property (nonatomic, copy) NSString *virCardNoIn;
+/**
+ *  交易代码 － 此交易只能为 MP01
+ */
+@property (nonatomic, copy) NSString *tranCode;
+/**
+ *  版本号 － 目前必须为 2.0
+ */
+@property (nonatomic, copy) NSString *version;
+/**
+ *  编码方式 － 1:UTF-8
+ */
+@property (nonatomic, copy) NSString *charset;
+/**
+ *  签名类型 － 1:RSA 2:MD5
+ */
+@property (nonatomic, copy) NSString *signType;
+/**
+ *  商户号 － 新生支付平台提供给商户的唯一 ID
+ */
+@property (nonatomic, copy) NSString *merId;
+/**
+ *  交易金额 － 格式:整数 单位:分
+ */
+@property (nonatomic, copy) NSString *tranAmt;
+/**
+ *  商户手续费金额 － 格式:整数 单位:分
+ */
+@property (nonatomic, copy) NSString *merFeeAmt;
+/**
+ *  币种 － 1:人民币
+ */
+@property (nonatomic, copy) NSString *currencyType;
+/**
+ *  同步返回地址 － 格式:URL  商户同步返回地址。表明商户希望 交易结果返回的前台页面显示地 址。
+ */
+@property (nonatomic, copy) NSString *returnUrl;
+/**
+ *  异步返回地址 － 格式:URL  商户异步通知地址。表明商户希望 交易结果通知的后台响应接收地 址。
+ */
+@property (nonatomic, copy) NSString *notifyUrl;
+/**
+ *  用户浏览器IP － 格式:数字和‘.’ 发起交易的客户 IP 地址
+ */
+@property (nonatomic, copy) NSString *tranIP;
+/**
+ *  用户在商户系统注册的ID
+ */
+@property (nonatomic, copy) NSString *merUserId;
+/**
+ *  买家姓名（用户姓名） － 格式:汉字、英文字母 参与交易的买方的姓名 注意:此字段值在收银台处输入的  姓名必须一致
+ */
+@property (nonatomic, copy) NSString *buyerName;
+/**
+ *  身份证号码 － 身份证号码
+ */
+@property (nonatomic, copy) NSString *idNumber;
+/**
+ *  商户订单号 － 格式:数字,英文字母,下划线, 竖划线,中划线 用于传送商户订单号,每笔新的交 易需生成一笔新的订单号
+ */
+@property (nonatomic, copy) NSString *merOrderNum;
+/**
+ *  交易时间 － 格式:YYYYMMDDHHMMSS  本域为订单发起的交易时间
+ */
+@property (nonatomic, copy) NSString *tranDateTime;
+/**
+ *  签名密文串 － 将交易信息用 signType 域设置的 方式加密后生成的字符串
+ */
+@property (nonatomic, copy) NSString *signValue;
+
+
+@end

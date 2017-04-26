@@ -1,0 +1,13 @@
+//
+//  CMT_Found_ViewController.h
+//  CongMingTou
+//
+//  Created by wzh on 16/6/3.
+//  Copyright © 2016年 QiYuan. All rights reserved.
+//
+
+#import "CMT_BaseVIewController.h"
+
+@interface CMT_Found_ViewController : CMT_BaseVIewController
+
+@end

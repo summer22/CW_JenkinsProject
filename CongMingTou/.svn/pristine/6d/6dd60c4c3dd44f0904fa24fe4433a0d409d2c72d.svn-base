@@ -1,0 +1,13 @@
+//
+//  CMT_BannerModel.m
+//  CongMingTou
+//
+//  Created by summer on 16/9/9.
+//  Copyright © 2016年 QiYuan. All rights reserved.
+//
+
+#import "CMT_BannerModel.h"
+
+@implementation CMT_BannerModel
+
+@end

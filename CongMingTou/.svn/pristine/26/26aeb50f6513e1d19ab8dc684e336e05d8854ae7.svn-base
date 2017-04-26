@@ -1,0 +1,60 @@
+//
+//  CMT_MessageTableViewCell.m
+//  CongMingTou
+//
+//  Created by wzh on 16/5/12.
+//  Copyright © 2016年 wzh. All rights reserved.
+//
+
+#import "CMT_MessageTableViewCell.h"
+
+@interface CMT_MessageTableViewCell ()
+@property (strong, nonatomic) IBOutlet NSLayoutConstraint *mssageNewBtnLeft;
+@property (strong, nonatomic) IBOutlet NSLayoutConstraint *deteLabRight;
+
+@end
+
+@implementation CMT_MessageTableViewCell
+
+- (void)awakeFromNib {
+    // Initialization code
+    [_meaagge_newBtn styleWithCornerRadius:_meaagge_newBtn.height/2];
+}
+
++ (CMT_MessageTableViewCell *)cellWithTablebView:(UITableView *)tableView{
+    static NSString *indent = @"cell";
+    [tableView registerNib:[UINib nibWithNibName:@"CMT_MessageTableViewCell" bundle:nil] forCellReuseIdentifier:indent];
+    CMT_MessageTableViewCell  *cell = [tableView dequeueReusableCellWithIdentifier:indent];
+    cell.selectionStyle = UITableViewCellSelectionStyleNone;
+    return cell;
+    
+}
+
+- (void)setModel:(CMT_GetNewsListModel *)model{
+    _model = model;
+    _dateLab.text = [NSString stringWithFormat:@"%@",model.msgdate];
+    _titleLab.text = [NSString stringWithFormat:@"%@",model.msgTitle];
+    _desLab.text = [NSString stringWithFormat:@"%@",model.msg];
+    _meaagge_newBtn.hidden = [model.read isEqualToString:@"0"] ? NO : YES;
+   
+}
+- (void)setSelected:(BOOL)selected animated:(BOOL)animated {
+    [super setSelected:selected animated:animated];
+
+    // Configure the view for the selected state
+}
+- (void)layoutSubviews{
+    [super layoutSubviews];
+//    CMT_Log(@"%f %f",_meaagge_newBtn.width , CMT_ScreenCellLeftMid - _meaagge_newBtn.width - 18);
+    _mssageNewBtnLeft.constant = _meaagge_newBtn.hidden ? CMT_ScreenCellLeftMid - _meaagge_newBtn.width - 18 : CMT_ScreenCellLeftMid;
+
+    if(CMT_6pAnd6ps){//6p 或 6ps 或者更大
+        _mssageNewBtnLeft.constant = (_meaagge_newBtn.hidden ? CMT_ScreenCellLeftMid - _meaagge_newBtn.width - 10 : CMT_ScreenCellLeftMid ) * CMT_ProportionX;
+//        _mssageNewBtnLeft.constant  = CMT_ScreenCellLeftMid  *CMT_ProportionX;
+        _deteLabRight.constant = CMT_ScreenCellRightMid *CMT_ProportionX;
+    }
+    
+    
+   
+}
+@end

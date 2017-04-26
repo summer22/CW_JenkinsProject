@@ -1,0 +1,14 @@
+//
+//  CMT_InvestmentEarningsTableViewCell.h
+//  CongMingTou
+//
+//  Created by wzh on 16/5/18.
+//  Copyright © 2016年 QiYuan. All rights reserved.
+//
+
+#import <UIKit/UIKit.h>
+
+@interface CMT_InvestmentEarningsTableViewCell : UITableViewCell
+@property (strong, nonatomic) IBOutlet UILabel *addRateLab;
++ (CMT_InvestmentEarningsTableViewCell *)cellWithTablebView:(UITableView *)tableView;
+@end

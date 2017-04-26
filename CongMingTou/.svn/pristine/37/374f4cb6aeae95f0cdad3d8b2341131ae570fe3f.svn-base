@@ -1,0 +1,47 @@
+//
+//  CMT_InvestConfirmModel.h
+//  CongMingTou
+//
+//  Created by summer on 16/5/28.
+//  Copyright © 2016年 QiYuan. All rights reserved.
+//
+
+#import <Foundation/Foundation.h>
+
+@interface CMT_InvestConfirmModel : NSObject
+/** 投资金额 */
+@property (nonatomic,copy)NSString *investMoney;
+/** 预期年化收益率 */
+@property (nonatomic,copy)NSString *apr;
+/** 预期收益 */
+@property (nonatomic,copy)NSString *earnMoney;
+/** 投资期限 */
+@property (nonatomic,copy)NSString *period;
+/** 投资时间 */
+@property (nonatomic,copy)NSString *investTime;
+/** 收益返还方式 */
+@property (nonatomic,copy)NSString *repaymentType;
+/** 标的id */
+@property (nonatomic,copy)NSString *bidId;
+/** 本金券个数 */
+@property (nonatomic,copy)NSString *myCashTicketsCount;
+/** 加息券个数 */
+@property (nonatomic,copy)NSString *myInterestCount;
+/** 预约金额 */
+@property (nonatomic,copy)NSString *preAmount;
+/** 投资时间 */
+@property (nonatomic,copy)NSString *preDate;
+/** 预期收益 */
+@property (nonatomic,copy)NSString *preIncome;
+/** 投资id */
+@property (nonatomic,copy)NSString *investId;
+/** 体验金 */
+@property (nonatomic,copy)NSString *cashInvestAmount;
+/** 投资token */
+@property (nonatomic,copy)NSString *investToken;
+
+
+
+
+
+@end

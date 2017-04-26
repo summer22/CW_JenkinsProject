@@ -1,0 +1,40 @@
+//
+//  CMT_inVestProtocalViewController.m
+//  CongMingTou
+//
+//  Created by summer on 16/6/12.
+//  Copyright © 2016年 QiYuan. All rights reserved.
+//
+
+#import "CMT_inVestProtocalViewController.h"
+
+@interface CMT_inVestProtocalViewController ()
+
+@end
+
+@implementation CMT_inVestProtocalViewController
+
+- (void)viewDidLoad {
+    [super viewDidLoad];
+    // Do any additional setup after loading the view.
+    [self createUIWeb];
+    self.title = @"投资协议";
+}
+- (void)createUIWeb{
+    //    self.webView.height =  CMT_ScreenHeight - CMT_NAV_Height - CMT_TAB_Height;
+    NSString *urlStr = [NSString stringWithFormat:@"%@%@%@-%@.htm",CMT_H5SERVEr_URL,CMT_ChectContractVC,@"0",@"0"];
+    CMT_Log(@"%@",urlStr);
+    NSURLRequest *request =[NSURLRequest requestWithURL:[NSURL URLWithString:urlStr]];
+    [self.webView loadRequest:request];
+}
+- (void)noNetWorkbtnClicked:(UIButton *)button{
+    [self createUIWeb];
+}
+
+- (void)didReceiveMemoryWarning {
+    [super didReceiveMemoryWarning];
+    // Dispose of any resources that can be recreated.
+}
+
+
+@end

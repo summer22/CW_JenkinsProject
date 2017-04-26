@@ -1,0 +1,24 @@
+//
+//  CMT_ProductAlertMaskView.h
+//  CongMingTou
+//
+//  Created by summer on 16/5/17.
+//  Copyright © 2016年 QiYuan. All rights reserved.
+//
+
+#import <UIKit/UIKit.h>
+
+//定义事件的协议
+@protocol CMT_ProductAlertMaskViewDelegate <NSObject>
+
+- (void)sendBtnStatue:(BOOL)CUSSTATE;
+
+@end
+
+@interface CMT_ProductAlertMaskView : UIView
+
+@property (nonatomic,strong)id<CMT_ProductAlertMaskViewDelegate>delegate;
+
++ (void)showWithDelegate:(id)target;
+
+@end

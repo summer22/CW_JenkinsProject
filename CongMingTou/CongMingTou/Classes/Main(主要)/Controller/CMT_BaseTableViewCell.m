@@ -1,0 +1,46 @@
+//
+//  CMT_BaseTableViewCell.m
+//  CongMingTou
+//
+//  Created by summer on 2016/10/24.
+//  Copyright © 2016年 QiYuan. All rights reserved.
+//
+
+#import "CMT_BaseTableViewCell.h"
+
+@implementation CMT_BaseTableViewCell
+
+
+- (void)setSelected:(BOOL)selected animated:(BOOL)animated {
+    [super setSelected:selected animated:animated];
+    // Configure the view for the selected state
+}
+- (instancetype)initWithCoder:(NSCoder *)aDecoder{
+    
+    if (self = [super initWithCoder:aDecoder]) {
+        
+        [self setUI];
+    }
+    
+    return self;
+}
+- (void)setUI{
+    
+    [[NSBundle mainBundle] loadNibNamed:@"CMT_BaseTableViewCell" owner:self options:nil];
+    [self addSubview:self.view];
+    self.userInteractionEnabled = YES;
+
+}
+
+- (void)layoutSubviews{
+    [super layoutSubviews];
+    self.view.frame = self.bounds; //填一下自动布局的坑！最好要写这一句
+    [self sendSubviewToBack:self.view];
+    if(CMT_6pAnd6ps){
+        _bottomViewX.constant = CMT_ScreenRightMid *CMT_ProportionX;
+    }
+    _topViewH.constant = 0.5;
+    _bottomViewH.constant = 0.5;
+
+}
+@end

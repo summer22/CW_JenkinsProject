@@ -1,0 +1,61 @@
+//
+//  CMT_MyWelfareListModel.h
+//  CongMingTou
+//
+//  Created by wzh on 16/5/24.
+//  Copyright © 2016年 QiYuan. All rights reserved.
+//
+
+#import <Foundation/Foundation.h>
+
+@interface CMT_MyWelfareListModel : NSObject
+
+/**
+ *  加息券时代表加息率，本金券时代表额度
+ */
+@property (copy, nonatomic) NSString *rate;
+/**
+ *  状态（-1：已过期  0：未使用  1：已使用）    101：未激活  102：已激活
+ */
+@property (copy, nonatomic) NSString *status;
+/**
+ *  描述信息
+ */
+@property (copy, nonatomic) NSString *details;
+/**
+ *  到期时间
+ */
+@property (copy, nonatomic) NSString *endDate;
+/**
+ *  剩余过期天数 说明：只有当 status = 0 时，才返回expireDays 字段
+ */
+@property (copy, nonatomic) NSString *expireDays;
+
+/**
+ *  加息券id
+ */
+@property (nonatomic,copy)NSString *id;
+/**
+ *  卷的名子类型
+ */
+@property  (copy, nonatomic) NSString *ticketName;
+/**
+ *  新手标id （如果没有新手，返回 no）
+ */
+@property  (copy, nonatomic) NSString *experienceGoldId;
+/**
+ *  新手标状态
+ */
+@property  (copy, nonatomic) NSString *experienceGoldStatus;
+
+/**
+ *  卷的类型  0:加息券；11：本金券 14 体验金 99 红包
+ */
+@property  (copy, nonatomic) NSString *type;
+
+/**
+ *   disable 状态 0:不可用 1：可用 (只有本金卷有)
+ */
+@property (nonatomic, copy) NSString *disable;
++ (CMT_MyWelfareListModel *)myWelfareListModelWithDic:(NSDictionary *)dic;
+@end

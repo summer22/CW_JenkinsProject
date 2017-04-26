@@ -1,0 +1,41 @@
+//
+//  CMT_InputView.h
+//  InputView
+//
+//  Created by wzh on 16/5/13.
+//  Copyright © 2016年 wzh. All rights reserved.
+//
+
+#import <UIKit/UIKit.h>
+#define 默认为隐藏
+
+@class CMT_InputView;
+@protocol CMT_InputViewDelegate <NSObject>
+
+/**
+ *  输入长度达到预计长度
+ *
+ *  @param password  密码
+ *  @param inputView 当前view
+ */
+- (void)didCompleteInput:(NSString *)password andInputView:(CMT_InputView *)inputView;
+- (void)changeValueWithTopTextField:(UITextField *)textField;
+- (void)beyondTheLengthWithiInputTextField:(UITextField *)textField andInputView:(CMT_InputView *)inputView;
+@end
+
+
+@interface CMT_InputView : UIView
+
+@property (nonatomic, assign) CMTInputViewType inputViewType;
+@property (nonatomic, strong) UIColor *midLineColor;
+@property (nonatomic ,assign) CGFloat midLineBorderWidth;
+//@property (nonatomic, strong) UIColor *inputItemBackColor;
+@property (nonatomic, strong) UITextField *topTextField;
+@property (nonatomic, strong) UIColor *pointColor;
+@property (nonatomic, assign) CGFloat pointRadius;
+@property (nonatomic, strong) UIColor *pointTextColor;
+
+
+@property (nonatomic, weak) __weak id<CMT_InputViewDelegate>delegate;
+- (void)emptyDataWithTopTextField;
+@end

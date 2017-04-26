@@ -1,0 +1,31 @@
+//
+//  CMT_InvestInforModel.h
+//  CongMingTou
+//
+//  Created by wzh on 16/6/1.
+//  Copyright © 2016年 QiYuan. All rights reserved.
+//
+
+#import <Foundation/Foundation.h>
+
+@interface CMT_InvestInforModel : NSObject
+/**
+ *  时间
+ */
+@property (nonatomic, copy) NSString *time;
+/**
+ *  事件
+ */
+@property (nonatomic, copy) NSString *event;
+/**
+ *  状态 state：
+ *  0：未完成，即灰色的点
+ *  1：已完成（过去式），即在上面的黄色的点
+ *  2：已完成（进行时），即当前停留的黄色的点
+ */
+@property (nonatomic, copy) NSString *state;
+
+
++ (CMT_InvestInforModel *)investInforModelWithDic:(NSDictionary *)dic;
+
+@end

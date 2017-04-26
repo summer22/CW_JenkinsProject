@@ -1,0 +1,160 @@
+//
+//  CMT_InvestBgView.m
+//  CongMingTou
+//
+//  Created by summer on 16/5/13.
+//  Copyright © 2016年 wzh. All rights reserved.
+//
+
+#import "CMT_InvestBgView.h"
+@interface CMT_InvestBgView()
+/** 姓名 */
+@property (nonatomic,copy)NSString *nameStr;
+/** carId */
+@property (nonatomic,copy)NSString *carIdStr;
+/** 下一步按钮 */
+@property (nonatomic,strong)UIButton *nextBtn;
+
+@end
+@implementation CMT_InvestBgView
+
+- (instancetype)initWithFrame:(CGRect)frame
+{
+    if (self = [super initWithFrame:frame])
+    {
+        [self getInvestSubView];
+    }
+    return self;
+}
+
+- (void)getInvestSubView
+{
+    UIImageView *topImg = [[UIImageView alloc] initWithFrame:CMT_CGRECTMAKE((CMT_ScreenWidth - 297 * CMT_6PERCENTY)/2, 33 * CMT_6PERCENTY, 297 * CMT_6PERCENTY, 45 * CMT_6PERCENTY)];
+    topImg.image = [UIImage imageNamed:@"My_InvestPreOne"];
+    [self addSubview:topImg];
+    
+    UILabel *bottomLabel = [CMT_Tools getLabel:@"监管部门规定投资理财必须提供实名信息" textFont:12 viewFrame:CMT_CGRECTMAKE((CMT_ScreenWidth - 300 * CMT_6PERCENTY)/2, topImg.bottom + 30 * CMT_6PERCENTY, 300 * CMT_6PERCENTY, 25 * CMT_6PERCENTY) textAlignments:NSTextAlignmentCenter textColors:CommonGrayTextColor];
+    [self addSubview:bottomLabel];
+    
+    UIView *midBgView = [[UIView alloc] initWithFrame:CMT_CGRECTMAKE(0, bottomLabel.bottom + 29 * CMT_6PERCENTY, CMT_ScreenWidth, 100 * CMT_6PERCENTY)];
+    midBgView.backgroundColor = CommonWhiteColor;
+    [self addSubview:midBgView];
+    
+    NSArray *nameArr = @[@"真实姓名",@"身份证号"];
+    NSArray *placholdArr = @[@"请输入您的真实姓名",@"请输入有效身份证号"];
+    
+    for (int i = 0; i < 3; i++) {
+        
+        CGFloat width = 0.0f;
+        CGFloat x = 0.0f;
+        
+        if (i < 2) {
+            
+            UILabel *nameLabel = [CMT_Tools getLabel:nameArr[i] textFont:14 viewFrame:CMT_CGRECTMAKE(15, 10* CMT_6PERCENTY + i*50 * CMT_6PERCENTY, 70 * CMT_6PERCENTY, 30 * CMT_6PERCENTY) textAlignments:NSTextAlignmentLeft textColors:CommonImpTextColor];
+            [midBgView addSubview:nameLabel];
+//            12 * CMT_6PERCENTY + i*50 * CMT_6PERCENTY
+            UITextField *inputView = [[UITextField alloc] initWithFrame:CMT_CGRECTMAKE(nameLabel.right + 5, 0, CMT_ScreenWidth - nameLabel.width - 30 * CMT_6PERCENTY - 7.5, 30 * CMT_6PERCENTY) ];
+            inputView.attributedPlaceholder = [[NSAttributedString alloc] initWithString:placholdArr[i] attributes:@{NSForegroundColorAttributeName: CommonGrayTextColor}];
+            inputView.centerY = nameLabel.centerY;
+            inputView.clearButtonMode = UITextFieldViewModeWhileEditing;
+            [inputView addTarget:self action:@selector(textFiledEdingChanged:) forControlEvents:UIControlEventEditingChanged];
+            inputView.font = [UIFont systemFontOfSize:14];
+            inputView.tag = i + 3000;
+            [midBgView addSubview:inputView];
+            
+        }
+        
+        if (i == 1) {
+            width = CMT_ScreenWidth - 15 * CMT_6PERCENTY;
+            x = 15 * CMT_6PERCENTY;
+        }else{
+            width = CMT_ScreenWidth;
+            x = 0;
+        }
+        
+        if (i == 1) {
+            UIView *topLine = [[UIView alloc] initWithFrame:CMT_CGRECTMAKE(x, i * 50 * CMT_6PERCENTY, width, 0.5)];
+            topLine.backgroundColor = CommonLineColor;
+            [midBgView addSubview:topLine];
+        }
+    }
+    
+//    UIView *tsView = [[UIView alloc] initWithFrame:CMT_CGRECTMAKE(0, midBgView.bottom + 1 , CMT_ScreenWidth, 40 * CMT_6PERCENTY)];
+//    tsView.backgroundColor = customColor(@"#FFF9C9");
+//    [self addSubview:tsView];
+    
+//    UILabel *tsLabel = [CMT_Tools getLabel:@"请输入18位二代公民身份证号" textFont:14 viewFrame:CMT_CGRECTMAKE(15, 5* CMT_6PERCENTY, 250  * CMT_6PERCENTY, 30 * CMT_6PERCENTY) textAlignments:NSTextAlignmentLeft textColors:customColor(@"#FF6600")];
+//    [tsView addSubview:tsLabel];
+    
+    UIButton *nextBtn = [CMT_Tools getButtonWithFrame:CMT_CGRECTMAKE(15, midBgView.bottom + 30  * CMT_6PERCENTY, CMT_ScreenWidth - 30  * CMT_6PERCENTY, 50  * CMT_6PERCENTY) BackGroudColor:CommonYellowTextColor Title:@"下一步" TitleColor:CommonWhiteColor textFont:15];
+    [nextBtn styteWithCornerRadius:25 * CMT_6PERCENTY shadowColor:CommonYellowTextColor shadowOffset:CMT_ShadowOffset shadowOpacity:CMT_ShadowOpacity shadowRadius:CMT_ShadowRadius];
+    [nextBtn addTarget:self action:@selector(nextBtn:) forControlEvents:UIControlEventTouchUpInside];
+    [nextBtn addTarget:self action:@selector(nextBtnTouchDown) forControlEvents:UIControlEventTouchDown];
+    [nextBtn addTarget:self action:@selector(nextBtnDragOutside) forControlEvents:UIControlEventTouchDragOutside];
+
+    self.nextBtn = nextBtn;
+    self.nextBtn.userInteractionEnabled = NO;
+    self.nextBtn.alpha = 0.5;
+    [self addSubview:nextBtn];
+    
+    UILabel *bottomViewLabel = [CMT_Tools getLabel: CMT_BottomBankInfor textFont:12 viewFrame:CMT_CGRECTMAKE(0, 0, 100, 30 * CMT_6PERCENTY) textAlignments:NSTextAlignmentCenter textColors:CommonGrayTextColor];
+    bottomViewLabel.centerY = nextBtn.centerY + 55 * CMT_6PERCENTY;
+    bottomViewLabel.centerX = nextBtn.centerX - 25 *CMT_6PERCENTY;
+    [self addSubview:bottomViewLabel];
+    
+    
+    UIImageView *thumImg = [[UIImageView alloc] initWithFrame:CMT_CGRECTMAKE(bottomViewLabel.right, 0, 64  * CMT_6PERCENTY, 15 *CMT_6PERCENTY)];
+    thumImg.centerY = bottomViewLabel.centerY;
+    thumImg.image = [UIImage imageNamed:@"My_YingHangLogo"];
+    [self addSubview:thumImg];
+}
+
+- (void)textFiledEdingChanged:(UITextField *)textField
+{
+    UITextField *nameTF = (UITextField *)[self viewWithTag:3000];
+    UITextField *idCarTF = (UITextField *)[self viewWithTag:3001];
+    
+    self.nameStr = nameTF.text;
+    self.carIdStr = idCarTF.text;
+    
+    if ( self.nameStr.length > 0 && self.carIdStr.length > 0) {
+        self.nextBtn.userInteractionEnabled = YES;
+        self.nextBtn.alpha = 1;
+    }else{
+        self.nextBtn.userInteractionEnabled = NO;
+        self.nextBtn.alpha = 0.5;
+    }
+    
+}
+
+- (void)nextBtnDragOutside
+{
+    self.nextBtn.backgroundColor = CommonYellowTextColor;
+}
+
+//点击事件
+- (void)nextBtn:(UIButton *)sender
+{
+    self.nextBtn.backgroundColor = CommonYellowTextColor;
+
+    if (self.carIdStr.length == 18) {
+        
+        UITextField *nameTF = (UITextField *)[self viewWithTag:3000];
+        UITextField *cardTF = (UITextField *)[self viewWithTag:3001];
+        
+        if (self.myDelegate && [self.myDelegate respondsToSelector:@selector(sendNameStr:IDCardNumStr:)]) {
+            [self.myDelegate sendNameStr:nameTF.text IDCardNumStr:cardTF.text];
+        }
+ 
+    }else{
+        [self showHint:@"请输入正确的身份证号"];
+    }
+    
+}
+
+- (void)nextBtnTouchDown
+{
+    self.nextBtn.backgroundColor = CommonLoginBtnTouchDownBackColor;
+}
+
+@end

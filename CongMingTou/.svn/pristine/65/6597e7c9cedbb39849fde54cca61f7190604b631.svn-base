@@ -1,0 +1,46 @@
+//
+//  CMT_MyWelfareViewController.h
+//  CongMingTou
+//
+//  Created by wzh on 16/5/11.
+//  Copyright © 2016年 wzh. All rights reserved.
+//
+
+#import <UIKit/UIKit.h>
+
+/**
+ *  进入我的福利的类型
+ */
+typedef NS_ENUM(NSInteger, CMTEnterMyWelfareType) {
+    /**
+     *  所有福利列表 （从我的- 我的福利进入 浏览然后选择）
+     */
+    CMTEnterMyWelfareTypeBrowseAllList = 0,
+    /**
+     *  加息卷列表  （从我的投资 选择想要的加息卷 进入）
+     */
+    CMTEnterMyWelfareTypeChooseRateIncreaseVolumeList,
+    /**
+     *  本金卷列表
+     */
+    CMTEnterMyWelfareTypeChoosePrincipalVolumeList
+};
+@interface CMT_MyWelfareViewController : CMT_BaseVIewController
+
+@property (nonatomic, assign) CMTEnterMyWelfareType enterMyWelfareType;
+@property (nonatomic, copy) void(^backBlock)(CMT_MyWelfareListModel *volumeListModel);
+
+/**
+ *  投资金额  默认 为“no”   只有投资的时候才可能传投资金额
+ */
+@property (nonatomic, copy) NSString *investAmount;
+/**
+ *  标得id 没有传空字符串
+ */
+@property (nonatomic, copy) NSString *bidIdStr;
+/**
+ *  标的期限  没有传空字符串
+ */
+@property (nonatomic, copy) NSString *bidTimeLimit;
+
+@end

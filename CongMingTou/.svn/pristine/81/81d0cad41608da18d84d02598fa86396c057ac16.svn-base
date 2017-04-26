@@ -1,0 +1,13 @@
+//
+//  UIImage+RoundedRectImage.h
+//  ZarBarDemo
+//
+//  Created by wzh on 16/6/7.
+//  Copyright © 2016年 wzh. All rights reserved.
+//
+
+#import <UIKit/UIKit.h>
+
+@interface UIImage (RoundedRectImage)
++ (UIImage *)createRoundedRectImage:(UIImage *)image withSize:(CGSize)size withRadius:(NSInteger)radius;
+@end

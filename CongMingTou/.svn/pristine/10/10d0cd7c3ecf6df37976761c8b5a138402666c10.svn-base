@@ -1,0 +1,19 @@
+//
+//  CMT_CouponTableViewCell.h
+//  CongMingTou
+//
+//  Created by summer on 16/5/11.
+//  Copyright © 2016年 wzh. All rights reserved.
+//
+
+#import <UIKit/UIKit.h>
+@class CMT_financialModel;
+
+@interface CMT_CouponTableViewCell : UITableViewCell
+/** 数据模型 */
+@property (nonatomic,strong)CMT_financialModel *model;
+/** 加息率 */
+@property (nonatomic,copy)NSString *percentStr;
+/** 列表类型判断*/
+@property (nonatomic,assign)LISTFROM_TYPE listFromType;
+@end

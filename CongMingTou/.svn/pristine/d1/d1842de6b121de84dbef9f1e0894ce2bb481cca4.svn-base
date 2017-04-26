@@ -1,0 +1,12 @@
+//
+//  CMT_inVestProtocalViewController.h
+//  CongMingTou
+//
+//  Created by summer on 16/6/12.
+//  Copyright © 2016年 QiYuan. All rights reserved.
+//
+
+#import "CMT_WebBaseViewController.h"
+
+@interface CMT_inVestProtocalViewController : CMT_WebBaseViewController
+@end

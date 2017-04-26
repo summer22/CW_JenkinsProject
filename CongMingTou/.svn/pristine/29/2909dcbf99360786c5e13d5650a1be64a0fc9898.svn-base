@@ -1,0 +1,35 @@
+//
+//  CMT_GetShareFirendInforModel.h
+//  CongMingTou
+//
+//  Created by wzh on 16/6/8.
+//  Copyright © 2016年 QiYuan. All rights reserved.
+//
+
+#import "CMT_BaseModel.h"
+
+@interface CMT_GetShareFirendInforModel : CMT_BaseModel
+/**
+ *  领取信息
+ */
+@property (nonatomic, copy) NSString *receiveNumStr;
+/**
+ *  描述
+ */
+@property (nonatomic, copy) NSString *oneAmt;
+/**
+ *  标题
+ */
+@property (nonatomic, copy) NSString *notReceiveStr;
+/**
+ *  二维码
+ */
+@property (nonatomic, copy) NSString *twoCodePath;
+
+/**
+ *  领取完是否 0已领取完 1未领取完
+ */
+@property (nonatomic, copy) NSString *flag;
++ (CMT_GetShareFirendInforModel *)getShareFirendInforModelWithDic:(NSDictionary *)dic;
+
+@end

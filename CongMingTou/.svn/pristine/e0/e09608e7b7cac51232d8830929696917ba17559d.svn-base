@@ -1,0 +1,13 @@
+//
+//  CMT_NewPayInforModel.m
+//  CongMingTou
+//
+//  Created by wzh on 16/6/16.
+//  Copyright © 2016年 QiYuan. All rights reserved.
+//
+
+#import "CMT_NewPayInforModel.h"
+
+@implementation CMT_NewPayInforModel
+
+@end

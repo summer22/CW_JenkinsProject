@@ -1,0 +1,196 @@
+//
+//  CMT_ChiyouzhongTableViewCell.m
+//  CongMingTou
+//
+//  Created by 雷博 on 16/5/17.
+//  Copyright © 2016年 QiYuan. All rights reserved.
+//
+
+#import "CMT_ChiyouzhongTableViewCell.h"
+#import "CMT_YuYueTouZiViewController.h"
+
+@interface CMT_ChiyouzhongTableViewCell ()
+
+@end
+
+@implementation CMT_ChiyouzhongTableViewCell
+
+- (void)awakeFromNib {
+    [super awakeFromNib];
+    // Initialization code
+}
+
+- (instancetype)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier
+{
+    self = [super initWithStyle:style reuseIdentifier:reuseIdentifier];
+    if (self) {
+        [self creatUI];
+    }
+    return self;
+}
+
+- (void)creatUI
+{
+
+    //左上角的状态图片view
+    markImageView *topLeftView = [[markImageView alloc] initWithFrame:CMT_CGRECTMAKE(15 * CMT_6PERCENTY, 10 * CMT_6PERCENTY, 161 * CMT_6PERCENTY, 22 * CMT_6PERCENTY)];
+    self.topLeftView2 = topLeftView;
+    [self.contentView addSubview:topLeftView];
+    
+    UIView *lineView = [CMT_Tools getUiviewWithFrame:CMT_CGRECTMAKE(15 * CMT_6PERCENTY , 44 * CMT_6PERCENTY, CMT_ScreenWidth - 15 * CMT_6PERCENTY, 0.5) BackGroudColor:CommonLineColor];
+    [self.contentView addSubview:lineView];
+    
+    UIView *leftBgView = [[UIView alloc] initWithFrame:CMT_CGRECTMAKE(0, lineView.bottom, CMT_ScreenWidth/2, 75 * CMT_6PERCENTY)];
+    [self.contentView addSubview:leftBgView];
+    
+    //200块
+    CGSize profitLabelSize = [ CMT_Tools getStrSize:@"200,00元" fontSize:24];
+    UILabel *profitLabel = [CMT_Tools getLabel:@"200,00元" textFont:24 viewFrame:CMT_CGRECTMAKE(0, 0, profitLabelSize.width, profitLabelSize.height) textAlignments:NSTextAlignmentCenter textColors:customColor(@"#FF603E")];
+    profitLabel.centerX = leftBgView.centerX - 15 *CMT_6PERCENTY;
+    profitLabel.centerY = leftBgView.centerY - profitLabel.height - 27 * CMT_6PERCENTY;
+
+    
+    [leftBgView addSubview:profitLabel];
+    
+    //投资金额
+    CGSize profitBottomLabelSize = [CMT_Tools getStrSize:@"投资金额" fontSize:12];
+    UILabel *profitBottomLabel = [CMT_Tools getLabel:@"投资金额" textFont:12 viewFrame:CMT_CGRECTMAKE(0, 0, profitBottomLabelSize.width,profitBottomLabelSize.height) textAlignments:NSTextAlignmentLeft textColors:customColor(@"#34495E")];
+    profitBottomLabel.centerX = leftBgView.centerX-15*CMT_6PERCENTY;
+    profitBottomLabel.centerY = profitLabel.bottom + 10 * CMT_6PERCENTY;
+    self.expectProfitLabel = profitBottomLabel;
+    [leftBgView addSubview:profitBottomLabel];
+    
+    UIView *rightBgView = [[UIView alloc] initWithFrame:CMT_CGRECTMAKE(CMT_ScreenWidth/2, lineView.bottom, CMT_ScreenWidth/2, 75 *CMT_6PERCENTY)];
+    [self.contentView addSubview:rightBgView];
+    
+    //剩余期限
+    CGSize dayLabelSize = [CMT_Tools getStrSize:@"剩余期限360天" fontSize:18];
+    UILabel *dayLabel = [CMT_Tools getLabel:@"剩余 期限360天" textFont:18 viewFrame:CMT_CGRECTMAKE((CMT_ScreenWidth/2 - dayLabelSize.width)/2, 10, dayLabelSize.width,dayLabelSize.height) textAlignments:NSTextAlignmentCenter textColors:customColor(@"#34495E")];
+    dayLabel.attributedText = [CMT_Tools strHeadAttributedString:@"投资期限" midAttributedString:@"360" backAttributedString:@"天" NSheadForegroundColorAttributeName:customColor(@"#34495E") NSbackForegroundColorAttributeName:customColor(@"#FF603E") NSbackForegroundColorAttributeName:customColor(@"#FF603E") NSheadFontAttributeName:12 NSbackFontAttributeName:18 NSbackFontAttributeName:18];
+    dayLabel.centerY = profitLabel.centerY;
+    self.dayLabel = dayLabel;
+    [rightBgView addSubview:dayLabel];
+    
+    //到期还本付息
+    CGSize profitStyleSize = [CMT_Tools getStrSize:@"到期还本付息" fontSize:12];
+    UIButton *profitStyleBtn = [CMT_Tools getButtonWithFrame:CMT_CGRECTMAKE(0, 0, profitStyleSize.width + 10 * CMT_6PERCENTY, profitStyleSize.height + 5 * CMT_6PERCENTY) BackGroudColor:nil Title:@"到期还本付息" TitleColor:customColor(@"#FFA33E") textFont:12];
+    profitStyleBtn.layer.cornerRadius = (profitStyleSize.height + 5 * CMT_6PERCENTY)/2;
+    profitStyleBtn.layer.masksToBounds = YES;
+    profitStyleBtn.layer.borderColor = customColor(@"#FFA33E").CGColor;
+    profitStyleBtn.layer.borderWidth = 0.5;
+    profitStyleBtn.centerX = dayLabel.centerX;
+    profitStyleBtn.centerY = profitBottomLabel.centerY;
+    self.backStyleBtn = profitStyleBtn;
+    [rightBgView addSubview:profitStyleBtn];
+    
+    _rightBtn = [UIButton buttonWithType:UIButtonTypeCustom];
+    [_rightBtn setTitle:@"立即预约" forState:UIControlStateNormal];
+    _rightBtn.titleLabel.font = UIFont28;
+    _rightBtn.frame = CGRectMake(CMT_ScreenWidth-94-15, 10 * CMT_6PERCENTY, 94*CMT_6PERCENTY, 29*CMT_6PERCENTY);
+    [_rightBtn styteWithCornerRadius:_rightBtn.height / 2 shadowColor:ThemeBackgroundColor shadowOffset:CGSizeMake(0, 2) shadowOpacity:0.5 shadowRadius:10];
+    _rightBtn.backgroundColor = ThemeBackgroundColor;
+    [self.contentView addSubview:_rightBtn];
+    
+    
+}
+
+
+    //根据数据的变化改变控件的状态和cell的交互状态
+- (void)setModel
+{
+    NSInteger num = arc4random()%4;
+    //调整子控件的的变化
+    [self getDifStateBtn:num];
+    [self getDifStateLabel:num];
+    [self getDifStateImg:num];
+    [self gettDifNumLabel:num];
+        
+}
+    
+    //数字label状态变化
+- (void)gettDifNumLabel:(NSInteger)index
+{
+    //收益率
+    UILabel *annualLabel = (UILabel *)[self viewWithTag:1000];
+    //投资时间
+    UILabel *timeLabel = (UILabel *)[self viewWithTag:1001];
+    //钱数
+    UILabel *moneyLabel = (UILabel *)[self viewWithTag:1002];
+        
+    if (index == 0) {
+        annualLabel.textColor = customColor(@"#FF6600");
+        timeLabel.textColor = customColor(@"#34495E");
+        moneyLabel.textColor = customColor(@"#34495E");
+    }else{
+        annualLabel.textColor = customColor(@"#8EA1B4");
+        timeLabel.textColor = customColor(@"#8EA1B4");
+        moneyLabel.textColor = customColor(@"#8EA1B4");
+    }
+}
+    
+    //改变状态图片
+- (void)getDifStateImg:(NSInteger)index
+{
+    if (index == 0) {
+        self.topLeftView.image = [UIImage imageNamed:@"Financial_Mark"];
+    }else{
+        self.topLeftView.image = [UIImage imageNamed:@"Financial_30"];
+    }
+        
+}
+    
+    //改变底部label文字颜色
+- (void)getDifStateLabel:(NSInteger)index
+{
+    UILabel *annualBottomLabel = (UILabel *)[self viewWithTag:2000];
+    UILabel *timeBottomLabel = (UILabel *)[self viewWithTag:2001];
+    UILabel *moneyBottomLabel = (UILabel *)[self viewWithTag:2002];
+        
+    if (index == 0) {
+        annualBottomLabel.textColor = CommonHelpTextColor;
+        timeBottomLabel.textColor = CommonHelpTextColor;
+        moneyBottomLabel.textColor = CommonHelpTextColor;
+    }else{
+        annualBottomLabel.textColor = customColor(@"#8EA1B4");
+        timeBottomLabel.textColor = customColor(@"#8EA1B4");
+        moneyBottomLabel.textColor = customColor(@"#8EA1B4");
+    }
+}
+    
+    //定制btn
+- (void)getDifStateBtn:(NSInteger)index
+{
+    if (index == 0) {
+        [self.rightBtn setTitle:@"立即投资" forState:UIControlStateNormal];
+        UIImage *image = [UIImage imageNamed:@"Investment_select"];
+        [self.rightBtn setImage:image forState:UIControlStateNormal];
+        CGSize imageSize = self.rightBtn.imageView.frame.size;
+        //先算出两边的间距
+        CGFloat abc = (self.rightBtn.frame.size.width - self.rightBtn.titleLabel.frame.size.width - imageSize.width ) / 2;
+        [self.rightBtn setTitleEdgeInsets:UIEdgeInsetsMake(0, - 5, 0, imageSize.width + 5)];
+        [self.rightBtn setImageEdgeInsets:UIEdgeInsetsMake(0, abc  + self.rightBtn.titleLabel.frame.size.width, 0, 0)];
+        [self.rightBtn setTitleColor:customColor(@"#FF6600") forState:UIControlStateNormal];
+            
+    }else{
+            
+        [self.rightBtn setTitle:@"已售罄" forState:UIControlStateNormal];
+        UIImage *image = [UIImage imageNamed:@"Investment_normal"];
+        [self.rightBtn setImage:image forState:UIControlStateNormal];
+        CGSize imageSize = self.rightBtn.imageView.frame.size;
+        //先算出两边的间距
+        CGFloat abc = (self.rightBtn.frame.size.width - self.rightBtn.titleLabel.frame.size.width - imageSize.width ) / 2;
+        [self.rightBtn setTitleEdgeInsets:UIEdgeInsetsMake(0, - 5, 0, imageSize.width + 5)];
+        [self.rightBtn setImageEdgeInsets:UIEdgeInsetsMake(0, abc  + self.rightBtn.titleLabel.frame.size.width, 0, 0)];
+        [self.rightBtn setTitleColor:customColor(@"#8EA1B4") forState:UIControlStateNormal];
+            
+    }
+}
+    
+
+- (void)setSelected:(BOOL)selected animated:(BOOL)animated {
+    [super setSelected:selected animated:animated];
+
+    // Configure the view for the selected state
+}
+
+@end

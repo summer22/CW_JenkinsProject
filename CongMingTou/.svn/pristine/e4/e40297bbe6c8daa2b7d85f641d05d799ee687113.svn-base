@@ -1,0 +1,25 @@
+//
+//  CMT_LoginNavBarView.h
+//  CongMingTou
+//
+//  Created by summer on 16/5/13.
+//  Copyright © 2016年 wzh. All rights reserved.
+//
+
+#import <UIKit/UIKit.h>
+
+@protocol CMT_LoginNavBarViewDelegate <NSObject>
+
+- (void)rightItemClick;
+
+- (void)leftItemClick;
+
+@end
+@interface CMT_LoginNavBarView : UIView
+
+/** delegate*/
+@property (nonatomic,assign)id <CMT_LoginNavBarViewDelegate> delegate;
+
+- (instancetype)initWithFrame:(CGRect)frame aboveSubview:(UIScrollView *)myView;
+
+@end

@@ -1,0 +1,22 @@
+//
+//  CMT_MyTenderDetailsViewController.h
+//  CongMingTou
+//
+//  Created by wzh on 16/5/17.
+//  Copyright © 2016年 QiYuan. All rights reserved.
+//
+
+#import "CMT_BaseVIewController.h"
+
+@interface CMT_MyTenderDetailsViewController : CMT_BaseVIewController
+
+/**
+ *   索引 0. 持有中 1. 预约中 2.已赎回
+ */
+@property (nonatomic, assign) int index;
+/**
+ *  标得model
+ */
+@property (nonatomic, strong) CMT_MyInverstmentListModel *model;
+
+@end

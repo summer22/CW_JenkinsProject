@@ -1,0 +1,114 @@
+//
+//  CMT_Barrage.m
+//  demos
+//
+//  Created by summer on 16/6/6.
+//  Copyright © 2016年 smartHeader. All rights reserved.
+//
+
+#import "CMT_Barrage.h"
+
+@interface CMT_Barrage ()
+{
+    UIButton *_contentView;
+    CGFloat  _duration;
+}
+@end
+
+@implementation CMT_Barrage
+
+- (void)dealloc{
+    
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:UIDeviceOrientationDidChangeNotification object:[UIDevice currentDevice]];
+}
+
+//初始化
+- (id)initWithText:(NSString *)text{
+    if (self = [super init]) {
+        
+        UIFont *font = [UIFont boldSystemFontOfSize:12];
+        NSDictionary * dict=[NSDictionary dictionaryWithObject: font forKey:NSFontAttributeName];
+        CGRect rect=[text boundingRectWithSize:CGSizeMake(250,CGFLOAT_MAX) options:NSStringDrawingTruncatesLastVisibleLine|NSStringDrawingUsesFontLeading|NSStringDrawingUsesLineFragmentOrigin attributes:dict context:nil];
+        UILabel *textLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 0,rect.size.width + 40, rect.size.height+ 20)];
+        textLabel.backgroundColor = [UIColor clearColor];
+        textLabel.textColor = [UIColor whiteColor];
+        textLabel.textAlignment = NSTextAlignmentCenter;
+        textLabel.font = font;
+        textLabel.text = text;
+        textLabel.numberOfLines = 0;
+        
+        _contentView = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, textLabel.frame.size.width, textLabel.frame.size.height)];
+        _contentView.layer.cornerRadius = (rect.size.height+ 20)/2;
+        _contentView.backgroundColor = [UIColor blackColor];
+        [_contentView addSubview:textLabel];
+        _contentView.autoresizingMask = UIViewAutoresizingFlexibleWidth;
+        [_contentView addTarget:self action:@selector(toastTaped:) forControlEvents:UIControlEventTouchDown];
+        _contentView.alpha = 0.0f;
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(deviceOrientationDidChanged:) name:UIDeviceOrientationDidChangeNotification object:[UIDevice currentDevice]];
+    }
+    
+    return self;
+}
+
+- (void)deviceOrientationDidChanged:(NSNotification *)notify{
+    [self hideAnimation];
+}
+
+-(void)dismissToast{
+    [_contentView removeFromSuperview];
+}
+
+-(void)toastTaped:(UIButton *)sender{
+    [self hideAnimation];
+}
+
+- (void)setDuration:(CGFloat)duration{
+    _duration = duration;
+}
+
+//淡入
+-(void)showAnimation{
+    
+    [UIView beginAnimations:@"show" context:NULL];
+    [UIView setAnimationCurve:UIViewAnimationCurveEaseIn];
+    [UIView setAnimationDuration:0.3];
+    _contentView.alpha = 1.0f;
+    [UIView commitAnimations];
+}
+
+//淡出
+-(void)hideAnimation{
+    
+    [UIView beginAnimations:@"hide" context:NULL];
+    [UIView setAnimationCurve:UIViewAnimationCurveEaseOut];
+    [UIView setAnimationDelegate:self];
+    [UIView setAnimationDidStopSelector:@selector(dismissToast)];
+    [UIView setAnimationDuration:0.3];
+    _contentView.alpha = 0.0f;
+    [UIView commitAnimations];
+}
+
+- (void)showFromTopOffset:(CGFloat)top leftOffset:(CGFloat)leftOffset{
+    
+    UIWindow *window = [[[UIApplication sharedApplication] windows] lastObject];
+    _contentView.center = CGPointMake(leftOffset + window.center.x, top + _contentView.frame.size.height/2);
+    [window  addSubview:_contentView];
+    [self showAnimation];
+    [self performSelector:@selector(hideAnimation) withObject:nil afterDelay:_duration];
+}
+
+/**
+ *  参数接口
+ *
+ *  @param text       文字
+ *  @param topOffset  距离顶部偏移量
+ *  @param leftOffset 距离左边偏移量
+ *  @param duration   多少时间隐藏
+ */
++ (void)showTopWithText:(NSString *)text topOffset:(CGFloat)topOffset leftOffset:(CGFloat)leftOffset duration:(CGFloat)duration{
+    
+    CMT_Barrage *toast = [[CMT_Barrage alloc] initWithText:text];
+    [toast setDuration:duration];
+    [toast showFromTopOffset:topOffset leftOffset:leftOffset];
+}
+@end

@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="11542" systemVersion="16A323" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES">
+    <device id="retina4_7" orientation="portrait">
+        <adaptation id="fullscreen"/>
+    </device>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="11524"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="CMT_VerificationViewController">
+            <connections>
+                <outlet property="contentLabel" destination="pWi-bG-r2O" id="S4T-kb-oX1"/>
+                <outlet property="finishBtn" destination="iaI-Jy-4V5" id="hZL-eQ-bMQ"/>
+                <outlet property="view" destination="i5M-Pr-FkT" id="sfx-zR-JGt"/>
+                <outlet property="yzNumbView" destination="ilk-Vs-wMx" id="BcK-xu-yPW"/>
+            </connections>
+        </placeholder>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <view clearsContextBeforeDrawing="NO" contentMode="scaleToFill" id="i5M-Pr-FkT">
+            <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+            <subviews>
+                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="我们已将验证码短信发送到您的手机130****2676" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="pWi-bG-r2O">
+                    <rect key="frame" x="47" y="20" width="281" height="21"/>
+                    <constraints>
+                        <constraint firstAttribute="width" constant="281" id="OXY-wm-coW"/>
+                        <constraint firstAttribute="height" constant="21" id="STb-lC-a7V"/>
+                    </constraints>
+                    <fontDescription key="fontDescription" type="system" pointSize="12"/>
+                    <color key="textColor" red="0.40000000000000002" green="0.40000000000000002" blue="0.40000000000000002" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                    <nil key="highlightedColor"/>
+                </label>
+                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="ilk-Vs-wMx" customClass="CMT_GetYzNumbView">
+                    <rect key="frame" x="0.0" y="61" width="375" height="50"/>
+                    <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                    <constraints>
+                        <constraint firstAttribute="height" constant="50" id="WDK-BD-H4C"/>
+                    </constraints>
+                </view>
+                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="iaI-Jy-4V5">
+                    <rect key="frame" x="6" y="131" width="363" height="62"/>
+                    <constraints>
+                        <constraint firstAttribute="height" constant="62" id="V52-F6-do7"/>
+                    </constraints>
+                    <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                    <inset key="titleEdgeInsets" minX="0.0" minY="-5" maxX="0.0" maxY="0.0"/>
+                    <state key="normal" title="完成" backgroundImage="CMT_DetailNoQiang">
+                        <color key="titleColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                    </state>
+                    <state key="selected" title="注册" backgroundImage="CMT_BlueLoneBtnImg"/>
+                    <connections>
+                        <action selector="finishBtnAction:" destination="-1" eventType="touchUpInside" id="tHR-gK-Zew"/>
+                    </connections>
+                </button>
+            </subviews>
+            <constraints>
+                <constraint firstItem="iaI-Jy-4V5" firstAttribute="leading" secondItem="i5M-Pr-FkT" secondAttribute="leading" constant="6" id="4je-GT-19A"/>
+                <constraint firstItem="ilk-Vs-wMx" firstAttribute="leading" secondItem="i5M-Pr-FkT" secondAttribute="leading" id="DJn-bm-yOo"/>
+                <constraint firstAttribute="trailing" secondItem="ilk-Vs-wMx" secondAttribute="trailing" id="IyS-kU-oSW"/>
+                <constraint firstItem="ilk-Vs-wMx" firstAttribute="top" secondItem="pWi-bG-r2O" secondAttribute="bottom" constant="20" id="ObE-Cy-mow"/>
+                <constraint firstItem="iaI-Jy-4V5" firstAttribute="top" secondItem="ilk-Vs-wMx" secondAttribute="bottom" constant="20" id="Ora-AO-uzp"/>
+                <constraint firstItem="pWi-bG-r2O" firstAttribute="top" secondItem="i5M-Pr-FkT" secondAttribute="top" constant="20" id="SXm-Kc-Z0w"/>
+                <constraint firstAttribute="trailing" secondItem="iaI-Jy-4V5" secondAttribute="trailing" constant="6" id="U1x-6z-Rsu"/>
+                <constraint firstItem="pWi-bG-r2O" firstAttribute="centerX" secondItem="i5M-Pr-FkT" secondAttribute="centerX" id="of4-Lv-sqc"/>
+            </constraints>
+            <point key="canvasLocation" x="25.5" y="51.5"/>
+        </view>
+    </objects>
+    <resources>
+        <image name="CMT_BlueLoneBtnImg" width="369" height="62"/>
+        <image name="CMT_DetailNoQiang" width="369" height="62"/>
+    </resources>
+</document>

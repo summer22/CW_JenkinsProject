@@ -1,0 +1,341 @@
+//
+//  CMT_Macro_URL.h
+//  CongMingTou
+//
+//  Created by wzh on 16/5/9.
+//  Copyright © 2016年 QiYuan All rights reserved.
+//
+
+#ifndef CMT_Macro_URL_h
+#define CMT_Macro_URL_h
+
+//神策数据统计模式
+//   SensorsAnalyticsDebugOff - 关闭 Debug 模式
+//   SensorsAnalyticsDebugOnly - 打开 Debug 模式，校验数据，但不进行数据导入
+//   SensorsAnalyticsDebugAndTrack - 打开 Debug 模式，校验数据，并将数据导入到 Sensors Analytics
+//域名
+//http://api.cmt.yourp2p.com/
+//主机
+//#define CMT_SERVER_URL  @"http://192.168.4.49:7777/service/"
+
+// 1:开发环境；2:本地测试环境 3:正式环境；
+#define CMT_CREATE_URL(a, b)     [NSString stringWithFormat:@"%@%@", a, b]
+
+/********** 1:开发环境（测试环境）；2:本地测试环境 3.预发布环境 4:正式环境  **********/
+#define kCWNetEnvVar  3
+
+/*************1.开发环境（测试环境）************/
+#if (kCWNetEnvVar == 1)
+
+#define CMT_SERVER_URL  @"http://cmt.yourp2p.com/"
+
+//所有静态页的域名
+#define CMT_H5SERVEr_URL @"http://yzp.yourp2p.com/"
+//神策数据统计模式
+#define CMT_SENSORANALYTICS SensorsAnalyticsDebugOnly
+//债权列表(调试)
+#define CMT_CREDICTOR_URL @"http://192.168.6.112:7777/"
+//极光推送的环境（开发环境：FALSE 生产环境：TRUE）
+#define isModleProduction FALSE
+
+/*************2.本地测试环境************/
+#elif (kCWNetEnvVar == 2)
+
+#define CMT_SERVER_URL  @"http://192.168.4.224:7777/service/"
+//所有静态页的域名 －－测试
+#define CMT_H5SERVEr_URL @"http://192.168.4.224:8081/yuanzi-portal/"
+//神策数据统计模式
+#define CMT_SENSORANALYTICS SensorsAnalyticsDebugOnly
+//债权列表(调试)
+#define CMT_CREDICTOR_URL @"http://192.168.6.112:7777/"
+//极光推送的环境（开发环境：FALSE 生产环境：TRUE）
+#define isModleProduction FALSE
+/*************3.预发布环境************/
+#elif (kCWNetEnvVar == 3)
+
+#define CMT_SERVER_URL  @"http://cmtapi.cmtouzi.com/service/"
+//所有静态页的域名 －－测试
+#define CMT_H5SERVEr_URL @"http://cmth5.cmtouzi.com/"
+//神策数据统计模式
+#define CMT_SENSORANALYTICS SensorsAnalyticsDebugOnly
+//债权列表(调试)
+#define CMT_CREDICTOR_URL @"http://101.200.202.140:7777/"
+//极光推送的环境（开发环境：FALSE 生产环境：TRUE）
+#define isModleProduction FALSE
+/*************4.正式环境************/
+#elif (kCWNetEnvVar == 4)
+
+#define CMT_SERVER_URL  @"http://api.cmtouzi.com/service/"
+//所有静态页的域名
+#define CMT_H5SERVEr_URL @"http://h5.cmtouzi.com/"
+//神策数据统计模式
+#define CMT_SENSORANALYTICS SensorsAnalyticsDebugOff
+//债权列表（正式）
+#define CMT_CREDICTOR_URL @"http://101.200.162.32:7777/"
+
+//极光推送的环境（开发环境：FALSE 生产环境：TRUE）
+#define isModleProduction TRUE
+
+////债权列表（正式）
+//#define CMT_CREDICTOR_URL @"http://rpc.huoniuzichan.com/"
+
+#endif
+
+//神策数据统计接收地址
+#define sensorsAnalyticsUrl @"http://101.200.228.12:8006/sa"
+
+//配置分发数据接受地址
+#define sensorsAnalyticUrl @"http://101.200.228.12:8007/api/vtrack/config"
+
+/**
+ *  广告位  链接
+ */
+#define CMT_AdvertisingUrl @"http://www.ccb.com/cn/home/indexv3.html"
+
+#define CMT_AdvertisingOpenState @"register/iosAdvertisement/"
+/**
+ *  /重置支付密码
+ */
+#define CMT_GetVerificationcode @"homePhone/verificationcode/"
+/**
+ *  注册
+ */
+#define CMT_Registered @"register/registerPhone/"
+/**
+ *  登陆
+ */
+#define CMT_Longin @"base/login/loginPhone/"
+/**
+ *  我的
+ */
+#define CMT_My @"user/myInfo/"
+/**
+ *  我的福利
+ */
+#define CMT_MyFuLi @"ticket/getTicket/"
+/**
+ *  我的交易记录
+ */
+#define CMT_MyJiaoYiJiLu @"user/myFinancial/"
+/**
+ *  实名认证及绑定银行卡
+ */
+#define CMT_RealNameAuthenticateAndTiedCard @"user/realNameAuthenticateAndSetPassword/"
+/**
+ *  重置支付密码
+ */
+#define CMT_ResetPayPwd @"userPhone/resetPayPwd/"
+/**
+ *  验证支付密码是否正确
+ */
+#define CMT_ConfirmPayPassword @"userPhone/confirmPassword/"
+/**
+ *  修改支付密码
+ */
+#define CMT_ModifyPayPassword @"userPhone/resetPayPwdNew/"
+
+/**
+ *  修改支付密码
+ */
+#define CMT_ModifyPayPwd  @"userPhone/changePayPwd/"
+/**
+ *  理财首页列表
+ */
+#define CMT_FinancialListInterface  CMT_CREATE_URL(CMT_SERVER_URL,@"bid/findBidList/")
+/**
+ *  首页banner活动接口
+ */
+#define CMT_FinancialBannerInterface  CMT_CREATE_URL(CMT_SERVER_URL,@"register/getActivityInfo/")
+
+/**
+ *  产品详情
+ */
+#define CMT_ProductDetailInterface  CMT_CREATE_URL(CMT_SERVER_URL,@"bid/findBidInfo/")
+/**
+ * 投资记录
+ */
+#define CMT_InvestRecordListInterface  CMT_CREATE_URL(CMT_SERVER_URL,@"bid/investRecordList/")
+/**
+ * 加息券列表
+ */
+#define CMT_TicketListInterface  CMT_CREATE_URL(CMT_SERVER_URL,@"ticket/getUsefullTicket/")
+
+/**
+ *  消息列表
+ */
+#define CMT_NewsList CMT_CREATE_URL(CMT_SERVER_URL,@"news/getNews/")
+/**
+ *  消息详情
+ */
+#define CMT_NewsDetail @"news/getNewsDetail/"
+/**
+ *  消息全部标记已读
+ */
+#define CMT_AllRead @"news/allRead/"
+/**
+ *  获取银行卡信息
+ */
+#define CMT_IDCardInfor CMT_CREATE_URL(CMT_SERVER_URL,@"user/toWidthdraw/")
+/**
+ *    我的投资
+ */
+#define CMT_MyInvestment  @"user/myInvestments/"
+/**
+ *  取消预约投资
+ */
+#define CMT_CancelYuYueInvestment @"preInvestment/cancelPreInvest/"
+
+/**
+ *  标的进度信息 http://cmt.yourp2p.com/bid/investDetail/3653-67
+ */
+#define CMT_BidProgressInforDetail @"bid/investDetail/"
+/**
+ * 预约投资
+ */
+#define CMT_PreInvestInterface  CMT_CREATE_URL(CMT_SERVER_URL,@"bid/findBidList/")
+/**
+ *  收益明细
+ */
+#define CMT_MyShouYiMingXi @"user/profitRecord/"
+/**
+ *  获取分享内容
+ */
+#define CMT_GetShareContent @"register/getShareInfo/"
+/**
+ *  获取分享页面内容（改前）
+ */
+#define CMT_GetShareFirendContent @"register/getShareAmt/"
+/**
+ *  获取分享页面内容（改后）
+ */
+#define CMT_GetShareFriendBeforeGetShareContent @"register/getFindShareRedPackage/"
+
+//投资确认
+#define CMT_InvestConfirmInterface  CMT_CREATE_URL(CMT_SERVER_URL,@"bid/investConfirm/")
+
+//立即投资
+#define CMT_AtOnceToInvestInterface  CMT_CREATE_URL(CMT_SERVER_URL,@"bid/investBid/")
+
+//预约投资
+#define CMT_PreInvestmentInterface  CMT_CREATE_URL(CMT_SERVER_URL,@"preInvestment/preInvest/")
+
+//预约金额
+#define CMT_PreAmountInterface  CMT_CREATE_URL(CMT_SERVER_URL,@"preInvestment/getPreInvestAmount/")
+
+//确认预约
+#define CMT_FirmPreInvestInfoInterface  CMT_CREATE_URL(CMT_SERVER_URL,@"preInvestment/confirmPreInvestInfo/")
+/**
+ *  分享加息
+ */
+#define CMT_ShareSuccessAddRates @"register/getInvestShareAmt/"
+
+/**
+ *  银生支付获取用户信息
+ */
+#define CMT_Pay_RechargeUserInfor @"pay/userRechargeInfo/"
+/**
+ *  充值申请
+ */
+#define CMT_Pay_RechargeRequest @"pay/rechargeGo/"
+/**
+ *  提现申请
+ */
+#define CMT_WithdrawalRequest @"user/widthdraw/"
+/**
+ *  重置手势密码验证
+ */
+#define CMT_ResetGesturePassword @"user/resetGesturePassword/"
+/**
+ *  验证验证码是否正确  忘记支付密码
+ */
+#define CMT_VerificationCodeIsOk @"homePhone/confirmCaptch/"
+/**
+ *  充值申请验证验证码
+ */
+#define CMT_TopUpApplicationVerificationCodeIsOk @"pay/rechargeGoCaptch/"
+/**
+ *  应用雷达
+ */
+#define CMT_LiveMobileIdfi @"register/iosAdvertisementActivate/"
+/**
+ *  债权列表
+ */
+#define CMT_CreditorsRightsList @"service/rpcAssetDebtService/httpGetDebtCombination/"
+
+#define CMT_FinalCreditorsRightsList @"service/rpcAssetDebtService/httpGettSonCredits/"
+
+/**
+ *  获取活动分享的分享内容
+ */
+#define CMT_ActivityShareContent @"register/getActivityShareInfo/"
+
+/**
+ *  银行卡号信息
+ */
+#define CMT_BankList @"user/getTDictBankQuotas/"
+
+//版本更新
+#define CMT_UpdateVersion @"register/version/"
+
+/**
+ *  H5的接口拼参数
+ */
+//保障
+#define CMT_H5SecurityVC @"app/guarantee.htm"
+//发现
+#define CMT_H5FountVC @"app/findPage.htm"
+//风险控制
+#define CMT_RiskControlInterface  CMT_CREATE_URL(CMT_H5SERVEr_URL,@"app/riskContrl.htm")
+//常见问题
+#define CMT_H5CommonProblemsVC @"app/problem.htm"
+//关于我们
+#define CMT_H5AboutMeVC @"app/aboutWe.htm"
+//注册 － 服务协议
+#define CMT_ServiceAgreementVC @"app/aboutAgreement.htm"
+//风险提示书 （1.我的 － 服务协议 2.投资前准备第二步 － 服务协议）
+#define CMT_H5RiskWarningBook @"app/aboutRisk.htm"
+// 查看合同 （1. 投资前 － 服务协议 参数默认 0  2.查看合同 ）
+#define CMT_ChectContractVC @"app/aboutPurchase/"
+//合同信息
+#define CMT_ContractInfor @"app/electPurchase/"
+//银行卡列表
+#define CMT_BankInfor @"app/bankInfo.htm"
+//banner跳转链接
+#define CMT_BannerUrl @"app/bannerJumpPage.htm"
+
+/**
+ *  银生宝私钥路径
+ */
+#define kPrivateKeyFile [[NSBundle mainBundle] pathForResource:@"pkcs8_rsa_private_key_1024" ofType:@"pem"]
+/**
+ *  友盟key
+ */
+//聪明投
+#define CMT_UmengAppkey @"575e470967e58ee24d000e04"
+/**
+ *  友盟微信AppleID
+ */
+//聪明投
+#define CMT_UMWXAPPID @"wxea21c7ba8cd2be7c"
+/**
+ *  友盟微信Secret
+ */
+// 聪明投
+#define UMWXAppSecret @"98bdd81707a06c3d846c29be3257a159"
+/**
+ *  qq的AppleID
+ */
+#define CMT_QQ_AppId @"1105556502"
+/**
+ *  qq的AppKey
+ *
+ */
+#define CMT_QQ_AppKey @"wZs2RePQoPqpEFib"
+
+/**
+ *  分享落地页url
+ */
+#define UMWXUrl @"app/invitRegister/"
+
+
+#endif /* CMT_Macro_URL_h */

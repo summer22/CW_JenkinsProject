@@ -1,0 +1,31 @@
+//
+//  CMT_ComStyleView.h
+//  CongMingTou
+//
+//  Created by summer on 16/5/26.
+//  Copyright © 2016年 QiYuan. All rights reserved.
+//
+
+#import <UIKit/UIKit.h>
+
+@protocol CMT_ComStyleViewDelegate <NSObject>
+
+- (void)comStyleViewBtnClick;
+
+@end
+
+@interface CMT_ComStyleView : UIView
+@property (nonatomic, strong) UIButton *nextBtn;
+/**
+ *  查看详情
+ */
+@property (nonatomic, strong) UIButton *checkDetailsBtn;
+
+- (instancetype)initWithFrame:(CGRect)frame;
+/**
+ *   索引 0. 持有中 1. 预约中 2.已赎回
+ */
+@property (nonatomic, assign) int index;
+@property (strong, nonatomic) CMT_BitInforModel *model;
+
+@end

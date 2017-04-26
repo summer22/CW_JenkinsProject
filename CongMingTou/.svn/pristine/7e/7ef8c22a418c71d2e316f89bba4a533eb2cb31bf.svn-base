@@ -1,0 +1,28 @@
+//
+//  CMT_InvestBgView.h
+//  CongMingTou
+//
+//  Created by summer on 16/5/13.
+//  Copyright © 2016年 wzh. All rights reserved.
+//
+
+#import <UIKit/UIKit.h>
+
+@protocol CMT_InvestBgViewDelegate <NSObject>
+
+//传递姓名和身份证号
+- (void)sendNameStr:(NSString *)nameStr IDCardNumStr:(NSString *)numStr;
+
+//下一步点击事件
+- (void)nextBtnClick;
+
+@end
+
+@interface CMT_InvestBgView : UIScrollView
+
+/** 代理*/
+@property (nonatomic,assign)id <CMT_InvestBgViewDelegate> myDelegate;
+
+- (instancetype)initWithFrame:(CGRect)frame;
+
+@end

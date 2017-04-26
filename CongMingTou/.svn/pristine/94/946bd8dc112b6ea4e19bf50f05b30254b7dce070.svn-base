@@ -1,0 +1,32 @@
+//
+//  CMT_GesturesPwdModel.h
+//  CongMingTou
+//
+//  Created by wzh on 16/5/26.
+//  Copyright © 2016年 QiYuan. All rights reserved.
+//
+
+#import <Foundation/Foundation.h>
+
+@interface CMT_GesturesPwdModel : NSObject<NSCoding>
+
+
+/**
+ *  手势密码
+ */
+@property (nonatomic, copy) NSString *gesturePwd;
+/**
+ *  手势密码开启状态 0 为关闭 1 开启
+ */
+@property (nonatomic, assign) int openState;
+
+/**
+ *  是否登陆过了手势 0 未登陆 1 登陆
+ */
+@property (nonatomic, assign) int loginGesturePwd;
+///**
+// *  是否跳过了手势密码 0 跳过了 1 没有跳过
+// */
+//@property (nonatomic, assign) int jumpSetGesturePwd;
+
+@end

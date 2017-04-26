@@ -1,0 +1,57 @@
+//
+//  CMT_StateView.m
+//  CongMingTou
+//
+//  Created by wzh on 16/6/20.
+//  Copyright © 2016年 QiYuan. All rights reserved.
+//
+
+#import "CMT_StateView.h"
+#import "AppDelegate.h"
+@implementation CMT_StateView
+
+- (instancetype)initWithFrame:(CGRect)frame{
+    if(self  = [super initWithFrame:frame]){
+        
+        UIButton *button = [UIButton buttonWithType:UIButtonTypeCustom];
+        button.frame = CMT_CGRECTMAKE((CMT_ScreenWidth - 156 * CMT_6PERCENTY)/2, 0, 156 * CMT_6PERCENTY, 102 * CMT_6PERCENTY);
+        button.centerY = self.centerY;
+        AppDelegate *app = (AppDelegate *)[UIApplication sharedApplication].delegate;
+        if (app.isReachable == YES) {
+            [button setBackgroundImage:[UIImage imageNamed:@"noDataShow"] forState:UIControlStateNormal];
+        }else{
+            [button setBackgroundImage:[UIImage imageNamed:@"noNetWork"] forState:UIControlStateNormal];
+        }
+        self.stateButton = button;
+        [self addSubview: self.stateButton];
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(netStatusChange) name:@"NETWORKSTATUS" object:nil];
+
+    }
+    return self;
+}
+- (void)dealloc{
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:@"NETWORKSTATUS" object:nil];
+
+}
+
+- (void)setDataArray:(NSMutableArray *)dataArray{
+    self.stateButton.hidden = dataArray.count > 0 ? YES : NO;
+    if(dataArray.count == 0 || !dataArray){
+        [self.stateButton setBackgroundImage:[UIImage imageNamed:@"noDataShow"] forState:UIControlStateNormal];
+        self.stateButton.userInteractionEnabled = NO;
+        [self netStatusChange];
+    }
+   
+}
+
+//网络状态监听通知方法
+- (void)netStatusChange
+{
+    AppDelegate *app = (AppDelegate *)[UIApplication sharedApplication].delegate;
+    if (app.isReachable == NO) {
+        self.stateButton.userInteractionEnabled = YES;
+        [self.stateButton setBackgroundImage:[UIImage imageNamed:@"noNetWork"] forState:UIControlStateNormal];
+    }
+}
+
+@end

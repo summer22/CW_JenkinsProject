@@ -1,0 +1,13 @@
+//
+//  CMT_CustomerServiceViewController.h
+//  CongMingTou
+//
+//  Created by wzh on 16/5/16.
+//  Copyright © 2016年 QiYuan. All rights reserved.
+//
+
+#import "CMT_BaseVIewController.h"
+
+@interface CMT_CustomerServiceViewController : CMT_BaseVIewController
+
+@end

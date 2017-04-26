@@ -1,0 +1,27 @@
+//
+//  CMT_MyInTheHoldInvestmentTableViewCell.h
+//  CongMingTou
+//
+//  Created by wzh on 16/5/18.
+//  Copyright © 2016年 QiYuan. All rights reserved.
+//
+
+#import <UIKit/UIKit.h>
+#import "CMT_MyInTheHoldInvestmentModel.h"
+#import "CMT_TenderTypeView.h"
+
+@interface CMT_MyInTheHoldInvestmentTableViewCell : UITableViewCell
+
+@property (strong, nonatomic) IBOutlet CMT_TenderTypeView *tenderTypeView;
+/**
+ *  立即预约 取消预约 查看合同
+ */
+@property (strong, nonatomic) IBOutlet UIButton *yuYueBtn;
+@property (strong, nonatomic) IBOutlet UILabel *touZiMoneyLab;
+@property (strong, nonatomic) IBOutlet UILabel *touZiDesLab;
+@property (strong, nonatomic) IBOutlet UILabel *qiXianDesLab;
+@property (strong, nonatomic) IBOutlet UILabel *huanXiFangShiLab;
+@property (strong, nonatomic) CMT_MyInTheHoldInvestmentModel *myInTheHoldInvestmenModel;
+
++ (CMT_MyInTheHoldInvestmentTableViewCell *)cellWithTablebView:(UITableView *)tableView;
+@end

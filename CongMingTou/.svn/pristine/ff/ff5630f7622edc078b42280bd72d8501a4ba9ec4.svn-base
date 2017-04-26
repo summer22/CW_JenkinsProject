@@ -1,0 +1,61 @@
+//
+//  CMT_LoginNavBarView.m
+//  CongMingTou
+//
+//  Created by summer on 16/5/13.
+//  Copyright © 2016年 wzh. All rights reserved.
+//
+
+#import "CMT_LoginNavBarView.h"
+
+@implementation CMT_LoginNavBarView
+
+- (instancetype)initWithFrame:(CGRect)frame aboveSubview:(UIScrollView *)myView
+{
+    if (self = [super initWithFrame:frame])
+    {
+        [self getCustomNavBar:myView];
+    }
+    return self;
+}
+
+- (void)getCustomNavBar:(UIScrollView *)myScrolView
+{
+    UIImageView *navBgView = [[UIImageView alloc] initWithFrame:CMT_CGRECTMAKE(0, 0, CMT_ScreenWidth, 64)];
+    navBgView.backgroundColor = [UIColor clearColor];
+    navBgView.userInteractionEnabled = YES;
+    
+    UIButton *leftBtnItem = [UIButton buttonWithType:UIButtonTypeCustom];
+    leftBtnItem.frame = CMT_CGRECTMAKE(15, 28, 28, 28);
+    CMT_BTN_NORMAL(leftBtnItem, @"NavBarBack");
+    [leftBtnItem addTarget:self action:@selector(backTo) forControlEvents:UIControlEventTouchUpInside];
+    [navBgView addSubview:leftBtnItem];
+    
+    UILabel *titleLable = [CMT_Tools getLabel:@"登录" textFont:17 viewFrame:CMT_CGRECTMAKE(0, 0, 100, 40) textAlignments:NSTextAlignmentCenter textColors:CommonWhiteColor];
+    titleLable.centerX = navBgView.centerX;
+    titleLable.centerY = navBgView.centerY + 10;
+    [navBgView addSubview:titleLable];
+    
+//    UIButton *rightBtnItem = [CMT_Tools getButtonWithFrame:CMT_CGRECTMAKE(CMT_ScreenWidth - 30 - 15, 27, 30, 30) BackGroudColor:nil Title:@"注册" TitleColor:customColor(@"#FFFFFF") textFont:14];
+//    [rightBtnItem addTarget:self action:@selector(registeBtnClick) forControlEvents:UIControlEventTouchUpInside];
+
+    [navBgView addSubview:leftBtnItem];
+//    [navBgView addSubview:rightBtnItem];
+    [self addSubview:navBgView];
+}
+
+- (void)backTo
+{
+    if (self.delegate && [self.delegate respondsToSelector:@selector(leftItemClick)]) {
+        [self.delegate leftItemClick];
+    }
+}
+- (void)registeBtnClick
+{
+    if (self.delegate && [self.delegate respondsToSelector:@selector(rightItemClick)]) {
+        [self.delegate rightItemClick];
+    }
+}
+
+
+@end

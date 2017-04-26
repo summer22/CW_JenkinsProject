@@ -1,0 +1,16 @@
+//
+//  CMT_RegisteredModel.m
+//  CongMingTou
+//
+//  Created by wzh on 16/5/19.
+//  Copyright © 2016年 QiYuan. All rights reserved.
+//
+
+#import "CMT_RegisteredModel.h"
+
+@implementation CMT_RegisteredModel
++ (CMT_RegisteredModel *)registeredModelWithDic:(NSDictionary *)dic{
+    return [[self alloc]initWithDic:dic];
+}
+
+@end

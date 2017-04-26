@@ -1,0 +1,19 @@
+//
+//  CMT_ChongZhiOrTixXianTableViewCell.h
+//  CongMingTou
+//
+//  Created by wzh on 16/5/12.
+//  Copyright © 2016年 wzh. All rights reserved.
+//
+
+#import <UIKit/UIKit.h>
+#import "CMT_ChongZhiTiXianListModel.h"
+@interface CMT_ChongZhiOrTixXianTableViewCell : CMT_BaseTableViewCell
+@property (weak, nonatomic) IBOutlet UILabel *titleLab;
+@property (weak, nonatomic) IBOutlet UILabel *dateLab;
+@property (weak, nonatomic) IBOutlet UILabel *moneyDesLab;
+
+@property  (assign,nonatomic) int currentIndex;
+@property (nonatomic, strong) CMT_ChongZhiTiXianListModel *model;
++ (CMT_ChongZhiOrTixXianTableViewCell *)cellWithTablebView:(UITableView *)tableView;
+@end

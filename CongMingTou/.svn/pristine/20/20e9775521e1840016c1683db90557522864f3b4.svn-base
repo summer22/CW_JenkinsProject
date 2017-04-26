@@ -1,0 +1,19 @@
+//
+//  CMT_InvestRecordModel.h
+//  CongMingTou
+//
+//  Created by summer on 16/5/26.
+//  Copyright © 2016年 QiYuan. All rights reserved.
+//
+
+#import <Foundation/Foundation.h>
+
+@interface CMT_InvestRecordModel : NSObject
+/** 手机号 */
+@property (nonatomic,copy)NSString *iMobile;
+/** 时间 */
+@property (nonatomic,copy)NSString *iTime;
+/** 金额 */
+@property (nonatomic,copy)NSString *iAmount;
+
+@end

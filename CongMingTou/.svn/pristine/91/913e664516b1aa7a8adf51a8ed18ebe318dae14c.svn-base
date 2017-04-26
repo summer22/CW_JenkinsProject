@@ -1,0 +1,124 @@
+//
+//  CMT_ModifyGesturesPwdValidationViewController.m
+//  CongMingTou
+//
+//  Created by wzh on 16/5/30.
+//  Copyright © 2016年 QiYuan. All rights reserved.
+//
+
+#import "CMT_ForgetGesturesPwdValidationViewController.h"
+#import "CMT_PhoneAndVerificationCodeView.h"
+#import "CMT_ViewController.h"
+@interface CMT_ForgetGesturesPwdValidationViewController ()<CMT_PhoneAndVerificationCodeViewDelegate,UITextFieldExtensionDelegate>
+@property (strong, nonatomic) IBOutlet CMT_PhoneAndVerificationCodeView *phoneAndVerificationView;
+@property (strong, nonatomic) IBOutlet UIButton *nextBtn;
+
+@end
+
+@implementation CMT_ForgetGesturesPwdValidationViewController
+
+- (void)viewDidLoad {
+    [super viewDidLoad];
+    //数据统计
+    SensorsAnalyticsSDK *sdk = [SensorsAnalyticsSDK sharedInstance];
+    if (sdk != nil) {
+        [sdk track:@"changePasswd" withProperties:@{@"distinctId": [NSString convertNull:[CMT_AnalyticsTool userID]],
+                                                    @"changePasswdType":@"手势密码"}];
+    }
+    
+    self.title = @"修改手势密码";
+    _phoneAndVerificationView.delegate = self;
+    _phoneAndVerificationView.verificationCodeTextField.extensonDelegate = self;
+    [_nextBtn styteWithCornerRadius:_nextBtn.height / 2 shadowColor:_nextBtn.backgroundColor shadowOffset:CMT_ShadowOffset shadowOpacity:CMT_ShadowOpacity shadowRadius:CMT_ShadowRadius];
+    _phoneAndVerificationView.phonetextField.text = [NSString stringWithFormat:@"%@",[CMT_AccountTool accountModel].mobileNo];
+    _phoneAndVerificationView.phonetextField.userInteractionEnabled = NO;
+
+}
+
+- (void)viewDidDisappear:(BOOL)animated{
+    [super viewDidDisappear:animated];
+}
+- (void)didReceiveMemoryWarning {
+    [super didReceiveMemoryWarning];
+    // Dispose of any resources that can be recreated.
+}
+- (void)didGetVerificationCodeBtn:(UIButton *)button{
+    [self loadDataGetVerificationcodeWithPhonNum:_phoneAndVerificationView.phonetextField.text type:@"6"];
+}
+- (void)textFieldEditingChange:(CMT_TextField *)textField{
+    if(textField.text.length > 0){
+        _nextBtn.enabled = YES;
+        _nextBtn.alpha = 1;
+    }else{
+        _nextBtn.enabled = NO;
+        _nextBtn.alpha = 0.5;
+    }
+}
+- (IBAction)nextBtnClicked:(id)sender {
+    [self loadDataGetVerificationcodeWithPhonNum:_phoneAndVerificationView.phonetextField.text captch:_phoneAndVerificationView.verificationCodeTextField.text];
+}
+
+#pragma mark -- 数据请求
+- (void)loadDataGetVerificationcodeWithPhonNum:(NSString *)phoneNum type:(NSString *)type{
+    //方法二
+    [self showHudInView:self.view hint:CMT_LoadDataWaiting];
+    [CMT_ProcessTheDataTool getVerificationcodeWithPhonNum:phoneNum type:type andBlock:^(CMT_GetVerificationcodeModel *getVerificationcodeModel, NSError *error) {
+        [self hideHud];
+        if(!error){
+            if([[NSString stringWithFormat:@"%@",getVerificationcodeModel.status] isEqualToString:@"1"]){
+                CMT_Log(@"获取验证码成功");
+                [self showHint:CMT_LoadDataGetCodeSuccessful];
+                
+            }else if ([[NSString stringWithFormat:@"%@",getVerificationcodeModel.status] isEqualToString:CMT_SinglePointCode]){
+                [CMT_SinglePointLoginTool addSinglePointLoginWithSelfVC:self];
+            }else{
+                [self showHint:getVerificationcodeModel.msg];
+                [_phoneAndVerificationView destroyTimer];
+
+            }
+        }else{
+            CMT_Log(@"获取验证码失败");
+            [self showHint:CMT_Error_NotNetWork];
+            [_phoneAndVerificationView destroyTimer];
+
+        }
+    }];
+}
+- (void)loadDataGetVerificationcodeWithPhonNum:(NSString *)phoneNum captch:(NSString *)captch{
+    //方法二
+    [self showHudInView:self.view hint:CMT_LoadDataWaiting];
+    [CMT_ProcessTheDataTool resetGesturePasswordWithPhoneNum:phoneNum andCaptch:captch andBlock:^(CMT_BaseModel *model, NSError *error) {
+        [self hideHud];
+        if(!error){
+            if([[NSString stringWithFormat:@"%@",model.status]isEqualToString:@"1"]){
+                [self showHint:CMT_LoadDataValidationCodeSuccessful];
+
+                CMT_ViewController *vc = [[CMT_ViewController alloc]init];
+                vc.type = GestureViewControllerTypeForget;
+                [_phoneAndVerificationView destroyTimer];
+
+                [self.navigationController pushViewController:vc animated:YES];
+            }else if ([[NSString stringWithFormat:@"%@",model.status] isEqualToString:CMT_SinglePointCode]){
+                [CMT_SinglePointLoginTool addSinglePointLoginWithSelfVC:self];
+            }else{
+                [self showHint:model.msg];
+            }
+        }else{
+            [self showHint:CMT_Error_NotNetWork];
+            [_phoneAndVerificationView destroyTimer];
+
+            
+        }
+    }];
+}
+/*
+#pragma mark - Navigation
+
+// In a storyboard-based application, you will often want to do a little preparation before navigation
+- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
+    // Get the new view controller using [segue destinationViewController].
+    // Pass the selected object to the new view controller.
+}
+*/
+
+@end

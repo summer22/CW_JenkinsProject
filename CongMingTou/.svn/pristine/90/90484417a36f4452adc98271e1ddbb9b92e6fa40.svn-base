@@ -1,0 +1,54 @@
+//
+//  CMT_TotalAssetsASubsidiaryViewController.m
+//  CongMingTou
+//
+//  Created by wzh on 16/5/17.
+//  Copyright © 2016年 QiYuan. All rights reserved.
+//
+
+#import "CMT_TotalAssetsASubsidiaryViewController.h"
+
+@interface CMT_TotalAssetsASubsidiaryViewController ()<UIWebViewDelegate>
+
+
+@end
+
+@implementation CMT_TotalAssetsASubsidiaryViewController
+
+
+
+- (void)viewDidLoad {
+    [super viewDidLoad];
+    // Do any additional setup after loading the view from its nib.
+    self.title = @"总资产明细";
+    [self createUIWeb];
+
+}
+- (void)createUIWeb{
+//    http://yzp.yourp2p.com/app/assetsDetail/
+     NSString *urlStr = @"";
+//    if([_totalAssetsUrl hasSuffix:@"/"]){
+//       urlStr = [NSString stringWithFormat:@"%@%@.htm",_totalAssetsUrl,[CMT_AccountTool accountModel].userId];
+//    }else{
+//        urlStr = [NSString stringWithFormat:@"%@/%@.htm",_totalAssetsUrl,[CMT_AccountTool accountModel].userId];
+//    }
+    urlStr = [NSString stringWithFormat:@"%@app/assetsDetail/%@.htm",CMT_H5SERVEr_URL,[CMT_AccountTool accountModel].userId];
+    CMT_Log(@"%@",urlStr);
+    NSURLRequest *request =[NSURLRequest requestWithURL:[NSURL URLWithString:urlStr]];
+    [self.webView loadRequest:request];
+}
+
+- (void)noNetWorkbtnClicked:(UIButton *)button{
+    [self createUIWeb];
+}
+/*
+#pragma mark - Navigation
+
+// In a storyboard-based application, you will often want to do a little preparation before navigation
+- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
+    // Get the new view controller using [segue destinationViewController].
+    // Pass the selected object to the new view controller.
+}
+*/
+
+@end

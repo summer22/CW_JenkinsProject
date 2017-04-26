@@ -1,0 +1,25 @@
+//
+//  CMT_RealNameAuthenticateModel.m
+//  CongMingTou
+//
+//  Created by wzh on 16/5/23.
+//  Copyright © 2016年 QiYuan. All rights reserved.
+//
+
+#import "CMT_RealNameAuthenticateModel.h"
+
+@implementation CMT_RealNameAuthenticateModel
+
+- (id)initWithDic:(NSDictionary *)dic{
+    if(self = [super init]){
+        [self setValuesForKeysWithDictionary:dic];
+    }
+    return self;
+}
+
+- (void)setValue:(id)value forUndefinedKey:(NSString *)key{
+    if([key isEqualToString:@"status"]){
+        self.code = value;
+    }
+}
+@end

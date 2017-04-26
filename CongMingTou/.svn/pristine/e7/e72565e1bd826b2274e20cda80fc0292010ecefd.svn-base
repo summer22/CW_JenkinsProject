@@ -1,0 +1,35 @@
+//
+//  CMT_AccountAndPasswordTableViewCell.m
+//  CongMingTou
+//
+//  Created by wzh on 16/5/16.
+//  Copyright © 2016年 QiYuan. All rights reserved.
+//
+
+#import "CMT_AccountAndPasswordTableViewCell.h"
+
+@implementation CMT_AccountAndPasswordTableViewCell
+
+- (void)awakeFromNib {
+    // Initialization code
+}
++ (CMT_AccountAndPasswordTableViewCell *)cellWithTablebView:(UITableView *)tableView andIndexPath:(NSIndexPath *)indexPath{
+    static NSString *indent = @"cell";
+    [tableView registerNib:[UINib nibWithNibName:@"CMT_AccountAndPasswordTableViewCell" bundle:nil] forCellReuseIdentifier:indent];
+    CMT_AccountAndPasswordTableViewCell  *cell = [tableView dequeueReusableCellWithIdentifier:indent];
+    cell.selectionStyle = UITableViewCellSelectionStyleNone;
+    cell.desLab.hidden = indexPath.section == 0 ? NO : YES;
+    cell.mySwitch.hidden = (indexPath.section == 1 && indexPath.row == 1) || indexPath.section == 2 ? NO : YES;
+    cell.nextBtn.hidden = (indexPath.section == 0 && indexPath.row) || (indexPath.section == 1 &&indexPath.row == 1) || (indexPath.section == 2 && indexPath.row == 0) ? YES : NO;
+    cell.desRight.constant = indexPath.section == 0 && indexPath.row == 1 ? 7 : 33;
+    
+      return cell;
+    
+}
+- (void)setSelected:(BOOL)selected animated:(BOOL)animated {
+    [super setSelected:selected animated:animated];
+
+    // Configure the view for the selected state
+}
+
+@end

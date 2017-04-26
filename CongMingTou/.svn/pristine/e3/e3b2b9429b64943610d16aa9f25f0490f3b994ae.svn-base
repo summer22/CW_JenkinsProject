@@ -1,0 +1,16 @@
+//
+//  CMT_MyWelfareModel.h
+//  CongMingTou
+//
+//  Created by wzh on 16/5/24.
+//  Copyright © 2016年 QiYuan. All rights reserved.
+//
+
+#import "CMT_BaseModel.h"
+#import "CMT_MyWelfareListModel.h"
+@interface CMT_MyWelfareModel : CMT_BaseModel
+
+@property (nonatomic, strong) NSArray *listArray;
++ (CMT_MyWelfareModel *)myWelfareModelWithDic:(NSDictionary *)dic;
+
+@end

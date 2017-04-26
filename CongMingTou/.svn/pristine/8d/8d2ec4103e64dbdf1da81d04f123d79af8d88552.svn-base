@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="10116" systemVersion="15B42" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES">
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="10085"/>
+        <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
+    </dependencies>
+    <customFonts key="customFonts">
+        <mutableArray key="Aileron-Light.otf">
+            <string>Aileron-Light</string>
+            <string>Aileron-Light</string>
+        </mutableArray>
+    </customFonts>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <tableViewCell contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" rowHeight="45" id="KGk-i7-Jjw" customClass="CMT_MySetTableViewCell">
+            <rect key="frame" x="0.0" y="0.0" width="320" height="41"/>
+            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+            <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="KGk-i7-Jjw" id="H2p-sc-9uM">
+                <rect key="frame" x="0.0" y="0.0" width="320" height="40"/>
+                <autoresizingMask key="autoresizingMask"/>
+                <subviews>
+                    <imageView userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="dF8-NI-XL8">
+                        <rect key="frame" x="15" y="12" width="16" height="16"/>
+                        <constraints>
+                            <constraint firstAttribute="width" constant="16" id="Lgm-ec-UbM"/>
+                            <constraint firstAttribute="height" constant="16" id="jee-Es-iLg"/>
+                        </constraints>
+                    </imageView>
+                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="消息推送通知" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Ohe-Ro-c52">
+                        <rect key="frame" x="47" y="9" width="150" height="21"/>
+                        <constraints>
+                            <constraint firstAttribute="width" constant="150" id="0Nk-nO-y86"/>
+                            <constraint firstAttribute="height" constant="21" id="ZYI-zP-bNK"/>
+                        </constraints>
+                        <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                        <color key="textColor" red="0.20392156862745098" green="0.28627450980392155" blue="0.36862745098039218" alpha="1" colorSpace="calibratedRGB"/>
+                        <nil key="highlightedColor"/>
+                    </label>
+                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="0gI-RJ-be9">
+                        <rect key="frame" x="294" y="9" width="11" height="22"/>
+                        <constraints>
+                            <constraint firstAttribute="width" constant="11" id="6N9-Hu-nLa"/>
+                            <constraint firstAttribute="height" constant="22" id="Yd2-Cz-5Qe"/>
+                        </constraints>
+                        <state key="normal" title="Button" image="Investment_normal"/>
+                    </button>
+                    <switch hidden="YES" opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" on="YES" translatesAutoresizingMaskIntoConstraints="NO" id="djE-Gu-9n5">
+                        <rect key="frame" x="256" y="5" width="51" height="31"/>
+                        <constraints>
+                            <constraint firstAttribute="height" constant="31" id="55L-NE-c52"/>
+                            <constraint firstAttribute="width" constant="49" id="Yfj-22-Zt9"/>
+                        </constraints>
+                    </switch>
+                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="400-800-3231" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="rcA-MJ-fZ9">
+                        <rect key="frame" x="146" y="10" width="133" height="21"/>
+                        <constraints>
+                            <constraint firstAttribute="width" constant="133" id="hjF-9o-dmT"/>
+                            <constraint firstAttribute="height" constant="21" id="iWf-Yy-jjd"/>
+                        </constraints>
+                        <fontDescription key="fontDescription" name="Aileron-Light" family="Aileron" pointSize="14"/>
+                        <color key="textColor" red="0.20392156862745098" green="0.28627450980392155" blue="0.36862745098039218" alpha="1" colorSpace="calibratedRGB"/>
+                        <nil key="highlightedColor"/>
+                    </label>
+                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="HS4-8m-jHw" userLabel="verson">
+                        <rect key="frame" x="255" y="5" width="50" height="31"/>
+                        <constraints>
+                            <constraint firstAttribute="width" constant="50" id="LvI-BH-gSs"/>
+                        </constraints>
+                        <fontDescription key="fontDescription" name="Aileron-Light" family="Aileron" pointSize="14"/>
+                        <color key="textColor" red="0.20392156859999999" green="0.28627450980000002" blue="0.36862745099999999" alpha="1" colorSpace="calibratedRGB"/>
+                        <nil key="highlightedColor"/>
+                    </label>
+                </subviews>
+                <constraints>
+                    <constraint firstItem="0gI-RJ-be9" firstAttribute="leading" secondItem="rcA-MJ-fZ9" secondAttribute="trailing" constant="15" id="1X1-EZ-MTq"/>
+                    <constraint firstItem="rcA-MJ-fZ9" firstAttribute="centerY" secondItem="H2p-sc-9uM" secondAttribute="centerY" id="C2r-su-fD3"/>
+                    <constraint firstAttribute="trailingMargin" secondItem="djE-Gu-9n5" secondAttribute="trailing" constant="7" id="Ejo-fJ-uRL"/>
+                    <constraint firstItem="Ohe-Ro-c52" firstAttribute="leading" secondItem="dF8-NI-XL8" secondAttribute="trailing" constant="16" id="GhE-hf-CrT"/>
+                    <constraint firstItem="HS4-8m-jHw" firstAttribute="trailing" secondItem="djE-Gu-9n5" secondAttribute="trailing" id="QeV-JJ-NcB"/>
+                    <constraint firstAttribute="trailingMargin" secondItem="0gI-RJ-be9" secondAttribute="trailing" constant="7" id="S3d-sJ-6h9"/>
+                    <constraint firstItem="djE-Gu-9n5" firstAttribute="centerY" secondItem="H2p-sc-9uM" secondAttribute="centerY" id="S5i-X1-MZZ"/>
+                    <constraint firstItem="dF8-NI-XL8" firstAttribute="leading" secondItem="H2p-sc-9uM" secondAttribute="leadingMargin" constant="7" id="Xl8-Sg-sO6"/>
+                    <constraint firstItem="Ohe-Ro-c52" firstAttribute="centerY" secondItem="H2p-sc-9uM" secondAttribute="centerY" id="c7u-Gk-BYE"/>
+                    <constraint firstItem="HS4-8m-jHw" firstAttribute="centerY" secondItem="djE-Gu-9n5" secondAttribute="centerY" id="qj2-IX-oc6"/>
+                    <constraint firstItem="HS4-8m-jHw" firstAttribute="height" secondItem="djE-Gu-9n5" secondAttribute="height" id="vQb-h0-h87"/>
+                    <constraint firstItem="0gI-RJ-be9" firstAttribute="centerY" secondItem="H2p-sc-9uM" secondAttribute="centerY" id="voD-xp-cGi"/>
+                    <constraint firstItem="dF8-NI-XL8" firstAttribute="centerY" secondItem="H2p-sc-9uM" secondAttribute="centerY" id="wtg-K0-1Tv"/>
+                </constraints>
+            </tableViewCellContentView>
+            <connections>
+                <outlet property="iconImaeView" destination="dF8-NI-XL8" id="Bdd-5S-fjJ"/>
+                <outlet property="messageSwitch" destination="djE-Gu-9n5" id="lvJ-xK-You"/>
+                <outlet property="nextBtn" destination="0gI-RJ-be9" id="Pdk-Nn-0jt"/>
+                <outlet property="phoneLab" destination="rcA-MJ-fZ9" id="LNJ-SA-LlN"/>
+                <outlet property="titleLab" destination="Ohe-Ro-c52" id="yMA-yE-K6L"/>
+                <outlet property="versonLab" destination="HS4-8m-jHw" id="E4e-AP-5l0"/>
+            </connections>
+            <point key="canvasLocation" x="354" y="208.5"/>
+        </tableViewCell>
+    </objects>
+    <resources>
+        <image name="Investment_normal" width="8" height="14"/>
+    </resources>
+</document>

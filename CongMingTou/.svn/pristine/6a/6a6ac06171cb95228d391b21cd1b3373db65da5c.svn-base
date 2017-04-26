@@ -1,0 +1,382 @@
+//
+//  CMT_CouponViewController.m
+//  CongMingTou
+//
+//  Created by summer on 16/5/11.
+//  Copyright © 2016年 wzh. All rights reserved.
+//
+
+#import "CMT_CouponViewController.h"
+#import "CMT_CouponTableViewCell.h"
+#import "CMT_CouponViewListHeaderView.h"
+#import "CMT_financialModel.h"
+#import "CMT_CoponTicketModel.h"
+#import "CMT_CouponViewScrollView.h"
+#import "CMT_CoponBgView.h"
+#import "CMT_productDetViewController.h"
+
+static NSString *identifiler = @"listTableCellID";
+
+@interface CMT_CouponViewController ()<UITableViewDataSource,UITableViewDelegate,UIScrollViewDelegate>
+
+/** table */
+@property (nonatomic,strong)UITableView *listTable;
+
+/** 加息券列表的数据源 */
+@property (nonatomic,strong)NSMutableArray *dataArr;
+
+/** 标的类型数据源 */
+@property (nonatomic,strong)NSMutableArray *markListDataArr;
+
+/** 存取头部时图的子view */
+@property (nonatomic,strong)NSMutableArray *headSubViewArr;
+/** 分页*/
+@property (nonatomic,assign)NSInteger pageCount;
+/** headerView */
+@property (nonatomic,strong)CMT_CoponBgView *headScrollView;
+/** 加息率 */
+@property (nonatomic,copy)NSString *addRate;
+/** pageCount*/
+@property (nonatomic,assign)NSInteger ratePageCount;
+/** 参数类型 */
+@property (nonatomic,copy)NSString *typeStr;
+
+@end
+
+@implementation CMT_CouponViewController
+
+- (NSMutableArray *)dataArr
+{
+    if (!_dataArr) {
+        _dataArr = [[NSMutableArray alloc] init];
+    }
+    return _dataArr;
+}
+- (NSMutableArray *)markListDataArr
+{
+    if (!_markListDataArr) {
+        _markListDataArr = [[NSMutableArray alloc] init];
+    }
+    return _markListDataArr;
+}
+- (NSMutableArray *)headSubViewArr
+{
+    if (!_headSubViewArr) {
+        _headSubViewArr = [[NSMutableArray alloc] init];
+    }
+    return _headSubViewArr;
+}
+- (CMT_CoponBgView *)headScrollView
+{
+    if (!_headScrollView) {
+        
+        _headScrollView = [[CMT_CoponBgView alloc] initWithFrame:CMT_CGRECTMAKE(0, 0, CMT_ScreenWidth ,145 * CMT_6PERCENTY)];
+    }
+    return _headScrollView;
+}
+- (void)viewDidLoad {
+    [super viewDidLoad];
+    
+    [self createTable];
+    
+    [self noNetView:NO];
+    
+    if (self.listFromType == TICKETCLASS) {
+        _typeStr = @"2";
+        self.title = @"使用本金券";
+
+    }else{
+        _typeStr = @"1";
+        self.title = @"使用加息券";
+    }
+
+    [self loadTicketListData:_typeStr];
+    
+}
+#pragma mark -- 点击重新加载事件
+- (void)netReloadData
+{
+//    [self loadTicketListData:_typeStr];
+    [self loadFirstMarkListData];
+}
+#pragma mark --  初始化添加头部view的子视图
+- (void)addTopHeadSubView:(NSInteger)count
+{
+    self.headScrollView.myScrollView.contentSize = CGSizeMake((CMT_ScreenWidth - (CMT_ScreenWidth - 350 * CMT_6PERCENTY)) * count , 145 * CMT_6PERCENTY);
+    self.headScrollView.myScrollView.delegate = self;
+    NSInteger num = count;
+    count = count == 0 ? 1 : count;
+    for (int i = 0; i < count; i++) {
+        CMT_CouponViewListHeaderView *view = [[CMT_CouponViewListHeaderView alloc] initWithFrame:CMT_CGRECTMAKE(15 * CMT_6PERCENTY + i * 350 * CMT_6PERCENTY, 0, 350 * CMT_6PERCENTY, 145 * CMT_6PERCENTY)];
+        view.backgroundColor = [UIColor clearColor];
+        if (num != 0) {
+            view.listFromType = self.listFromType;
+            view.model = self.dataArr[i];
+            if (self.ticketIdStr == view.model.id) {
+                [self sortScrollViewItem:i];
+            }
+        }
+        [self.headScrollView.myScrollView addSubview:view];
+    }
+    
+}
+
+- (void)sortScrollViewItem:(NSInteger)index{
+
+    CGPoint point;
+    CGFloat numValue = 0.00f;
+    
+    if (CMT_5PERCENTY == 1) {
+        numValue = 298.5;
+    }else if(CMT_6PERCENTY == 1){
+        numValue = 350;
+    }else {
+        numValue = 386;
+    }
+    point.x = index * numValue;
+    [ self.headScrollView.myScrollView setContentOffset:point animated:NO];
+    [self scrollViewDidScroll:self.headScrollView.myScrollView];
+
+}
+#pragma mark -- 上拉获取更多标列表的数据
+- (void)loadMarkListData
+{
+    [self showHudInView:self.view hint:@"加载中..."];
+    
+    __weak  typeof(self) weakSelf = self;
+    
+    NSString *pageStr = [NSString stringWithFormat:@"%ld",(long)self.pageCount];
+    
+    [CMT_ProcessTheDataTool getFinancialListDataPageCount:pageStr pageDataCount:@"10" typeDefault:@"2" andBlock:^(id jsonObject, NSError *error) {
+        
+        [weakSelf hideHud];
+        [weakSelf.listTable.mj_footer endRefreshing];
+
+        if(!error){
+            
+            if([jsonObject[@"status"] isEqualToString:@"1"]){
+                NSArray *dataArr = (NSArray *)jsonObject[@"bids"];
+                //如果上拉数据没有了就提示数据已加载完毕
+                if (dataArr.count == 0) {
+                    [weakSelf.listTable.mj_footer endRefreshingWithNoMoreData];
+                    return ;
+                }
+                weakSelf.pageCount += dataArr.count;
+                // 消除没有更多数据的状态
+                [weakSelf.listTable.mj_footer resetNoMoreData];
+                
+                for (NSDictionary *dict in dataArr) {
+                    
+                    CMT_financialModel *model = [CMT_financialModel mj_objectWithKeyValues:dict];
+                    [weakSelf.markListDataArr addObject:model];
+                    model.memoryCacheDataArr = weakSelf.markListDataArr;
+                }
+                
+                if (self.listFromType == RATECLASS) {
+                    if (weakSelf.dataArr.count > self.ratePageCount) {
+                        self.addRate = [self.dataArr[self.ratePageCount] rate];
+                    }
+                }
+                [weakSelf.listTable reloadData];
+ 
+            }else if ([jsonObject[@"status"] isEqualToString:CMT_SinglePointCode]){
+                [CMT_SinglePointLoginTool addSinglePointLoginWithSelfVC:self];
+            }else{
+                [self showHint:jsonObject[@"msg"]];
+            }
+            }else{
+            [weakSelf showHint:CMT_Error_NotNetWork];
+        }
+    }];
+}
+#pragma mark -- 获取首页数据
+- (void)loadFirstMarkListData
+{
+    __weak  typeof(self) weakSelf = self;
+    self.pageCount = 10;
+    
+    [CMT_ProcessTheDataTool getFinancialListDataPageCount:@"0" pageDataCount:@"10" typeDefault:@"2" andBlock:^(id jsonObject, NSError *error) {
+        
+        [weakSelf.listTable.mj_header endRefreshing];
+
+        if(!error){
+            
+            if([jsonObject[@"status"] isEqualToString:@"1"]){
+                
+                [weakSelf.listTable.mj_footer resetNoMoreData];
+                
+                if (weakSelf.markListDataArr) [weakSelf.markListDataArr removeAllObjects];
+                
+                NSArray *dataArr = (NSArray *)jsonObject[@"bids"];
+                for (NSDictionary *dict in dataArr) {
+                    CMT_financialModel *model = [CMT_financialModel mj_objectWithKeyValues:dict];
+                    [weakSelf.markListDataArr addObject:model];
+                }
+                
+                weakSelf.netBtn.hidden = weakSelf.markListDataArr.count > 0 ? YES : NO;
+                if (weakSelf.markListDataArr.count == 0) {
+                    [self changeStatusBtn];
+                }
+                
+                weakSelf.listTable.mj_footer.hidden = weakSelf.markListDataArr.count > 0 ? NO : YES;
+                
+                if (self.listFromType == RATECLASS) {
+                    
+                    if (weakSelf.dataArr.count > weakSelf.ratePageCount) {
+                        weakSelf.addRate = [weakSelf.dataArr[weakSelf.ratePageCount] rate];
+                    }
+                }
+                
+                [weakSelf.listTable reloadData];
+
+                
+            }else if ([jsonObject[@"status"] isEqualToString:CMT_SinglePointCode]){
+                [CMT_SinglePointLoginTool addSinglePointLoginWithSelfVC:self];
+            }else{
+                [self showHint:jsonObject[@"msg"]];
+            }
+            
+        }else{
+            [weakSelf showHint:CMT_Error_NotNetWork];
+        }
+    }];
+}
+#pragma mark -- 获取加息券列表的数据
+- (void)loadTicketListData:(NSString *)typeStr
+{
+    [self showHudInView:self.view hint:@"加载中..."];
+
+    __weak  typeof(self) weakSelf = self;
+    self.pageCount = 10;
+    
+    CMT_AccountModel *accoutModel = [CMT_AccountTool accountModel];
+    
+    //investAmount 投资金额  默认 为“no”
+    [CMT_ProcessTheDataTool getTicketListDataUserId:accoutModel.userId typeStr:typeStr investAmount:@"no" bidId:@"" bidpre:@"" andBlock:^(id jsonObject, NSError *error) {
+        
+        [weakSelf hideHud];
+        
+        if (!error) {
+            
+            if([jsonObject[@"status"] isEqualToString:@"1"]){
+                
+                if ([jsonObject[@"recordList"] count] == 0) return ;
+                
+                for (NSDictionary *dict in jsonObject[@"recordList"]) {
+                    NSLog(@"加息券列表数据======%@",dict);
+                    
+                    CMT_CoponTicketModel *model = [CMT_CoponTicketModel mj_objectWithKeyValues:dict];
+                    [weakSelf.dataArr addObject:model];
+                    
+                }
+                if (weakSelf.dataArr.count > 0) [self loadFirstMarkListData];
+                
+                [weakSelf addTopHeadSubView:weakSelf.dataArr.count];
+                
+                if (self.listFromType == RATECLASS) {
+                    weakSelf.addRate = [weakSelf.dataArr[0] rate];
+                }
+            }else if ([jsonObject[@"status"] isEqualToString:CMT_SinglePointCode]){
+                [CMT_SinglePointLoginTool addSinglePointLoginWithSelfVC:self];
+            }else{
+                [self showHint:jsonObject[@"msg"]];
+            }
+         }else {
+            [weakSelf showHint:CMT_Error_NotNetWork];
+            [weakSelf addTopHeadSubView:0];
+
+        }
+    }];
+}
+#pragma mark -- 初始化tableView
+- (void)createTable
+{
+    _listTable = [[UITableView alloc] initWithFrame:CGRectMake(0, 0, CMT_ScreenWidth, CMT_ScreenHeight - 64) style:UITableViewStyleGrouped];
+    _listTable.delegate = self;
+    _listTable.dataSource = self;
+    _listTable.tableHeaderView = self.headScrollView;
+    _listTable.sectionFooterHeight = 5;
+    _listTable.sectionHeaderHeight = 5;
+    _listTable.mj_header = [MJRefreshNormalHeader headerWithRefreshingTarget:self refreshingAction:@selector(loadFirstMarkListData)];
+    _listTable.mj_footer = [MJRefreshAutoNormalFooter footerWithRefreshingTarget:self refreshingAction:@selector(loadMarkListData)];
+    
+    self.listTable.mj_footer.hidden = YES;
+    
+    self.view = _listTable;
+}
+#pragma mark - scrollViewDelegate
+- (void)scrollViewDidScroll:(UIScrollView *)scrollView
+{
+    if (scrollView == self.headScrollView.myScrollView) {
+        //拿到bgScrollView的偏移量来判断让threeBtnSuperView在拖动是不隐藏
+        
+        CGFloat numValue = 0.00f;
+        
+        if (CMT_5PERCENTY == 1) {
+            numValue = 298.5;
+        }else if(CMT_6PERCENTY == 1){
+            numValue = 350;
+        }else {
+            numValue = 386;
+        }
+        NSInteger pageNum = scrollView.contentOffset.x / numValue;
+        self.ratePageCount = pageNum;
+        
+        if (pageNum < self.dataArr.count) {
+            self.addRate = [self.dataArr[pageNum] rate];
+            [_listTable reloadData];
+        }
+    }
+}
+#pragma mark - tableViewDelegate
+- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
+{
+    return self.markListDataArr.count;
+}
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section{
+    
+    return 1;
+}
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath{
+    
+    CMT_CouponTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:identifiler];
+    tableView.separatorStyle = UITableViewCellSelectionStyleNone;
+    
+    if (!cell) {
+        
+        cell = [[CMT_CouponTableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:identifiler];
+    }
+    if (self.listFromType == RATECLASS) {
+        cell.percentStr = self.addRate;
+    }
+    cell.listFromType = self.listFromType;
+    cell.model = self.markListDataArr[indexPath.section];
+    
+    return cell;
+}
+- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath{
+    
+    return 120;
+}
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
+    
+    [tableView deselectRowAtIndexPath:indexPath animated:YES];
+    
+    CMT_productDetViewController *couponVc = [[CMT_productDetViewController alloc] init];
+    couponVc.markIdStr = [self.markListDataArr[indexPath.section] bidId];
+    couponVc.markType = [[self.markListDataArr[indexPath.section] bidType]  isEqual: @"0"] ? 0 : 1;;//是否是新手标
+    couponVc.fromType = 3;//来自加息券列表
+    couponVc.markState = [[self.markListDataArr[indexPath.section] status]  isEqual: @"2"] ? 0 : 1;//状态
+    
+    if (self.listFromType == RATECLASS) {
+        couponVc.rateStr = [ self.addRate substringFromIndex:1];
+    }
+    [self.navigationController pushViewController:couponVc animated:YES];
+}
+
+- (void)didReceiveMemoryWarning {
+    [super didReceiveMemoryWarning];
+    // Dispose of any resources that can be recreated.
+}
+
+@end

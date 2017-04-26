@@ -1,0 +1,18 @@
+//
+//  CMT_ThreeInvestPreViewController.h
+//  CongMingTou
+//
+//  Created by summer on 16/5/11.
+//  Copyright © 2016年 wzh. All rights reserved.
+//
+
+#import "CMT_BaseVIewController.h"
+
+@interface CMT_ThreeInvestPreViewController : CMT_BaseVIewController
+@property  (nonatomic, assign) CMTEnterInvestmentPreparationType enterInvestmentPreparationType;
+@property (copy, nonatomic) NSString *nameStr;
+@property (copy, nonatomic) NSString *idNumberStr;
+@property (copy, nonatomic) NSString * bankCardNumberStr;
+@property (copy, nonatomic) NSString *phoneStr;
+@property (copy, nonatomic) NSString *verificationCodeStr;
+@end

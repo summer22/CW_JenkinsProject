@@ -1,0 +1,50 @@
+//
+//  CMT_MyFuLiTableViewCell.h
+//  CongMingTou
+//
+//  Created by wzh on 16/5/11.
+//  Copyright © 2016年 wzh. All rights reserved.
+//
+
+#import <UIKit/UIKit.h>
+#import "CMT_MyWelfareListModel.h"
+@interface CMT_MyFuLiTableViewCell : UITableViewCell
+
+
+
+
+@property (strong, nonatomic) IBOutlet UIImageView *backImageView;
+/**
+ *  百分比lab
+ */
+@property (strong, nonatomic) IBOutlet UILabel *percentageLab;
+/**
+ *  标题lab
+ */
+@property (strong, nonatomic) IBOutlet UILabel *titleLab;
+/**
+ *  详细介绍
+ */
+@property (strong, nonatomic) IBOutlet UILabel *detailLab;
+/**
+ *  到期描述
+ */
+@property (strong, nonatomic) IBOutlet UILabel *desLab;
+/**
+ *  有效日期
+ */
+@property (strong, nonatomic) IBOutlet UILabel *dateLab;
+/**
+ *  优惠卷状态 lab
+ */
+@property (strong, nonatomic) IBOutlet UILabel *shiYongStateLab;
+@property (strong, nonatomic) IBOutlet UIButton *shiYongStateBtn;
+@property (strong, nonatomic) CMT_MyWelfareListModel *model;;
+@property (strong, nonatomic) IBOutlet NSLayoutConstraint *lineViewH;
+
+
+- (IBAction)shiYongStateBtnClicked:(id)sender;
++ (CMT_MyFuLiTableViewCell *)cellWithTablebView:(UITableView *)tableView;
+
+
+@end

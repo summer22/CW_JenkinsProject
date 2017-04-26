@@ -1,0 +1,83 @@
+//
+//  CMT_TenderTypeView.m
+//  CongMingTou
+//
+//  Created by wzh on 16/5/18.
+//  Copyright © 2016年 QiYuan. All rights reserved.
+//
+
+#import "CMT_TenderTypeView.h"
+
+@interface CMT_TenderTypeView ()
+@property (nonatomic, strong) IBOutlet UIView *view;
+@end
+
+@implementation CMT_TenderTypeView
+
+- (instancetype)initWithFrame:(CGRect)frame{
+    if(self = [super initWithFrame:frame]){
+        
+        [self setUI];
+
+    }
+    return self;
+}
+
+- (instancetype)initWithCoder:(NSCoder *)aDecoder{
+    
+    if (self = [super initWithCoder:aDecoder]) {
+
+        [self setUI];
+    }
+    
+    return self;
+}
+
+- (void)setUI{
+    [[NSBundle mainBundle] loadNibNamed:@"CMT_TenderTypeView" owner:self options:nil];
+    [self addSubview:self.view];
+}
+
+- (void)layoutSubviews{
+    [super layoutSubviews];
+    self.view.frame = self.bounds; //填一下自动布局的坑！最好要写这一句
+    [self sendSubviewToBack:self.view];
+}
+- (void)chiYouZhongTenderStr:(NSString *)tenderStr numStr:(NSString *)numStr andTenderType:(CMTTenderType)tenderType{
+    _numLab.hidden = NO;
+    if(tenderType == CMTTenderTypeNewStandard){
+        _backImageView.image = [UIImage imageNamed:@"Financail_NewMark"];
+    }else if (tenderType == CMTTenderType30Day || tenderType == CMTTenderType90Day){
+        _backImageView.image = [UIImage imageNamed:@"Financial_YellowMark"];
+    }else if (tenderType == CMTTenderType180Day || tenderType == CMTTenderType360Day){
+        _backImageView.image = [UIImage imageNamed:@"Financial_BlueMark"];
+
+    }
+    _titleLab.attributedText = [NSMutableAttributedString attributeWithTotalStr:tenderStr andWholeTiltSize:0.2];
+    _numLab.attributedText = [NSMutableAttributedString attributeWithTotalStr:numStr andWholeTiltSize:0.2];
+    
+}
+- (void)yuYueAndShuHuiTenderStr:(NSString *)tenderStr andTenderType:(CMTTenderType)tenderType{
+
+    _numLab.hidden = YES;
+    if(tenderType == CMTTenderTypeNewStandard){
+        _backImageView.image = [UIImage imageNamed:@"TenderRed"];
+    }else if (tenderType == CMTTenderType30Day || tenderType == CMTTenderType90Day){
+        _backImageView.image = [UIImage imageNamed:@"TenderYellow"];
+    }else if (tenderType == CMTTenderType180Day || tenderType == CMTTenderType360Day){
+        _backImageView.image = [UIImage imageNamed:@"TenderBlue"];
+        
+    }
+    _titleLab.attributedText = [NSMutableAttributedString attributeWithTotalStr:tenderStr andWholeTiltSize:0.2];
+}
+
+
+/*
+// Only override drawRect: if you perform custom drawing.
+// An empty implementation adversely affects performance during animation.
+- (void)drawRect:(CGRect)rect {
+    // Drawing code
+}
+*/
+
+@end

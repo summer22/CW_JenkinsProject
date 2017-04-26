@@ -1,0 +1,446 @@
+//
+//  CMT_HttpTool.h
+//  CongMingTou
+//
+//  Created by wzh on 16/5/9.
+//  Copyright © 2016年 QiYuan All rights reserved.
+//
+
+#import <Foundation/Foundation.h>
+@interface CMT_HttpTool : NSObject
+
+/**
+ *  广告开启状态
+ *
+ *  @return
+ */
++ (NSString *)advertisingOpenState;
+/**
+ *  获取验证码
+ *
+ *  @param phoneNum 手机号
+ *  @param type (0:注册，1：找回密码，2：登录3：设置密码，4:实名认证 5:其他)
+ *  @return
+ */
++ (NSString *)getVerificationcodeWithPhonNum:(NSString *)phoneNum andType:(NSString *)type;
+/**
+ *  注册
+ *
+ *  @param phoneNum        手机号
+ *  @param verificatonCode 验证码
+ *  @param invitationCode  邀请码
+ *  @param mobileType  客户端类型  ios  0  安卓 1
+ *  @param channelNumber 唯一表示广告id
+ *  @param downLoadType  下载渠道 安卓专用   苹果传 appStore
+ *  @return
+ */
++ (NSString *)registeredWithPhoneNum:(NSString *)phoneNum verificatonCode:(NSString *)verificatonCode andInvitationCode:(NSString *)invitationCode mobileType:(NSString *)mobileType channelNumber:(NSString *)channelNumber downLodType:(NSString *)downLoadType;
+/**
+ *  登陆
+ *
+ *  @param phoneNum        手机号
+ *  @param verificatonCode 验证码
+ *
+ *  @return
+ */
++ (NSString *)loginWithPhoneNum:(NSString *)phoneNum verificatonCode:(NSString *)verificatonCode;
+
+/**
+ *  我的福利
+ *
+ *  @param userId userId
+ *  @param  type：0:获取所有加息券和本金券    1，所有可用加息券    2，所有可用本金券
+ *  @param investAmount 投资金额 投资金额  默认 为“no”
+ *  @param bid 标的id
+ *  @param bidpre 标的期限
+ *  @return
+ */
++ (NSString *)myFuLiListWithUserId:(NSString *)userId andType:(NSString *)type investAmount:(NSString *)investAmount bid:(NSString *)bid bidpre:(NSString *)bidpre;
+
+/**
+ *  获取我的交易记录
+ *
+ *  @param userId userId
+ *  @param page   当前页数
+ *  @param size   每页显示数
+ *  @param type   类型(1：充值；2：提现；)
+ *
+ *  @return 
+ */
++ (NSString *)getJiaoYiJiLuListWithUserId:(NSString *)userId page:(int)page size:(int)size type:(int)type;
+
+
+/**
+ *  实名认证和绑定银行卡
+ *
+ *  @param userId        用户ID
+ *  @param userIdentity  身份证号
+ *  @param userName      真实姓名
+ *  @param bankCardNum   银行卡号
+ *  @param userMobile    预留手机号
+ *  @param mobileSmsCode 短信验证码
+ *  token	时间戳	必选
+ *  @return
+ */
++ (NSString *)realNameAuthenticateWithUserId:(NSString *)userId userIdentity:(NSString *)userIdentity userName:(NSString *)userName bankCardNum:(NSString *)bankCardNum userMobile:(NSString *)userMobile mobileSmsCode:(NSString *)mobileSmsCode rePassword:(NSString *)rePassword;
+/**
+ *  验证支付密码是否正确
+ *
+ *  @param phoneNum    用户手机号
+ *  @param oldPassword 旧密码
+ *
+ *  @return
+ */
++ (NSString *)confirmPayPasswordWithPhoneNum:(NSString *)phoneNum andOldPassword:(NSString *)oldPassword;
+
+/**
+ *  修改支付密码
+ *
+ *  @param phoneNum  用户手机号
+ *  @param newPayPwd 新密码
+ *
+ *  @return
+ */
++ (NSString *)modifyPayPwdWithPhoneNum:(NSString *)phoneNum andNewsPayPwd:(NSString *)newPayPwd;
+/**
+ *  设置支付密码
+ *
+ *  @param phoneNum    手机号
+ *  @param resetPayPwd 重置的密码   输入两次
+ *
+ *  @return
+ */
++ (NSString *)resetPayPwdWithPhoneNum:(NSString *)phoneNum resetPayPwd:(NSString *)resetPayPwd;
+
+/**
+ *  修改支付密码
+ *
+ *  @param phoneNum  手机号
+ *  @param oldPayPwd 旧密码
+ *  @param newPayPwd 新密码
+ *
+ *  @return
+ */
++ (NSString *)modifyPayPwdWithPhoneNum:(NSString *)phoneNum oldPayPwd:(NSString *)oldPayPwd andNewPayPwd:(NSString *)newPayPwd;
+/**
+ *  我的
+ *
+ *  @param userId userId
+ *
+ *  @return
+ */
++ (NSString *)getUserInforWithUserId:(NSString *)userId;
+/**
+ *  理财首页列表
+ *
+ *  @param startStr 分页参数 － 当前记录 －累加
+ *  @param endStr   每页返回的个数
+ *
+ *  @return 拼接的理财列表接口
+ */
++ (NSString *)getFinaciallDataList:(NSString *)startStr pageCount:(NSString *)endStr defaultIdStr:(NSString *)typeStr;
+
+
+/**
+ *  产品详情
+ *
+ *  @param bidIdStr 标的id
+ *
+ *  @return 拼接的产品详情接口
+ */
++ (NSString *)getProductDetileDataList:(NSString *)bidIdStr userID:(NSString *)userIdStr;
+
+/**
+ *  投资记录
+ *
+ *  @param bidIdStr 标的id
+ *  @param pageStr  分页
+ *
+ *  @return 拼接的投资记录接口
+ */
++ (NSString *)getProductInvestRecordDataList:(NSString *)bidIdStr start:(NSString *)pageStr;
+
+/**
+ *  消息列表
+ *
+ *  @param userId userid
+ *  @param start  开始
+ *  @param end    结束
+ *
+ *  @return
+ */
++ (NSString *)getNewsListWithUserId:(NSString *)userId start:(int)start end:(int)end;
+
+/**
+ *   消息详情界面
+ *
+ *  @param newsId 消息id
+ *
+ *  @return
+ */
++ (NSString *)getNewsDetailWithId:(NSString *)newsId;
+/**
+ *  全部标记已读
+ *
+ *  @param userId userId
+ *
+ *  @return
+ */
++ (NSString *)allReadWithUserId:(NSString *)userId;
+
+/**
+ *  获取银行卡信息
+ *
+ *  @param userId userId
+ *
+ *  @return
+ */
++ (NSString *)getIDCardInforWithUserId:(NSString *)userId;
+
+/**
+ *  我的投资(持有中、预约中、已赎回)
+ *
+ *  @param userId 当前页数
+ *  @param size   分页参数-每页显示数
+ *  @param type   类型(0:持有中；1：预约中；2：已赎回)
+ *
+ *  @return
+ */
++ (NSString *)myInvestmentWithUserId:(NSString *)userId page:(int)page size:(int)size andType:(int)type;
+
+
+/**
+ *  标的详细信息
+ *
+ *  @param investId  投资ID
+ *  @param type     (持有中和已赎回传0，预约中传1)
+ *  @return
+ */
++ (NSString *)investmentWithInvestId:(NSString *)investId andType:(NSString *)type;
+
+/**
+ *  取消预约投资
+ *
+ *  @param userId   用户id
+ *  @param investId 投资记录id
+ *
+ *  @return
+ */
++ (NSString *)cancelYuYueInvestmentWithUserId:(NSString *)userId investId:(NSString *)investId;
+
+
+/**
+ *  收益明细
+ *
+ *  @param userId           用户id
+ *  @param pageIndex <#pageIndex description#>
+ *  @param pageSize  <#pageSize description#>
+ *
+ *  @return
+ */
++ (NSString *)myShouYiMingXiWithUserId:(NSString *)userId pageIndex:(int)pageIndex pageSize:(int)pageSize;
+
+//预约投资列表
++ (NSString *)getPreInvestDataList:(NSString *)pageCountStr;
+
+/**
+ *  投资确认
+ *
+ *  @param bidId  标的id
+ *  @param amount 金额
+ *
+ */
++ (NSString *)getinvestConfirm:(NSString *)bidId pageCount:(NSString *)amount userIdStr:(NSString *)userId;
+/**
+ *  银生支付获取用户信息
+ *
+ *  @param userId 用户id
+ *
+ *  @return 
+ */
++ (NSString *)getRechargeUserInforWithUserId:(NSString *)userId;
+
+/**
+ *  充值申请
+ *
+ *  @param userId  用户ID
+ *  @param amount  数额
+ *  @param orderId  订单Id
+ *
+ *  @return
+ */
++ (NSString *)getRechargeRequestWithUserId:(NSString *)userId amount:(NSString *)amount;
+
+/**
+ *  充值申请验证验证码
+ *
+ *  @param userId       用户id
+ *  @param amount       金额
+ *  @param orderNoThird 第三方平台订单号
+ *  @param payToken     支付令牌
+ *  @param orderNo      聪明投订单号
+ *  @param captch        验证码
+ *
+ *  @return
+ */
++ (NSString *)topUpApplicationVerificationCodeWithUserId:(NSString *)userId amount:(NSString *)amount orderNoThird:(NSString *)orderNoThird payToken:(NSString *)payToken orderNo:(NSString *)orderNo captch:(NSString *)captch;
+
+
+/**
+ *  提现申请
+ *
+ *  @param userId      用户id
+ *  @param amount      金额
+ *  @param bankId      银行ID
+ *  @param payPassword 支付密码
+ *  @param type        类型(默认传1)
+ *
+ *  @return 
+ */
++ (NSString *)getWithdrawalRequestWithUserId:(NSString *)userId amount:(NSString *)amount bankId:(NSString *)bankId payPassword:(NSString *)payPassword type:(NSString *)type;
+/**
+ *  重置手势密码验证
+ *
+ *  @param phoneNum 手机号
+ *  @param captch   验证码
+ *
+ *  @return
+ */
++ (NSString *)resetGesturePasswordWithPhoneNum:(NSString *)phoneNum andCaptch:(NSString *)captch;
+
+/**
+ *  立即投资
+ *
+ *  @param userId          userId
+ *  @param bidStr          标id
+ *  @param investAmountStr 投资金额
+ *  @param cashIdStr       本金券id
+ *  @param jrateId         加息券id
+ *
+ *  @return
+ */
++(NSString *)atOnceToInvest:(NSString *)userId bidIdStr:(NSString *)bidStr investAmount:(NSString *)investAmountStr  cashId:(NSString *)cashIdStr rateStr:(NSString *)jrateId token:(NSString *)investToken;
+
+/**
+ *  预约投资
+ *
+ *  @param userId             userid
+ *  @param bidStr             标id
+ *  @param preInvestAmountStr 预投资金额
+ *  @param periodStr          标的期限
+ *  @param investIdStr        投资记录
+ *  @param rateStr            加息券id
+ *  @return 预约投资金额
+ */
++ (NSString *)preinvestInvest:(NSString *)userId  preInvestAmount:(NSString *)preInvestAmountStr period:(NSString *)periodStr investId:(NSString *)investIdStr rateStr:(NSString *)rateId;
+/**
+ *  预约金额
+ *
+ *  @param investIdStr 预约id
+ *
+ *  @return 预约金额
+ */
++ (NSString *)preinvestInvest:(NSString *)investIdStr;
+
+//确认预约接口
++ (NSString *)preinvestInvest:(NSString *)userId period:(NSString *)periodStr investId:(NSString *)investIdStr apr:(NSString *)aprStr;
+
+/**
+ *  获取分享给网友的内容
+ *
+ *  @param userId 用户id
+ *
+ *  @return
+ */
++ (NSString *)getShareFirendContentWithUserId:(NSString *)userId;
+
+/**
+ *  分享到好友页面界面内容获取 （更改后）
+ *
+ *  @param userid 用户id
+ *  @param type   接口标识(0:点击发现分享查询接口 1：分享成功后回调保存数据接口)
+ *
+ *  @return
+ */
++ (NSString *)getShareFriendBeforeGetShareContentWithUserId:(NSString *)userId type:(NSString *)type;
+/**
+ *  获取分享内容
+ *
+ *  @param userId 用户id
+ *
+ *  @return
+ */
++ (NSString *)getShareContentWithUserId:(NSString *)userId;
+
+/**
+ *  分享加息接口
+ *
+ *  @param phoneNum 手机号
+ *  @param bitId    标得id
+ *  @param investId 投资id
+ *  @param amount 投资金额
+ *  @return
+ */
++ (NSString *)shareSuccessAddRatesWithPhoneNum:(NSString *)phoneNum bitId:(NSString *)bitId investId:(NSString *)investId amount:(NSString *)amount;
+/**
+ *  验证验证码是否正确
+ *
+ *  @param phoneNum         手机号
+ *  @param verificationCode验证码
+ *
+ *  @return
+ */
++ (NSString *)verificationCodeIsOkWithPhoneNum:(NSString *)phoneNum verificationCode:(NSString *)verificationCode;
+
+/**
+ *  应用雷达
+ *
+ */
++ (NSString *)liveModelIdfi;
+
+/**
+ *  版本更新
+ *
+ *  @return
+ */
++ (NSString *)updateVersion;
+/**
+ *  获取合同信息
+ *
+ *  @param investId 投资id
+ *  @param period   期限
+ *
+ *  @return
+ */
++ (NSString *)getContractInforWithInvestId:(NSString *)investId period:(NSString *)period;
+/**
+ *  债权列表
+ *
+ *  @param markNumb 标的编号
+ *
+ *  @return
+ */
++ (NSString *)getCreditors:(NSString *)markNumb;
+
++ (NSString *)getFinalCreditors:(NSString *)creditorNumb;
+
+/**
+ *  获取银行列表
+ *  @return
+ */
++ (NSString *)getBanklist;
+
+/**
+ *  获取活动分享的分享内容
+ *
+ *  @param activityId 活动id
+ *  @param userId     用户id
+ *
+ *  @return
+ */
++ (NSString *)getActivityShareContentWithActivityId:(NSString *)activityId userId:(NSString *)userId;
+/**
+ *  首页banner接口
+ */
++ (NSString *)getFinacialBanner;
+@end

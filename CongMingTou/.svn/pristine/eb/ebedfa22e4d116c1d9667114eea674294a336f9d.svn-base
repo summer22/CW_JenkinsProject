@@ -1,0 +1,44 @@
+//
+//  CMT_ChiyouzhongTableViewCell.h
+//  CongMingTou
+//
+//  Created by 雷博 on 16/5/17.
+//  Copyright © 2016年 QiYuan. All rights reserved.
+//
+
+#import <UIKit/UIKit.h>
+#import "markImageView.h"
+
+@interface CMT_ChiyouzhongTableViewCell : UITableViewCell
+
+/** 状态ImageView */
+@property (nonatomic,strong)UIImageView *topLeftView;
+/** 图片上的文字右边label */
+@property (nonatomic,strong) UILabel *titleLabel;
+/** 图片上的文字左边的label */
+@property (nonatomic,strong) UILabel *rightLabel;
+/** 右上角按钮 */
+@property (nonatomic,strong)UIButton *rightBtn;
+
+/** 状态ImageView */
+@property (nonatomic,strong)markImageView *topLeftView2;
+/** 已售罄状态ImageView */
+@property (nonatomic,strong)UIImageView *toprightView;
+/** 图片上的文字分期label */
+@property (nonatomic,strong) UILabel *stageLabel;
+/** 投标类型的label */
+@property (nonatomic,strong) UILabel *markLabel;
+/** 投资期限label */
+@property (nonatomic,strong) UILabel *dayLabel;
+/** 投资状态类型按钮 */
+@property (nonatomic,strong)UIButton *backStyleBtn;
+/** 投资收益率label */
+@property (nonatomic,strong) UILabel *profitLabel;
+/** 预期年化收益率label */
+@property (nonatomic,strong) UILabel *expectProfitLabel;
+
+@property (nonatomic,assign) int type;
+
+- (void)setModel;
+
+@end

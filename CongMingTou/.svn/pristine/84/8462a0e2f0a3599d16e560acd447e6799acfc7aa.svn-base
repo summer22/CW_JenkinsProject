@@ -1,0 +1,16 @@
+//
+//  CMT_RegisteredModel.h
+//  CongMingTou
+//
+//  Created by wzh on 16/5/19.
+//  Copyright © 2016年 QiYuan. All rights reserved.
+//
+
+#import <Foundation/Foundation.h>
+#import "CMT_BaseModel.h"
+
+@interface CMT_RegisteredModel : CMT_BaseModel
+
+
++ (CMT_RegisteredModel *)registeredModelWithDic:(NSDictionary *)dic;
+@end

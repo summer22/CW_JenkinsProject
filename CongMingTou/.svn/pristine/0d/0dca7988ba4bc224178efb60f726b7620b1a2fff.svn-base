@@ -1,0 +1,341 @@
+//
+//  CMT_FriendsShareViewController.m
+//  CongMingTou
+//
+//  Created by wzh on 16/6/6.
+//  Copyright © 2016年 QiYuan. All rights reserved.
+//
+
+#import "CMT_FriendsShareViewController.h"
+#import "QRCode.h"
+#import "UIImage+RoundedRectImage.h"
+#import "SDWebImageManager.h"
+#import "CMT_ShareSuccessfulView.h"
+
+@interface CMT_FriendsShareViewController ()<UMSocialUIDelegate>
+@property (strong, nonatomic) IBOutlet UIScrollView *backScrollView;
+@property (strong, nonatomic) IBOutlet UIView *backView;
+@property (strong, nonatomic) IBOutlet NSLayoutConstraint *topViewH;
+@property (strong, nonatomic) IBOutlet UILabel *titleLab;
+@property (strong, nonatomic) IBOutlet UILabel *desLab;
+@property (strong, nonatomic) IBOutlet UIButton *shareBtn;
+@property (strong, nonatomic) IBOutlet UIImageView *qrCodeImageView;
+@property (strong, nonatomic) IBOutlet UIImageView *logoImageView;
+@property (strong, nonatomic) IBOutlet UIView *topView;
+@property (strong, nonatomic) IBOutlet UIView *topViewBottomDesView;
+@property (strong, nonatomic) IBOutlet UILabel *contenDesLab1;
+@property (strong, nonatomic) IBOutlet UILabel *itemLab1;
+@property (strong, nonatomic) IBOutlet UILabel *contentDesLab2;
+@property (strong, nonatomic) IBOutlet UILabel *itemLab2;
+@property (strong, nonatomic) IBOutlet UILabel *receiveMoneyLab;
+@property (strong, nonatomic) IBOutlet NSLayoutConstraint *receiveLabTop;
+
+
+- (IBAction)shareBtnClicked:(id)sender;
+
+@end
+
+@implementation CMT_FriendsShareViewController
+
+#define CMT_ShareFriendNavColor [UIColor colorWithRed:0.82f green:0.24f blue:0.29f alpha:1.00f]
+#define CMT_TitleColor [UIColor colorWithRed:0.98f green:0.75f blue:0.42f alpha:1.00f]
+
+- (void)viewWillAppear:(BOOL)animated{
+    [super viewWillAppear:animated];
+    //设置导航背景
+    [self.navigationController.navigationBar setBackgroundImage:[UIImage createImageWithColor:CMT_ShareFriendNavColor] forBarMetrics:UIBarMetricsDefault];
+    [self loadDataGetShareFirendInforWithType:@"0"];
+
+}
+
+- (void)viewDidLoad {
+    [super viewDidLoad];
+    // Do any additional setup after loading the view from its nib.
+    [self setDefautUI];
+    
+}
+
+- (void)viewWillDisappear:(BOOL)animated{
+    [super viewWillDisappear:animated];
+    // 1.获得appearance对象, 就能修改主题
+    [self.navigationController.navigationBar setBackgroundImage:[UIImage createImageWithColor:ThemeBackgroundColor] forBarMetrics:UIBarMetricsDefault];
+
+}
+
+
+- (void)setDefautUI{
+
+    _backScrollView.frame = self.view.bounds;
+    [_backScrollView addSubview:_backView];
+    _topView.backgroundColor = [CMT_ShareFriendNavColor colorWithAlphaComponent:0.9];
+    
+    _titleLab.textColor = CMT_TitleColor;
+    _titleLab.attributedText = [NSMutableAttributedString attributeWithTotalStr:_titleLab.text subStr:@"1" subStrFont:UIFont54];
+    
+    _contenDesLab1.textColor = [[UIColor whiteColor] colorWithAlphaComponent:0.6];
+    _contentDesLab2.textColor = [[UIColor whiteColor] colorWithAlphaComponent:0.6];
+    
+    [_itemLab1 styleWithCornerRadius:_itemLab1.height / 2];
+    _itemLab1.textColor = CMT_ShareFriendNavColor;
+    _itemLab1.backgroundColor = CMT_TitleColor;
+    
+    [_itemLab2 styleWithCornerRadius:_itemLab2.height / 2];
+    _itemLab2.textColor = CMT_ShareFriendNavColor;
+    _itemLab2.backgroundColor = CMT_TitleColor;
+
+
+    
+    [_shareBtn styteWithCornerRadius:_shareBtn.height/2 shadowColor:_shareBtn.backgroundColor shadowOffset:CMT_ShadowOffset shadowOpacity:CMT_ShadowOpacity shadowRadius:CMT_ShadowRadius];
+    [_qrCodeImageView styleWithCornerRadius:10.0 borderColor:ThemeBackgroundColor borderWidth:4.0];
+    
+    
+    _topViewBottomDesView.backgroundColor = CMT_ShareFriendNavColor;
+    
+//    [self qrCode];
+}
+- (void)viewDidLayoutSubviews{
+    [super viewDidLayoutSubviews];
+    _backView.height = CMT_StandardHeight - CMT_NAV_Height;
+    if(CMT_6pAnd6ps){
+        _contenDesLab1.font = UIFont28;
+        _contentDesLab2.font = UIFont28;
+        _topViewH.constant = 200 * CMT_ProportionX;
+        _backView.height = CMT_ScreenHeight - CMT_NAV_Height;
+        _receiveLabTop.constant = 90;
+    }
+    CMT_Log(@"%f",_backView.height);
+    _backScrollView.contentSize = CGSizeMake(0, CGRectGetMaxY(_backView.frame));
+
+}
+- (void)didReceiveMemoryWarning {
+    [super didReceiveMemoryWarning];
+    // Dispose of any resources that can be recreated.
+}
+
+- (IBAction)shareBtnClicked:(id)sender {
+    [self loadDataGetShareContent];
+}
+
+#pragma mark - -获取分享内容
+- (void)loadDataGetShareContent{
+    [self showHudInView:self.view hint:CMT_LoadDataWaiting];
+    [CMT_ProcessTheDataTool getShareContentWithUserId:[CMT_AccountTool accountModel].userId andBlock:^(CMT_GetShareContentModel *model, NSError *error) {
+        [self hideHud];
+        if(!error){
+            if([[NSString stringWithFormat:@"%@",model.status] isEqualToString:@"1"]){
+                
+                [self setShareContentWithModel:model];
+            }else if ([[NSString stringWithFormat:@"%@",model.status] isEqualToString:CMT_SinglePointCode]){
+                [CMT_SinglePointLoginTool addSinglePointLoginWithSelfVC:self];
+            }else{
+                [self showHint:model.msg];
+                
+            }
+        }else{
+            [self showHint:CMT_Error_NotNetWork];
+        }
+    }];
+}
+
+// 界面 数据接口 及 标记是否分享接口
+- (void)loadDataGetShareFirendInforWithType:(NSString *)type{
+    
+    [self showHudInView:self.view hint:CMT_LoadDataWaiting];
+    [CMT_ProcessTheDataTool getShareFirendContentWithUserId:[CMT_AccountTool accountModel].userId type:type andBlock:^(CMT_GetShareFirendInforAfterModel *model, NSError *error) {
+        [self hideHud];
+        if(!error){
+            if([type isEqualToString:@"1"]){
+                [self loadDataGetShareFirendInforWithType:@"0"];
+                return ;
+            }
+            if([[NSString stringWithFormat:@"%@",model.status] isEqualToString:@"1"]){
+                [self setLoadDataUIWithModel:model];
+            }else if ([[NSString stringWithFormat:@"%@",model.status] isEqualToString:CMT_SinglePointCode]){
+                [CMT_SinglePointLoginTool addSinglePointLoginWithSelfVC:self];
+            }else{
+                [self showHint:model.msg];
+            }
+        }else{
+            [self showHint:CMT_Error_NotNetWork];
+        }
+
+    }];
+}
+- (void)setLoadDataUIWithModel:(CMT_GetShareFirendInforAfterModel *)model{
+    //分享金额状态（0：没领取，1：已领取）
+    if([model.amtStatus isEqualToString:@"0"]){//0：没领取
+        _logoImageView.image = [UIImage imageNamed:@"redEnvelope"];
+        _receiveMoneyLab.hidden = YES;
+    }else{//已领取
+        _logoImageView.image = [UIImage imageNamed:@"redEnvelopeFinish"];
+        _receiveMoneyLab.hidden = NO;
+        NSString *subStr = @"元";
+        NSString *totalStr = [NSString stringWithFormat:@"%@元",model.shareAmt];
+        _receiveMoneyLab.attributedText = [NSMutableAttributedString attributeWithTotalStr:totalStr subStr: subStr subStrFont:UIFont18];
+    }
+    [_qrCodeImageView sd_setImageWithURL:[NSURL URLWithString:model.twoCodePath] placeholderImage:nil];
+    _desLab.text = [NSString stringWithFormat:@"本月剩余领取红包机会 %@ 次",model.shareNum];
+}
+
+#pragma mark - -设置分享
+- (void)setShareContentWithModel:(CMT_GetShareContentModel *)model{
+    __block UIImage *iconImage = nil;
+    [[SDWebImageManager sharedManager] downloadImageWithURL:[NSURL URLWithString:model.imgUrl] options:0 progress:^(NSInteger receivedSize, NSInteger expectedSize){
+        //处理下载进度
+    } completed:^(UIImage *image, NSError *error, SDImageCacheType cacheType, BOOL finished, NSURL *imageURL) {
+        if (error) {//加载失败
+            iconImage = [UIImage imageNamed:@"default_image"];
+        }else{
+            iconImage = image;
+        }
+        // 分享到微信朋友圈
+        [CMT_ShareTool wechatTimelineWithTitle:model.title url:model.link shareText:model.desc shareImage:iconImage];
+        // 分享到微信好友
+        [CMT_ShareTool wechatSessionWithTitle:model.title url:model.link shareText:model.desc shareImage:iconImage];
+        //qq好友
+        [CMT_ShareTool qqWithTitle:model.title url:model.link shareText:model.desc shareImage:iconImage ];
+        //qq空间
+        [CMT_ShareTool qqQzoneWithTitle:model.title url:model.link shareText:model.desc shareImage:iconImage];
+        [UMSocialSnsService presentSnsIconSheetView:self
+                                             appKey:CMT_UmengAppkey
+                                          shareText:model.desc
+                                         shareImage:iconImage
+                                    shareToSnsNames:[NSArray arrayWithObjects:UMShareToWechatTimeline,UMShareToWechatSession,UMShareToQQ,UMShareToQzone,nil]
+                                           delegate:self];
+        
+    }];
+}
+
+/**
+ 自定义关闭授权页面事件
+ 
+ @param navigationCtroller 关闭当前页面的navigationCtroller对象
+ 
+ */
+//-(BOOL)closeOauthWebViewController:(UINavigationController *)navigationCtroller socialControllerService:(UMSocialControllerService *)socialControllerService{
+//
+//}
+
+/**
+ 关闭当前页面之后
+ 
+ @param fromViewControllerType 关闭的页面类型
+ 
+ */
+-(void)didCloseUIViewController:(UMSViewControllerType)fromViewControllerType{
+    
+}
+
+/**
+ 各个页面执行授权完成、分享完成、或者评论完成时的回调函数
+ 
+ @param response 返回`UMSocialResponseEntity`对象，`UMSocialResponseEntity`里面的viewControllerType属性可以获得页面类型
+ */
+-(void)didFinishGetUMSocialDataInViewController:(UMSocialResponseEntity *)response{
+    [CMT_ShareSuccessfulView shareSuccessfulViewWithResponse:response.responseCode];
+    if (response.responseCode == UMSResponseCodeSuccess) {
+        
+        NSString *platName;
+        //得到分享到的平台名
+        if ([[[response.data allKeys] objectAtIndex:0] isEqualToString:@"wxtimeline"]) {
+            platName = @"微信朋友圈";
+        }else if ([[[response.data allKeys] objectAtIndex:0] isEqualToString:@"wxsession"]){
+            platName = @"微信好友";
+        }else if ([[[response.data allKeys] objectAtIndex:0] isEqualToString:@"qzone"]){
+            platName = @"QQ空间";
+        }else if ([[[response.data allKeys] objectAtIndex:0] isEqualToString:@"qq"]){
+            platName = @"QQ好友";
+        }
+        
+        CMT_Log(@"分享平台%@",[[response.data allKeys] objectAtIndex:0]);
+        if([[response.data allKeys] objectAtIndex:0] == UMShareToQzone || [[response.data allKeys] objectAtIndex:0] == UMShareToWechatTimeline){
+            [self loadDataGetShareFirendInforWithType:@"1"];
+        }
+
+        SensorsAnalyticsSDK *sdk = [SensorsAnalyticsSDK sharedInstance];
+        if (sdk != nil) {
+            [sdk track:@"share" withProperties:@{@"shareType": [NSString convertNull:platName],
+                                                 @"shareContent": @"加息券分享",
+                                                 @"distinctId": [NSString convertNull:[CMT_AnalyticsTool userID]]}];
+        }
+    }
+
+}
+
+/**
+ 点击分享列表页面，之后的回调方法，你可以通过判断不同的分享平台，来设置分享内容。
+ 例如：
+ 
+ -(void)didSelectSocialPlatform:(NSString *)platformName withSocialData:(UMSocialData *)socialData
+ {
+ if (platformName == UMShareToSina) {
+ socialData.shareText = @"分享到新浪微博的文字内容";
+ }
+ else{
+ socialData.shareText = @"分享到其他平台的文字内容";
+ }
+ }
+ 
+ @param platformName 点击分享平台
+ 
+ @prarm socialData   分享内容
+ */
+-(void)didSelectSocialPlatform:(NSString *)platformName withSocialData:(UMSocialData *)socialData{
+    MySetObjectForKey([NSNumber numberWithInt:1], CMT_Share_key);
+    //qq好友 和 微信好友
+    if(platformName == UMShareToQQ || platformName == UMShareToWechatSession){
+        [self loadDataGetShareFirendInforWithType:@"1"];
+    }
+}
+
+
+/**
+ 配置点击分享列表后是否弹出分享内容编辑页面，再弹出分享，默认需要弹出分享编辑页面
+ 
+ @result 设置是否需要弹出分享内容编辑页面，默认需要
+ 
+ */
+//-(BOOL)isDirectShareInIconActionSheet{
+//    return NO;
+//}
+
+//用于生成二维码的字符串source
+
+- (void)qrCode{
+    NSString *source = @"https://github.com/KenmuHuang";
+    
+    //使用iOS 7后的CIFilter对象操作，生成二维码图片imgQRCode（会拉伸图片，比较模糊，效果不佳）
+    CIImage *imgQRCode = [QRCode createQRCodeImage:source];
+    
+    //使用核心绘图框架CG（Core Graphics）对象操作，进一步针对大小生成二维码图片imgAdaptiveQRCode（图片大小适合，清晰，效果好）
+    UIImage *imgAdaptiveQRCode = [QRCode resizeQRCodeImage:imgQRCode
+                                                  withSize:_qrCodeImageView.frame.size.width];
+    
+    //默认产生的黑白色的二维码图片；我们可以让它产生其它颜色的二维码图片，例如：蓝白色的二维码图片
+//    imgAdaptiveQRCode = [QRCode specialColorImage:imgAdaptiveQRCode
+//                                          withRed:33.0
+//                                            green:114.0
+//                                             blue:237.0]; //0~255
+    
+    //使用核心绘图框架CG（Core Graphics）对象操作，创建带圆角效果的图片
+    UIImage *imgIcon = [UIImage createRoundedRectImage:[UIImage imageNamed:@"zbar-back"]
+                                              withSize:CGSizeMake(50, 50)
+                                            withRadius:10];
+    //使用核心绘图框架CG（Core Graphics）对象操作，合并二维码图片和用于中间显示的图标图片
+    imgAdaptiveQRCode = [QRCode addIconToQRCodeImage:imgAdaptiveQRCode
+                                            withIcon:imgIcon
+                                        withIconSize:imgIcon.size];
+    
+    //    imgAdaptiveQRCode = [KMQRCode addIconToQRCodeImage:imgAdaptiveQRCode
+    //                                              withIcon:imgIcon
+    //                                             withScale:3];
+    
+    _qrCodeImageView.image = imgAdaptiveQRCode;
+    //设置图片视图的圆角边框效果
+    _qrCodeImageView.layer.masksToBounds = YES;
+    _qrCodeImageView.layer.cornerRadius = 10.0;
+    _qrCodeImageView.layer.borderColor = ThemeBackgroundColor.CGColor;
+    _qrCodeImageView.layer.borderWidth = 4.0;
+
+}
+@end

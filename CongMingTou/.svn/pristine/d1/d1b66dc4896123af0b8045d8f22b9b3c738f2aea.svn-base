@@ -1,0 +1,162 @@
+//
+//  markImageView.m
+//  CongMingTou
+//
+//  Created by summer on 16/5/20.
+//  Copyright © 2016年 QiYuan. All rights reserved.
+//
+
+#import "markImageView.h"
+
+@interface markImageView()
+/** 标类型 */
+@property (nonatomic,strong)UILabel *bStyleLabel;
+/** 标的期数 */
+@property (nonatomic,strong)UILabel *dateLabel;
+@end
+
+@implementation markImageView
+
+- (instancetype)initWithFrame:(CGRect)frame
+{
+    if (self = [super initWithFrame:frame])
+    {
+        [self creatSubViews];
+        self.image = [UIImage imageNamed:@"Financail_NewMark"];
+    }
+    return self;
+}
+
+- (void)creatSubViews
+{
+    //标类型
+    CGSize titleSize = [CMT_Tools getStrSize:@"新人豪享18天" fontSize:16];
+    UILabel *titleLabel = [CMT_Tools getLabel:nil textFont:13 viewFrame:CMT_CGRECTMAKE(10, (self.height - titleSize.height)/2, 95,titleSize.height) textAlignments:NSTextAlignmentLeft textColors:CommonWhiteColor];
+    titleLabel.attributedText = [NSMutableAttributedString attributeWithTotalStr:@"新人豪享18天" andWholeTiltSize:0.2];
+    self.bStyleLabel = titleLabel;
+    [self addSubview:titleLabel];
+    
+    //新手标期数
+    CGSize rightLabelSize = [CMT_Tools getStrSize:@"001期" fontSize:15];
+    UILabel *rightLabel = [CMT_Tools getLabel:@"001期" textFont:13 viewFrame:CMT_CGRECTMAKE(113.5, (self.height - rightLabelSize.height)/2, 43,rightLabelSize.height) textAlignments:NSTextAlignmentCenter textColors:CommonWhiteColor];
+    rightLabel.attributedText = [NSMutableAttributedString attributeWithTotalStr:@"001期" andWholeTiltSize:0.2];
+    self.dateLabel = rightLabel;
+    [self addSubview:rightLabel];
+    
+}
+
+//数据判断显示类型
+- (void)setModel:(CMT_financialModel *)model
+{
+    _model = model;
+    self.bStyleLabel.attributedText = [NSMutableAttributedString attributeWithTotalStr:_model.bidTitle andWholeTiltSize:0.2]; //标名称
+    self.dateLabel.attributedText = [NSMutableAttributedString attributeWithTotalStr:_model.bidNumber andWholeTiltSize:0.2];//标期
+
+    NSString *status = _model.status;//判断是否是进行中 2 是进行中； 3、4是按已售罄处理（置灰）
+    NSString *markStyle = _model.bidType;//标的类型
+    
+    if ([status isEqualToString:@"2"]) {
+        //新手表
+        if ([markStyle isEqualToString:@"0"]) {
+            self.image = [UIImage imageNamed:@"Financail_NewMark"];
+            
+            //30
+        }else if([markStyle isEqualToString:@"1"]){
+            self.image = [UIImage imageNamed:@"Financial_YellowMark"];
+            
+            // 90
+        }else if([markStyle isEqualToString:@"2"]){
+            self.image = [UIImage imageNamed:@"Financial_YellowMark"];
+            
+            //180
+        }else if([markStyle isEqualToString:@"3"]){
+            self.image = [UIImage imageNamed:@"Financial_BlueMark"];
+            
+            //360
+        }else if([markStyle isEqualToString:@"4"]){
+            self.image = [UIImage imageNamed:@"Financial_BlueMark"];
+        }else{
+            self.image = [UIImage imageNamed:@"Financial_BlueMark"];
+        }
+    }else{
+        self.image = [UIImage imageNamed:@"Financial_GrayMark"];
+    }
+}
+- (void)setPreInvestmodel:(CMT_PreInvestModel *)preInvestmodel{
+    
+    _preInvestmodel = preInvestmodel;
+    
+    self.bStyleLabel.attributedText = [NSMutableAttributedString attributeWithTotalStr:_preInvestmodel.bidTitle andWholeTiltSize:0.2]; //标名称
+//    self.dateLabel.attributedText = [NSMutableAttributedString attributeWithTotalStr:_preInvestmodel.bidNumber andWholeTiltSize:0.2];//标期
+    NSString *status = _preInvestmodel.status;//判断是否是进行中 2 是进行中； 3、4是按已售罄处理（置灰）
+    NSString *markStyle = _preInvestmodel.bidType;//标的类型
+    
+    if ([status isEqualToString:@"2"]) {
+        //新手表
+        if ([markStyle isEqualToString:@"0"]) {
+            self.image = [UIImage imageNamed:@"Financail_NewMark"];
+            
+            //30
+        }else if([markStyle isEqualToString:@"1"]){
+            self.image = [UIImage imageNamed:@"Financial_YellowMark"];
+            
+            // 90
+        }else if([markStyle isEqualToString:@"2"]){
+            self.image = [UIImage imageNamed:@"Financial_YellowMark"];
+            
+            //180
+        }else if([markStyle isEqualToString:@"3"]){
+            self.image = [UIImage imageNamed:@"Financial_BlueMark"];
+            
+            //360
+        }else if([markStyle isEqualToString:@"4"]){
+            self.image = [UIImage imageNamed:@"Financial_BlueMark"];
+        }else{
+            self.image = [UIImage imageNamed:@"Financial_BlueMark"];
+        }
+    }else{
+        self.image = [UIImage imageNamed:@"Financial_GrayMark"];
+    }
+}
+
+- (void)setProductDetModel:(CMT_ProductDetModel *)productDetModel
+{
+    _productDetModel = productDetModel;
+    
+    self.bStyleLabel.attributedText = [NSMutableAttributedString attributeWithTotalStr:_productDetModel.bidTitle andWholeTiltSize:0.2]; //标名称
+    self.dateLabel.attributedText = [NSMutableAttributedString attributeWithTotalStr:_productDetModel.bidNumber andWholeTiltSize:0.2];//标期
+    NSString *status = self.markStatus;//判断是否是进行中 2 是进行中； 3、4是按已售罄处理（置灰）
+    NSString *markStyle = _productDetModel.bidType;//标的类型
+    CMT_Log(@"标的状态%@",status);
+    
+    if ([status isEqualToString:@"2"]) {
+        //新手表
+        if ([markStyle isEqualToString:@"0"]) {
+            self.image = [UIImage imageNamed:@"Financail_NewMark"];
+            
+            //30
+        }else if([markStyle isEqualToString:@"1"]){
+            self.image = [UIImage imageNamed:@"Financial_YellowMark"];
+            
+            // 90
+        }else if([markStyle isEqualToString:@"2"]){
+            self.image = [UIImage imageNamed:@"Financial_YellowMark"];
+            
+            //180
+        }else if([markStyle isEqualToString:@"3"]){
+            self.image = [UIImage imageNamed:@"Financial_BlueMark"];
+            
+            //360
+        }else if([markStyle isEqualToString:@"4"]){
+            self.image = [UIImage imageNamed:@"Financial_BlueMark"];
+        }else{
+            self.image = [UIImage imageNamed:@"Financial_BlueMark"];
+        }
+    }else{
+        self.image = [UIImage imageNamed:@"Financial_GrayMark"];
+    }
+
+}
+
+
+@end

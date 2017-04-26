@@ -1,0 +1,22 @@
+//
+//  CMT_MyAppointmentInvestmentTableViewCell.h
+//  CongMingTou
+//
+//  Created by wzh on 16/5/18.
+//  Copyright © 2016年 QiYuan. All rights reserved.
+//
+
+#import <UIKit/UIKit.h>
+#include "CMT_MyAppointmentInvestmentModel.h"
+#import "CMT_TenderTypeView.h"
+@interface CMT_MyAppointmentInvestmentTableViewCell : UITableViewCell
+@property (strong, nonatomic) IBOutlet CMT_TenderTypeView *tenderTypeView;
+@property (strong, nonatomic) IBOutlet UIButton *quXiaoYuYueBtn;
+@property (strong, nonatomic) IBOutlet UILabel *yuYueMoneyLab;
+@property (strong, nonatomic) IBOutlet UILabel *yuYueMoneyDesLab;
+@property (strong, nonatomic) IBOutlet UILabel *shengYuQiXianLab;
+@property (strong, nonatomic) IBOutlet UILabel *huanXiFangShiLab;
+
+@property (strong, nonatomic) CMT_MyAppointmentInvestmentModel *myAppointmentInvestmentModel;
++ (CMT_MyAppointmentInvestmentTableViewCell *)cellWithTablebView:(UITableView *)tableView;
+@end

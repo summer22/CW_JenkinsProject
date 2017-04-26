@@ -1,0 +1,16 @@
+//
+//  CMT_ChongZhiTiXianModel.h
+//  CongMingTou
+//
+//  Created by wzh on 16/5/25.
+//  Copyright © 2016年 QiYuan. All rights reserved.
+//
+
+#import "CMT_ChongZhiTiXianListModel.h"
+@interface CMT_ChongZhiTiXianModel : CMT_BaseModel
+
+@property (nonatomic, strong) NSArray *listDataArray;
+
++ (CMT_ChongZhiTiXianModel *)chongZhiTiXianModelWithDic:(NSDictionary *)dic;
+
+@end

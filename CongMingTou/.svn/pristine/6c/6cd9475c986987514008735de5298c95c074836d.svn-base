@@ -1,0 +1,25 @@
+//
+//  CMT_CapitalSubsidiaryViewController.h
+//  CongMingTou
+//
+//  Created by wzh on 16/5/17.
+//  Copyright © 2016年 QiYuan. All rights reserved.
+//
+
+#import "CMT_BaseVIewController.h"
+
+@interface CMT_CapitalSubsidiaryViewController : CMT_BaseVIewController
+/**
+ *  已收收益
+ */
+@property (nonatomic, copy) NSString *yiShouShouYiStr;
+/**
+ *  待收收益
+ */
+@property (nonatomic, copy) NSString *daiShouShouYiStr;
+/**
+ *  总收益
+ */
+@property (nonatomic, copy) NSString *totalShouYiStr;
+
+@end

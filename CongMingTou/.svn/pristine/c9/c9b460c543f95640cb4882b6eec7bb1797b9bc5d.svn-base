@@ -1,0 +1,158 @@
+//
+//  CMT_ForgetPasswordViewController.m
+//  CongMingTou
+//
+//  Created by wzh on 16/5/17.
+//  Copyright © 2016年 QiYuan. All rights reserved.
+//
+
+#import "CMT_ForgetPasswordViewController.h"
+#import "CMT_PhoneAndVerificationCodeView.h"
+#import "CMT_ModifyPaymentPasswordViewController.h"
+@interface CMT_ForgetPasswordViewController ()<CMT_PhoneAndVerificationCodeViewDelegate,UITextFieldExtensionDelegate>
+@property (strong, nonatomic) IBOutlet CMT_PhoneAndVerificationCodeView *phoneNumAndCodeView;
+
+@property (weak, nonatomic) IBOutlet UIButton *commitBtn;
+@end
+
+@implementation CMT_ForgetPasswordViewController
+
+
+- (void)viewDidDisappear:(BOOL)animated{
+    [super viewDidDisappear:animated];
+}
+- (void)viewDidLoad {
+    [super viewDidLoad];
+    // Do any additional setup after loading the view from its nib.
+    [self setDefautUI];
+
+}
+
+- (void)setDefautUI{
+    
+    //数据统计
+    SensorsAnalyticsSDK *sdk = [SensorsAnalyticsSDK sharedInstance];
+    if (sdk != nil) {
+        [sdk track:@"changePasswd" withProperties:@{@"distinctId": [NSString convertNull:[CMT_AnalyticsTool userID]],
+                                                    @"changePasswdType":@"支付密码"}];
+    }
+    
+    self.title = @"修改支付密码";
+    _phoneNumAndCodeView.phonetextField.text = [NSString stringWithFormat:@"%@",[CMT_AccountTool accountModel].mobileNo];
+    _phoneNumAndCodeView.phonetextField.userInteractionEnabled = NO;
+    _phoneNumAndCodeView.delegate = self;
+    _phoneNumAndCodeView.phonetextField.extensonDelegate = self;
+    _phoneNumAndCodeView.verificationCodeTextField.extensonDelegate = self;
+    //设置提交按钮
+    [_commitBtn styteWithCornerRadius:_commitBtn.height / 2 shadowColor:_commitBtn.backgroundColor shadowOffset:CMT_ShadowOffset shadowOpacity:CMT_ShadowOpacity shadowRadius:CMT_ShadowRadius];
+}
+
+#pragma mark -- 点击事件
+//获取验证码
+- (void)didGetVerificationCodeBtn:(UIButton *)button{
+    CMT_Log(@"点击啊了或许验证码按钮");
+    [self loadDataGetVerificationcodeWithPhonNum:_phoneNumAndCodeView.phonetextField.text type:@"3"];
+}
+
+- (IBAction)commitBtnClicked:(id)sender {
+    [self loadDataVerificationCodeIsOk];
+}
+
+
+- (void)textFieldEditingChange:(CMT_TextField *)textField{
+    CMT_Log(@"textFieldEditingChange === %@",textField.text);
+    [self chectIsCouldNext];
+}
+- (void)chectIsCouldNext{
+    if(_phoneNumAndCodeView.phonetextField.text.length > 0 && _phoneNumAndCodeView.verificationCodeTextField.text.length > 0){
+        _commitBtn.enabled = YES;
+        _commitBtn.alpha = 1;
+    }else{
+        _commitBtn.enabled = NO;
+        _commitBtn.alpha = 0.5;
+    }
+}
+#pragma mark -- 判断为空
+- (BOOL)checkInputIsNullOrCorrect{
+
+    if(_phoneNumAndCodeView.verificationCodeTextField.text.length > CMT_VerificationCodeLenght || _phoneNumAndCodeView.verificationCodeTextField.text.length <= 0){
+        [CMT_Tools showInfoAlert:CMT_Error_VerificationCode];
+        return NO;
+    }
+    
+    return YES;
+}
+
+#pragma mark -- 获取验证码
+- (void)loadDataGetVerificationcodeWithPhonNum:(NSString *)phoneNum type:(NSString *)type{
+    //方法二
+    [self showHudInView:self.view hint:CMT_LoadDataWaiting];
+    [CMT_ProcessTheDataTool getVerificationcodeWithPhonNum:phoneNum type:type andBlock:^(CMT_GetVerificationcodeModel *getVerificationcodeModel, NSError *error) {
+        [self hideHud];
+        if(!error){
+            
+            if([[NSString stringWithFormat:@"%@",getVerificationcodeModel.status] isEqualToString:@"1"]){
+                [self showHint:CMT_LoadDataGetCodeSuccessful];
+                CMT_Log(@"获取验证码成功");
+            }else if ([[NSString stringWithFormat:@"%@",getVerificationcodeModel.status] isEqualToString:CMT_SinglePointCode]){
+                [CMT_SinglePointLoginTool addSinglePointLoginWithSelfVC:self];
+            }else{
+                [self showHint:getVerificationcodeModel.msg];
+                [_phoneNumAndCodeView destroyTimer];
+            }
+        }else{
+            CMT_Log(@"获取验证码失败");
+            [_phoneNumAndCodeView destroyTimer];
+            [self showHint:CMT_Error_NotNetWork];
+        }
+    }];
+}
+
+- (void)loadDataVerificationCodeIsOk{
+    [self showHudInView:self.view hint:CMT_LoadDataWaiting];
+    [CMT_ProcessTheDataTool verificationCodeIsOkWithPhoneNum:_phoneNumAndCodeView.phonetextField.text verificationCode:_phoneNumAndCodeView.verificationCodeTextField.text  andBlock:^(CMT_BaseModel *model, NSError *error) {
+//        CMT_Log(@"验证验者码成功");
+        [self hideHud];
+        if(!error){
+            if([[NSString stringWithFormat:@"%@",model.status] isEqualToString:@"1"]){
+                [self showHint:@"验证验者码成功"];
+                [self nextVC];
+            }else if ([[NSString stringWithFormat:@"%@",model.status] isEqualToString:CMT_SinglePointCode]){
+                [CMT_SinglePointLoginTool addSinglePointLoginWithSelfVC:self];
+            }else{
+                [self showHint:model.msg];
+            }
+        }else{
+            [self showHint:CMT_Error_NotNetWork];
+        }
+        
+    }];
+}
+- (void)nextVC{
+    if([self checkInputIsNullOrCorrect]){
+        CMT_ModifyPaymentPasswordViewController *modifyPaymentPasswordVC = [[CMT_ModifyPaymentPasswordViewController alloc]init];
+        modifyPaymentPasswordVC.modifyPaymentPasswordType = CMTModifyPaymentPasswordTypeEnterNewPassword;
+        modifyPaymentPasswordVC.title = @"修改支付密码";
+        modifyPaymentPasswordVC.setPwdType = CMTSetPwdTypeForgetPwd;
+        modifyPaymentPasswordVC.forgetVCType = _enterForgetVCType;
+        modifyPaymentPasswordVC.phoneNumStr = _phoneNumAndCodeView.phonetextField.text;
+//        modifyPaymentPasswordVC.verificationCodeStr = _phoneNumAndCodeView.verificationCodeTextField.text;
+        [self.navigationController pushViewController:modifyPaymentPasswordVC animated:YES];
+    }
+}
+- (void)didReceiveMemoryWarning {
+    [super didReceiveMemoryWarning];
+    // Dispose of any resources that can be recreated.
+}
+
+/*
+#pragma mark - Navigation
+
+// In a storyboard-based application, you will often want to do a little preparation before navigation
+- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
+    // Get the new view controller using [segue destinationViewController].
+    // Pass the selected object to the new view controller.
+}
+*/
+
+@end

@@ -1,0 +1,34 @@
+//
+//  CMT_LoginBgView.h
+//  CongMingTou
+//
+//  Created by summer on 16/5/13.
+//  Copyright © 2016年 wzh. All rights reserved.
+//
+
+#import <UIKit/UIKit.h>
+
+@protocol CMT_LoginBgViewDelegate <NSObject>
+
+//传送手机号和验证码
+- (void)sendPhoneNum:(NSString *)telNum yzNum:(NSString *)yzNumStr;
+// 验证码点击传递事件
+- (void)sendPhoneNum:(NSString *)telNum;
+//安全注册点击事件
+- (void)toJumpRegisterVc;
+
+@end
+
+@interface CMT_LoginBgView : UIScrollView
+
+/** delegate*/
+@property (nonatomic,assign)id <CMT_LoginBgViewDelegate> myDelegate;
+
+- (instancetype)initWithFrame:(CGRect)frame;
+
+//倒计时方法
+- (void)startTime;
+
+-(void)destroyTimer;
+
+@end

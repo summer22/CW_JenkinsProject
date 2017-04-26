@@ -1,0 +1,25 @@
+//
+//  CMT_ChongZhiTiXianListModel.m
+//  CongMingTou
+//
+//  Created by wzh on 16/5/25.
+//  Copyright © 2016年 QiYuan. All rights reserved.
+//
+
+#import "CMT_ChongZhiTiXianListModel.h"
+
+@implementation CMT_ChongZhiTiXianListModel
++ (CMT_ChongZhiTiXianListModel *)chongZhiTiXianListModelWithDic:(NSDictionary *)dic{
+    return [[self alloc]initWithDic:dic];
+}
+- (id)initWithDic:(NSDictionary *)dic{
+    if(self = [super init]){
+        [self setValuesForKeysWithDictionary:dic];
+    }
+    return self;
+}
+
+- (void)setValue:(id)value forUndefinedKey:(NSString *)key{
+    
+}
+@end

@@ -1,0 +1,14 @@
+//
+//  BannerViewController.h
+//  CongMingTou
+//
+//  Created by summer on 16/7/6.
+//  Copyright © 2016年 QiYuan. All rights reserved.
+//
+
+#import "CMT_WebBaseViewController.h"
+#import "CMT_BannerModel.h"
+@interface BannerViewController : CMT_WebBaseViewController
+/** banerModel */
+@property (nonatomic,strong)CMT_BannerModel *bannerModel;
+@end

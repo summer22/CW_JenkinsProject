@@ -1,0 +1,14 @@
+//
+//  CMT_ShouYiMingXIModel.h
+//  CongMingTou
+//
+//  Created by wzh on 16/5/26.
+//  Copyright © 2016年 QiYuan. All rights reserved.
+//
+
+#import "CMT_CodeBaseModel.h"
+#import "CMT_ShouYiMingXiDataModel.h"
+@interface CMT_ShouYiMingXIModel : CMT_CodeBaseModel
+@property (nonatomic, strong) CMT_ShouYiMingXiDataModel *dataModel;
++ (CMT_ShouYiMingXIModel *)shouYiMingXiModelWithDic:(NSDictionary *)dic;
+@end

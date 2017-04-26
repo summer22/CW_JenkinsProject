@@ -1,0 +1,33 @@
+//
+//  CMT_ShouYiMingXiDataModel.m
+//  CongMingTou
+//
+//  Created by wzh on 16/5/26.
+//  Copyright © 2016年 QiYuan. All rights reserved.
+//
+
+#import "CMT_ShouYiMingXiDataModel.h"
+
+@implementation CMT_ShouYiMingXiDataModel
++ (CMT_ShouYiMingXiDataModel *)shouYiMingXiDataModelWithDic:(NSDictionary *)dic{
+    return  [[self alloc]initWithDic:dic];
+}
+- (id)initWithDic:(NSDictionary *)dic{
+    if(self = [super init]){
+        [self setValuesForKeysWithDictionary:dic];
+    }
+    return self;
+}
+
+- (void)setValue:(id)value forUndefinedKey:(NSString *)key{
+    if ([key isEqualToString:@"profitRecordList"]) {
+        NSMutableArray *dataArray = [NSMutableArray array];
+        for (NSDictionary *subDic in (NSArray *)value) {
+            CMT_ShouYiMingXIListModel *model = [CMT_ShouYiMingXIListModel shouYiMingXiListModelWith:subDic];
+            [dataArray addObject:model];
+        }
+        self.listDataArray = [NSArray arrayWithArray:dataArray];
+    }
+
+}
+@end

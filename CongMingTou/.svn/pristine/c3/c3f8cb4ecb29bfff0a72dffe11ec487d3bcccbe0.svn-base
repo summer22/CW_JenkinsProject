@@ -1,0 +1,27 @@
+//
+//  markImageView.h
+//  CongMingTou
+//
+//  Created by summer on 16/5/20.
+//  Copyright © 2016年 QiYuan. All rights reserved.
+//
+
+#import <UIKit/UIKit.h>
+#import "CMT_financialModel.h"
+#import "CMT_PreInvestModel.h"
+#import "CMT_ProductDetModel.h"
+
+@interface markImageView : UIImageView
+
+- (instancetype)initWithFrame:(CGRect)frame;
+
+/** 首页理财列表数据model */
+@property (nonatomic,strong)CMT_financialModel *model;
+/** 预约投资列表数据model */
+@property (nonatomic,strong)CMT_PreInvestModel *preInvestmodel;
+/** 产品详情数据model */
+@property (nonatomic,strong)CMT_ProductDetModel *productDetModel;
+/** 标的状态 */
+@property (nonatomic,copy)NSString *markStatus;
+
+@end

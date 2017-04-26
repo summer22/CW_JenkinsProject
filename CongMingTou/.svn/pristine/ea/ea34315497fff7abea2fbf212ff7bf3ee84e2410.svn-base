@@ -1,0 +1,27 @@
+//
+//  CMT_MyInverstmentModel.h
+//  CongMingTou
+//
+//  Created by wzh on 16/5/20.
+//  Copyright © 2016年 QiYuan. All rights reserved.
+//
+
+#import "CMT_BaseModel.h"
+#import "CMT_MyInverstmentListModel.h"
+@interface CMT_MyInverstmentModel : CMT_BaseModel
+
+@property (nonatomic, copy) NSString *addRate;
+@property (nonatomic, strong) NSArray *listDataArray;
+
++ (CMT_MyInverstmentModel *)myInverstmentModelWithDic:(NSDictionary *)dic;
+
+@property (nonatomic, assign) int currentIndex;
+
+
+/**
+ *  临时
+ */
+@property (nonatomic, assign) int huanXiFangShi;
+@property (nonatomic, assign) int yuYueState;
+@property (nonatomic, assign) int isKeYiquXiaoYuYue;
+@end

@@ -1,0 +1,13 @@
+//
+//  CMT_AboutUsViewController.h
+//  CongMingTou
+//
+//  Created by wzh on 16/5/16.
+//  Copyright © 2016年 QiYuan. All rights reserved.
+//
+
+#import "CMT_WebBaseViewController.h"
+
+@interface CMT_AboutUsViewController : CMT_WebBaseViewController
+
+@end

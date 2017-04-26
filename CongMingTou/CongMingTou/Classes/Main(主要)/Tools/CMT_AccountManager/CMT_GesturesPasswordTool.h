@@ -1,0 +1,29 @@
+//
+//  CMT_GesturesPasswordTool.h
+//  CongMingTou
+//
+//  Created by wzh on 16/5/26.
+//  Copyright © 2016年 QiYuan. All rights reserved.
+//
+
+#import <Foundation/Foundation.h>
+#import "CMT_GesturesPwdModel.h"
+
+@interface CMT_GesturesPasswordTool : NSObject
+
+
+/**
+ *  存储手势帐号
+ */
++ (void)save:(CMT_GesturesPwdModel *)gesturesPwdModel;
+
+/**
+ *  读取手势帐号
+ */
++ (CMT_GesturesPwdModel *)gesturesPwdModel;
+
+/**
+ *  清除手势账号信息
+ */
++ (BOOL)removeEmptyGesturesPwdData;
+@end

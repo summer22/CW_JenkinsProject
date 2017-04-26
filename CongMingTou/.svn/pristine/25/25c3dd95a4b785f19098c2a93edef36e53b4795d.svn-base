@@ -1,0 +1,23 @@
+//
+//  CMT_UserInfo.h
+//  CongMingTou
+//
+//  Created by summer on 16/5/10.
+//  Copyright © 2016年 wzh. All rights reserved.
+//
+
+#import <Foundation/Foundation.h>
+
+@interface CMT_UserInfo : NSObject
+
+// 用户id  手机信息生成的secrect   是否绑定房屋
+@property (nonatomic,copy)NSString* userId;
+// 同步到文件
+@property (nonatomic, retain) NSUserDefaults *defaults;
+
++ (instancetype)info;
+
+//销毁
+- (void)destory;
+
+@end

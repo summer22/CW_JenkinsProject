@@ -1,0 +1,33 @@
+//
+//  CMT_ModifyPaymentPasswordViewController.h
+//  CongMingTou
+//
+//  Created by wzh on 16/5/17.
+//  Copyright © 2016年 QiYuan. All rights reserved.
+//
+
+#import "CMT_BaseVIewController.h"
+#import "CMT_InputView.h"
+
+@interface CMT_ModifyPaymentPasswordViewController : CMT_BaseVIewController
+
+/**
+ *  设置密码的类型
+ */
+@property (nonatomic, assign) CMTSetPwdType setPwdType;
+/**
+ *  修改
+ */
+@property (nonatomic, assign) CMTModifyPaymentPasswordType modifyPaymentPasswordType;
+
+@property (nonatomic, assign) CMTEnterForgetVCType forgetVCType;
+
+@property (nonatomic, copy) NSString *prePassWord;
+
+
+/**
+ *  忘记密码需要字段
+ */
+@property (nonatomic, copy) NSString *phoneNumStr;
+
+@end

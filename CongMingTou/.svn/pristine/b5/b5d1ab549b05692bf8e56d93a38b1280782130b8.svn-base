@@ -1,0 +1,38 @@
+//
+//  CMT_TenderRecordTableViewCell.h
+//  CongMingTou
+//
+//  Created by wzh on 16/5/17.
+//  Copyright © 2016年 QiYuan. All rights reserved.
+//
+
+#import <UIKit/UIKit.h>
+
+@interface CMT_TenderRecordTableViewCell : UITableViewCell
+/**
+ *  上部分线
+ */
+@property (strong, nonatomic) IBOutlet UIView *topView;
+/**
+ *  中间view
+ */
+@property (strong, nonatomic) IBOutlet UIView *midPointView;
+/**
+ *  中间图片
+ */
+@property (strong, nonatomic) IBOutlet UIImageView *midPointImageView;
+/**
+ *  下部分线
+ */
+@property (strong, nonatomic) IBOutlet UIView *bottomView;
+/**
+ *  左部图片
+ */
+@property (strong, nonatomic) IBOutlet UIImageView *leftbackImageView;
+@property (strong, nonatomic) IBOutlet UILabel *dateLab;
+@property (strong, nonatomic) IBOutlet UILabel *leftDesLab;
++ (CMT_TenderRecordTableViewCell *)cellWithTablebView:(UITableView *)tableView;
+
+@property (nonatomic, strong) CMT_InvestInforModel *model;
+@property (nonatomic, strong) NSString *str;
+@end

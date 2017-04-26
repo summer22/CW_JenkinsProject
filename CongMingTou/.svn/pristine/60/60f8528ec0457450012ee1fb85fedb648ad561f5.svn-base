@@ -1,0 +1,33 @@
+//
+//  CMT_CouponViewScrollView.m
+//  CongMingTou
+//
+//  Created by summer on 16/5/26.
+//  Copyright © 2016年 QiYuan. All rights reserved.
+//
+
+#import "CMT_CouponViewScrollView.h"
+
+@implementation CMT_CouponViewScrollView
+
+- (id)initWithFrame:(CGRect)frame
+{
+    self = [super initWithFrame:frame];
+    if (self) {
+        // Initialization code
+        [self initializeValue];
+    }
+    return self;
+}
+
+- (void)initializeValue
+{
+    self.clipsToBounds = YES;
+    self.showsHorizontalScrollIndicator = NO;
+    self.showsVerticalScrollIndicator = NO;
+    self.multipleTouchEnabled = NO;
+    self.decelerationRate = UIScrollViewDecelerationRateFast;
+}
+
+
+@end

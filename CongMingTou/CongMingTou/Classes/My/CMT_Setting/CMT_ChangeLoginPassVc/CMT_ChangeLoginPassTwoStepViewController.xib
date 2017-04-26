@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="11542" systemVersion="16A323" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES">
+    <device id="retina4_7" orientation="portrait">
+        <adaptation id="fullscreen"/>
+    </device>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="11524"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="CMT_ChangeLoginPassTwoStepViewController">
+            <connections>
+                <outlet property="makeSureBtn" destination="lIc-Tf-THX" id="rcA-aY-Fy6"/>
+                <outlet property="myTF" destination="nJf-zr-fNq" id="TgQ-AH-ePs"/>
+                <outlet property="view" destination="i5M-Pr-FkT" id="sfx-zR-JGt"/>
+            </connections>
+        </placeholder>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <view clearsContextBeforeDrawing="NO" contentMode="scaleToFill" id="i5M-Pr-FkT">
+            <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+            <subviews>
+                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="CMT_SetLoginPassTwo" translatesAutoresizingMaskIntoConstraints="NO" id="dfs-Kl-jyx">
+                    <rect key="frame" x="140" y="15" width="96" height="32"/>
+                    <constraints>
+                        <constraint firstAttribute="height" constant="32" id="MsS-N1-ulk"/>
+                        <constraint firstAttribute="width" constant="96" id="W1g-oF-coY"/>
+                    </constraints>
+                </imageView>
+                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="设置密码" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Tbc-ar-jhC">
+                    <rect key="frame" x="150" y="77" width="76" height="21"/>
+                    <constraints>
+                        <constraint firstAttribute="height" constant="21" id="9iS-tU-ksq"/>
+                        <constraint firstAttribute="width" constant="76" id="DjT-vR-UaD"/>
+                    </constraints>
+                    <fontDescription key="fontDescription" type="system" pointSize="18"/>
+                    <color key="textColor" red="0.20000000000000001" green="0.20000000000000001" blue="0.20000000000000001" alpha="1" colorSpace="calibratedRGB"/>
+                    <nil key="highlightedColor"/>
+                </label>
+                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="请设置新登录密码" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ShJ-pA-IX9">
+                    <rect key="frame" x="138" y="110" width="100" height="21"/>
+                    <constraints>
+                        <constraint firstAttribute="height" constant="21" id="LyB-IL-D0n"/>
+                        <constraint firstAttribute="width" constant="100" id="SZE-V6-Pan"/>
+                    </constraints>
+                    <fontDescription key="fontDescription" type="system" pointSize="12"/>
+                    <color key="textColor" red="0.40000000000000002" green="0.40000000000000002" blue="0.40000000000000002" alpha="1" colorSpace="calibratedRGB"/>
+                    <nil key="highlightedColor"/>
+                </label>
+                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="pvR-Be-Dab">
+                    <rect key="frame" x="0.0" y="146" width="375" height="50"/>
+                    <subviews>
+                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="新密码" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="lQg-FY-OGR">
+                            <rect key="frame" x="12" y="15" width="69" height="21"/>
+                            <constraints>
+                                <constraint firstAttribute="width" constant="69" id="S3n-8a-BcB"/>
+                                <constraint firstAttribute="height" constant="21" id="kqn-TU-9Bh"/>
+                            </constraints>
+                            <fontDescription key="fontDescription" type="system" pointSize="15"/>
+                            <color key="textColor" red="0.20000000000000001" green="0.20000000000000001" blue="0.20000000000000001" alpha="1" colorSpace="calibratedRGB"/>
+                            <nil key="highlightedColor"/>
+                        </label>
+                        <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="请设置新登录密码(8-16位数字字母)" textAlignment="right" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="nJf-zr-fNq" customClass="CMT_TextField">
+                            <rect key="frame" x="81" y="8" width="238" height="35"/>
+                            <constraints>
+                                <constraint firstAttribute="height" constant="35" id="3xB-ec-x25"/>
+                                <constraint firstAttribute="width" constant="238" id="jsS-AO-mCd"/>
+                            </constraints>
+                            <nil key="textColor"/>
+                            <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                            <textInputTraits key="textInputTraits"/>
+                            <connections>
+                                <action selector="textFieldChangeValue:" destination="-1" eventType="editingChanged" id="wb1-4g-mFG"/>
+                            </connections>
+                        </textField>
+                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="0yc-vl-6ge">
+                            <rect key="frame" x="317" y="10" width="46" height="31"/>
+                            <constraints>
+                                <constraint firstAttribute="height" constant="31" id="b1Q-9a-31l"/>
+                                <constraint firstAttribute="width" constant="46" id="tRe-vh-LvS"/>
+                            </constraints>
+                            <inset key="imageEdgeInsets" minX="28" minY="0.0" maxX="0.0" maxY="0.0"/>
+                            <state key="normal" title="Button" image="CMT_ShowPw"/>
+                            <state key="selected" image="CMT_HidePw"/>
+                            <connections>
+                                <action selector="eyeBtnAction:" destination="-1" eventType="touchUpInside" id="ZOp-R1-cE0"/>
+                            </connections>
+                        </button>
+                    </subviews>
+                    <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                    <constraints>
+                        <constraint firstItem="nJf-zr-fNq" firstAttribute="centerY" secondItem="pvR-Be-Dab" secondAttribute="centerY" id="BVT-6p-Fis"/>
+                        <constraint firstAttribute="trailing" secondItem="nJf-zr-fNq" secondAttribute="trailing" constant="56" id="OZV-hr-4Bu"/>
+                        <constraint firstAttribute="trailing" secondItem="0yc-vl-6ge" secondAttribute="trailing" constant="12" id="Qk5-CG-T8Q"/>
+                        <constraint firstItem="lQg-FY-OGR" firstAttribute="leading" secondItem="pvR-Be-Dab" secondAttribute="leading" constant="12" id="QpU-5f-wBc"/>
+                        <constraint firstItem="0yc-vl-6ge" firstAttribute="centerY" secondItem="pvR-Be-Dab" secondAttribute="centerY" id="YIx-Qf-qtY"/>
+                        <constraint firstAttribute="height" constant="50" id="deO-4d-c0L"/>
+                        <constraint firstItem="lQg-FY-OGR" firstAttribute="centerY" secondItem="pvR-Be-Dab" secondAttribute="centerY" id="tPj-W4-Cd2"/>
+                    </constraints>
+                </view>
+                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="lIc-Tf-THX">
+                    <rect key="frame" x="6" y="226" width="363" height="62"/>
+                    <constraints>
+                        <constraint firstAttribute="height" constant="62" id="u2b-oE-Neb"/>
+                    </constraints>
+                    <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                    <inset key="titleEdgeInsets" minX="0.0" minY="-5" maxX="0.0" maxY="0.0"/>
+                    <state key="normal" title="确认" backgroundImage="CMT_DetailNoQiang">
+                        <color key="titleColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                    </state>
+                    <state key="selected" title="确认" backgroundImage="CMT_DetailQIangG"/>
+                    <connections>
+                        <action selector="makeSureBtn:" destination="-1" eventType="touchUpInside" id="G4K-CB-QPK"/>
+                    </connections>
+                </button>
+            </subviews>
+            <constraints>
+                <constraint firstItem="dfs-Kl-jyx" firstAttribute="centerX" secondItem="i5M-Pr-FkT" secondAttribute="centerX" id="547-SL-LYl"/>
+                <constraint firstItem="pvR-Be-Dab" firstAttribute="leading" secondItem="i5M-Pr-FkT" secondAttribute="leading" id="6Rf-TV-L1q"/>
+                <constraint firstAttribute="trailing" secondItem="lIc-Tf-THX" secondAttribute="trailing" constant="6" id="BDg-t5-apV"/>
+                <constraint firstItem="pvR-Be-Dab" firstAttribute="top" secondItem="ShJ-pA-IX9" secondAttribute="bottom" constant="15" id="D4q-Pr-2Z8"/>
+                <constraint firstItem="ShJ-pA-IX9" firstAttribute="centerX" secondItem="i5M-Pr-FkT" secondAttribute="centerX" id="GrU-ul-fkp"/>
+                <constraint firstItem="ShJ-pA-IX9" firstAttribute="top" secondItem="Tbc-ar-jhC" secondAttribute="bottom" constant="12" id="H5t-G5-GuO"/>
+                <constraint firstItem="Tbc-ar-jhC" firstAttribute="centerX" secondItem="i5M-Pr-FkT" secondAttribute="centerX" id="VwQ-T4-RSu"/>
+                <constraint firstItem="Tbc-ar-jhC" firstAttribute="top" secondItem="dfs-Kl-jyx" secondAttribute="bottom" constant="30" id="Y8C-vV-mk0"/>
+                <constraint firstItem="lIc-Tf-THX" firstAttribute="top" secondItem="pvR-Be-Dab" secondAttribute="bottom" constant="30" id="gdl-ig-0Rl"/>
+                <constraint firstItem="dfs-Kl-jyx" firstAttribute="top" secondItem="i5M-Pr-FkT" secondAttribute="top" constant="15" id="puE-4T-MXR"/>
+                <constraint firstItem="lIc-Tf-THX" firstAttribute="leading" secondItem="i5M-Pr-FkT" secondAttribute="leading" constant="6" id="uDz-2B-VRl"/>
+                <constraint firstAttribute="trailing" secondItem="pvR-Be-Dab" secondAttribute="trailing" id="vGi-Co-aQ0"/>
+            </constraints>
+        </view>
+    </objects>
+    <resources>
+        <image name="CMT_DetailNoQiang" width="369" height="62"/>
+        <image name="CMT_DetailQIangG" width="369" height="62"/>
+        <image name="CMT_HidePw" width="16" height="12"/>
+        <image name="CMT_SetLoginPassTwo" width="96" height="32"/>
+        <image name="CMT_ShowPw" width="16" height="12"/>
+    </resources>
+</document>

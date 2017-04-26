@@ -1,0 +1,154 @@
+//
+//  ZHInputView.m
+//  InputView
+//
+//  Created by wzh on 16/5/10.
+//  Copyright © 2016年 wzh. All rights reserved.
+//
+
+#import "ZHInputView.h"
+#define ZHPasswordLength  5
+
+//内部输入框的frame
+
+#define Mid 0
+#define TopAndBelowMid 0
+#define LeftAndRightMid 0
+#define InputView_X LeftAndRightMid
+#define InputView_Y TopAndBelowMid
+#define InputView_W (self.frame.size.width - LeftAndRightMid * 2 - ZHPasswordLength *(Mid-1)) / ZHPasswordLength
+#define InputView_H self.frame.size.height - TopAndBelowMid * 2
+
+
+@interface ZHInputView ()
+@property (nonatomic, strong) UITextField *topTextField;
+@property (nonatomic, strong) NSMutableArray *dataSource;
+@end
+
+@implementation ZHInputView
+
+- (instancetype)initWithFrame:(CGRect)frame{
+    if(self = [super initWithFrame:frame]){
+        CMT_Log(@"initWithFrame");
+
+        [self setUI];
+
+    }
+    return self;
+}
+
+- (id)initWithCoder:(NSCoder *)decoder
+{
+    if (self = [super initWithCoder:decoder]) {
+        CMT_Log(@"initWithCoder");
+
+        [self setUI];
+    }
+    return self;
+}
+- (instancetype)init{
+    if(self = [super init]){
+        CMT_Log(@"init");
+
+    }
+    return self;
+}
+- (void)setFrame:(CGRect)frame{
+    [super setFrame:frame];
+    CMT_Log(@"setFrame");
+}
+
+- (NSMutableArray *)dataSource{
+    if(!_dataSource){
+        _dataSource = [NSMutableArray array];
+    }
+    return _dataSource;
+}
+
+- (UITextField *)topTextField{
+    if(!_topTextField){
+        _topTextField = [[UITextField alloc] initWithFrame:CGRectMake(0, 0, self.frame.size.width, self.frame.size.height)];
+        _topTextField.hidden = YES;
+        _topTextField.keyboardType = UIKeyboardTypeNumberPad;
+        [_topTextField addTarget:self action:@selector(txchange:) forControlEvents:UIControlEventEditingChanged];
+        [self addSubview:_topTextField];
+    }
+    return _topTextField;
+}
+
+
+- (void)setUI{
+    
+    _midLineColor = [UIColor blackColor];
+    _inputItemBackColor = [UIColor whiteColor];
+    _midLineBorderWidth = 1;
+    [self addSubview:self.topTextField];
+    //进入界面，topTX成为第一响应
+    [self.topTextField becomeFirstResponder];
+    for (int i = 0; i < ZHPasswordLength; i++){
+        UITextField *pwdTextField = [[UITextField alloc] init];
+        pwdTextField.enabled = NO;
+        pwdTextField.textAlignment = NSTextAlignmentCenter;//居中
+        pwdTextField.secureTextEntry = YES;//设置密码模式
+        [self addSubview:pwdTextField];
+        [self.dataSource addObject:pwdTextField];
+        
+        
+//        UIView * pointView = [[UIView alloc]init];
+//        pointView.backgroundColor = ThemeBackgroundColor;
+//        [pwdTextField addSubview:pointView];
+//        //一个不透明类型的Quartz 2D绘画环境,相当于一个画布,你可以在上面任意绘画
+//        CGContextRef context = UIGraphicsGetCurrentContext();
+//        CGContextSetFillColorWithColor(context, ThemeBackgroundColor.CGColor);//填充颜色
+//        CGContextAddArc(context, 0, 0, 10, 0, M_PI *2, 0); //添加一个圆
+//        CGContextDrawPath(context, kCGPathFill);//绘制填充
+    }
+}
+
+- (void)setupSubViewTextFildWithFrame{
+    CGFloat inputView_X = 0;
+
+    int i = 0;
+    for (UITextField *textField  in self.dataSource) {
+        inputView_X = LeftAndRightMid + i * Mid + i * (InputView_W - 1);
+        textField.frame = CGRectMake(inputView_X, InputView_Y, InputView_W, InputView_H);
+        textField.layer.borderColor = self.midLineColor.CGColor;
+        textField.backgroundColor = self.inputItemBackColor;
+        textField.layer.borderWidth = self.midLineBorderWidth;
+        i++;
+    }
+}
+- (void)layoutSubviews{
+    [super layoutSubviews];
+    
+    [self setupSubViewTextFildWithFrame];
+}
+#pragma mark 文本框内容改变
+- (void)txchange:(UITextField *)tx
+{
+    NSString *password = tx.text;
+    
+    if (password.length == self.dataSource.count)
+    {
+        [tx resignFirstResponder];//隐藏键盘
+    }
+    
+    for (int i = 0; i < self.dataSource.count; i++)
+    {
+        UITextField *pwdtx = [self.dataSource objectAtIndex:i];
+        if (i < password.length)
+        {
+            NSString *pwd = [password substringWithRange:NSMakeRange(i, 1)];
+            pwdtx.text = pwd;
+        }
+        
+    }
+    CMT_Log(@"%@",password);
+    if (password.length == ZHPasswordLength)
+    {
+        UIAlertView *alert = [[UIAlertView alloc]initWithTitle:@"输入的密码是" message:password delegate:nil cancelButtonTitle:@"完成" otherButtonTitles:nil, nil];
+        [alert show];
+    }
+}
+
+@end

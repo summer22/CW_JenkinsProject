@@ -1,0 +1,13 @@
+//
+//  CMT_ShufflingView.h
+//  CongMingTou
+//
+//  Created by wzh on 16/6/3.
+//  Copyright © 2016年 QiYuan. All rights reserved.
+//
+
+#import <UIKit/UIKit.h>
+
+@interface CMT_ShufflingView : UIView
+
+@end

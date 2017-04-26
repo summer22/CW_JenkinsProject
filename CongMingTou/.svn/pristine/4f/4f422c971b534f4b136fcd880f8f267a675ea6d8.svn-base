@@ -1,0 +1,38 @@
+//
+//  CMT_productDetHeadView.h
+//  CongMingTou
+//
+//  Created by summer on 16/5/13.
+//  Copyright © 2016年 wzh. All rights reserved.
+//
+
+#import <UIKit/UIKit.h>
+
+@class CMT_ProductDetModel;
+
+//定义btnclick事件的协议
+@protocol CMT_productDetHeadViewDelegate <NSObject>
+
+@end
+
+@interface CMT_productDetHeadView : UIView
+
+//重写初始化
+- (instancetype)initWithFrame:(CGRect)frame;
+
+//delegate
+@property (nonatomic,strong)id<CMT_productDetHeadViewDelegate>delegate;
+
+/** 数据源 */
+@property (nonatomic,strong)CMT_ProductDetModel *model;
+
+/** 加息率 */
+@property (nonatomic,copy)NSString *addRate;
+
+/** 是否是新手标类型判断*/
+@property (nonatomic,assign,getter=isNewMarkType)BOOL newMarkType;
+
+/** 标的状态 */
+@property (nonatomic,copy)NSString *markStatus;
+
+@end

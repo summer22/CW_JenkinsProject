@@ -1,0 +1,114 @@
+//
+//  CMT_AFNetWorking.m
+//  CongMingTou
+//
+//  Created by wzh on 16/5/9.
+//  Copyright © 2016年 QiYuan All rights reserved.
+//
+
+#import "CMT_AFNetWorking.h"
+#import "CWUDIDTools.h"
+@implementation CMT_AFNetWorking
+/** post 有参数请求 */
++(void)postWithBaseURL:(NSString *)url params:(NSDictionary *)params success:(HttpSuccess)success failure:(HttpFailure)failure{
+    [self requestPostWithBaseURL:url params:params success:success failure:failure ];
+}
+/** post 无参数请求 */
++(void)postWithBaseURL:(NSString *)url success:(HttpSuccess)success failure:(HttpFailure)failure{
+    
+    [self requestPostWithBaseURL:url params:nil success:success failure:failure];
+}
+
+/** get 有参数请求 */
++(void)getWithBaseURL:(NSString *)url params:(NSDictionary *)params success:(HttpSuccess)success failure:(HttpFailure)failure{
+    
+    [self requestGetWithBaseURL:url params:params success:success failure:failure];
+}
+/** get 无参数请求 */
++(void)getWithBaseURL:(NSString *)url success:(HttpSuccess)success failure:(HttpFailure)failure{
+    [self requestGetWithBaseURL:url params:nil success:success failure:failure];
+}
+
++ (void)requestPostWithBaseURL:(NSString *)url params:(NSDictionary *)params success:(HttpSuccess)success failure:(HttpFailure)failure {
+    
+    AFHTTPRequestOperationManager* manager=[AFHTTPRequestOperationManager manager];
+    //创建字典
+    manager.responseSerializer.acceptableContentTypes=[NSSet setWithObjects:@"text/html",@"application/json",@"text/plain", nil];
+    //    [manager.operationQueue cancelAllOperations];
+    //中文转码，中文会转换为%E%D%EB这些，英文则不影响
+    url = [url stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+    
+    [manager POST:url parameters:params success:^(AFHTTPRequestOperation *operation, id responseObject) {
+        if (success) {
+            
+            success(responseObject);
+        }
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+        
+        failure(error);
+    }];
+}
+
++ (void)requestGetWithBaseURL:(NSString *)url params:(NSDictionary *)params success:(HttpSuccess)success failure:(HttpFailure)failure {
+//    AFHTTPRequestOperationManager* manager=[AFHTTPRequestOperationManager manager];
+//    //创建字典
+//    manager.responseSerializer.acceptableContentTypes=[NSSet setWithObjects:@"text/html",@"application/json",@"text/plain", nil];
+//    manager.requestSerializer.timeoutInterval = 10;
+//    
+//    //中文转码，中文会转换为%E%D%EB这些，英文则不影响
+//    url = [url stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+//    [manager GET:url parameters:params success:^(AFHTTPRequestOperation *operation, id responseObject) {
+//        if (success) {
+//            success(responseObject);
+//        }
+//    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+//        failure(error);
+//    }];
+    
+    
+    url = [url stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+   
+    NSMutableURLRequest *request = [[NSMutableURLRequest alloc] initWithURL:[NSURL URLWithString:url]];
+    [request setHTTPMethod:@"GET"];
+    //  [request setHTTPBody:@"XXX"];
+    CMT_Log(@"[CWUDIDTools UDID] == %@",[CWUDIDTools UDID]);
+    [request setValue:[CWUDIDTools UDID] forHTTPHeaderField:@"uId"];
+    //当前app版本号
+    NSString *versionKey = @"CFBundleShortVersionString";
+    NSString *currentVersion = [NSBundle mainBundle].infoDictionary[versionKey];
+    [request setValue:currentVersion forHTTPHeaderField:@"version"];
+    if (![CMT_AccountTool accountModel].userId) {
+        [request setValue:@"" forHTTPHeaderField:@"userId"];
+    }else{
+        [request setValue:[CMT_AccountTool accountModel].userId forHTTPHeaderField:@"userId"];
+    }
+    AFHTTPRequestOperation *op = [[AFHTTPRequestOperation alloc] initWithRequest:request];
+    op.responseSerializer.acceptableContentTypes=[NSSet setWithObjects:@"text/html",@"application/json",@"text/plain", nil];
+    [op setCompletionBlockWithSuccess:^(AFHTTPRequestOperation * _Nonnull operation, id  _Nonnull responseObject) {
+        
+        if (success) {
+//            NSLog(@"%@",operation.responseString );
+            
+            responseObject = [self urlWithJson:responseObject];
+            success(responseObject);
+            
+        }
+//        CMT_Log(@"%@", responseObject);
+    } failure:^(AFHTTPRequestOperation * _Nonnull operation, NSError * _Nonnull error) {
+//        CMT_Log(@"%@",error);
+        failure(error);
+    }];
+    
+    [op start];
+}
++ (NSDictionary *)urlWithJson:(NSData *)jsonMutdic{
+    NSError *error ;
+    //    NSData *jsonData = [NSJSONSerialization dataWithJSONObject:jsonMutdic options:NSJSONWritingPrettyPrinted error:&error];
+    
+    NSDictionary *content = [NSJSONSerialization JSONObjectWithData:jsonMutdic options:NSJSONReadingMutableContainers error:&error];//转换数据格式
+    
+    //    NSString *json =[[NSString alloc] initWithData:jsonMutdic encoding:NSUTF8StringEncoding];
+    return content;
+}
+
+@end

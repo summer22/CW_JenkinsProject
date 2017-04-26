@@ -1,0 +1,32 @@
+//
+//  CMT_noNetShowView.m
+//  CongMingTou
+//
+//  Created by summer on 16/6/8.
+//  Copyright © 2016年 QiYuan. All rights reserved.
+//
+
+#import "CMT_noNetShowView.h"
+
+@implementation CMT_noNetShowView
+
+- (instancetype)initWithFrame:(CGRect)frame
+{
+    if (self = [super initWithFrame:frame])
+    {
+        [self creatSubView];
+        self.backgroundColor = CommonBgColor;
+        
+    }
+    return self;
+}
+
+- (void)creatSubView
+{
+    UIImageView *centerImgView = [CMT_Tools getImageViewWithFrame:CMT_CGRECTMAKE(0, 0, 86 * CMT_6PERCENTY, 101 * CMT_6PERCENTY) BackGroudColor:nil];
+    centerImgView.center = self.center;
+    centerImgView.image = [UIImage imageNamed:@"CMT_NoInvestRecord"];
+    [self addSubview:centerImgView];
+}
+
+@end

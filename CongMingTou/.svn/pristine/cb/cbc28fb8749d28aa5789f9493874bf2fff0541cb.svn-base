@@ -1,0 +1,30 @@
+//
+//  CMT_CapitalSubsidiaryTableViewCell.m
+//  CongMingTou
+//
+//  Created by wzh on 16/5/17.
+//  Copyright © 2016年 QiYuan. All rights reserved.
+//
+
+#import "CMT_CapitalSubsidiaryTableViewCell.h"
+
+@implementation CMT_CapitalSubsidiaryTableViewCell
+
+- (void)awakeFromNib {
+    // Initialization code
+}
++ (CMT_CapitalSubsidiaryTableViewCell *)cellWithTablebView:(UITableView *)tableView{
+    static NSString *indent = @"cell";
+    [tableView registerNib:[UINib nibWithNibName:@"CMT_CapitalSubsidiaryTableViewCell" bundle:nil] forCellReuseIdentifier:indent];
+    CMT_CapitalSubsidiaryTableViewCell  *cell = [tableView dequeueReusableCellWithIdentifier:indent];
+    cell.selectionStyle = UITableViewCellSelectionStyleNone;
+    return cell;
+    
+}
+- (void)setSelected:(BOOL)selected animated:(BOOL)animated {
+    [super setSelected:selected animated:animated];
+
+    // Configure the view for the selected state
+}
+
+@end

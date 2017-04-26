@@ -1,0 +1,271 @@
+//
+//  CMT_MyFuLiTableViewCell.m
+//  CongMingTou
+//
+//  Created by wzh on 16/5/11.
+//  Copyright © 2016年 wzh. All rights reserved.
+//
+
+#import "CMT_MyFuLiTableViewCell.h"
+
+@implementation CMT_MyFuLiTableViewCell
+
+- (void)awakeFromNib {
+    // Initialization code
+    self.backgroundColor = [UIColor clearColor];
+}
+
+- (IBAction)shiYongStateBtnClicked:(id)sender {
+    
+}
+
++ (CMT_MyFuLiTableViewCell *)cellWithTablebView:(UITableView *)tableView{
+    static NSString *indent = @"cell";
+    [tableView registerNib:[UINib nibWithNibName:@"CMT_MyFuLiTableViewCell" bundle:nil] forCellReuseIdentifier:indent];
+    CMT_MyFuLiTableViewCell  *cell = [tableView dequeueReusableCellWithIdentifier:indent];
+    cell.selectionStyle = UITableViewCellSelectionStyleNone;
+    return cell;
+    
+}
+
+//- (void)setModel:(CMT_MyWelfareListModel *)model{
+//    _model = model;
+//    NSString *rateStr = [NSString stringWithFormat:@"%@",model.rate];
+//    // 0:加息券；11：本金券 14体验金
+//    if([_model.type isEqualToString:@"0"]){//加息
+//        NSString *fuHaoStr = @"%";
+//        NSString *rateTotalStr = [NSString stringWithFormat:@"%@%@",rateStr,fuHaoStr];
+//        _percentageLab.attributedText = [NSMutableAttributedString attributeWithTotalStr:rateTotalStr subStr:fuHaoStr subStrFont:UIFont24];
+//    }else if ([_model.type isEqualToString:@"11"]){//本金
+//        NSString *danWeiStr = @"元";
+//        NSString *benJinTotalStr = [NSString stringWithFormat:@"%@%@",rateStr,danWeiStr];
+//        _percentageLab.attributedText = [NSMutableAttributedString attributeWithTotalStr:benJinTotalStr subStr:danWeiStr subStrFont:UIFont24];
+//    }else if ([_model.type isEqualToString:@"14"]){//体验金
+//        NSString *danWeiStr = @"元";
+//        NSString *benJinTotalStr = [NSString stringWithFormat:@"%@%@",rateStr,danWeiStr];
+//        _percentageLab.attributedText = [NSMutableAttributedString attributeWithTotalStr:benJinTotalStr subStr:danWeiStr subStrFont:UIFont24];
+//    }else{
+//        NSString *danWeiStr = @"元";
+//        NSString *benJinTotalStr = [NSString stringWithFormat:@"%@%@",rateStr,danWeiStr];
+//        _percentageLab.attributedText = [NSMutableAttributedString attributeWithTotalStr:benJinTotalStr subStr:danWeiStr subStrFont:UIFont24];
+//    }
+//    _detailLab.text = [NSString stringWithFormat:@"·%@",_model.details];
+//    _dateLab.text = [NSString stringWithFormat:@"有效期至:%@",_model.endDate];
+//    _titleLab.text = [NSString stringWithFormat:@"%@",_model.ticketName];
+//    
+//    /**
+//     *  状态（-1：已过期  0：未使用  1：已使用）
+//     */
+//    if([_model.status isEqualToString:@"-1"]){
+//        [self setHaveBeenUsedOrExpiredDefautUI];
+//        _desLab.text = @"已过期";
+//        _shiYongStateLab.text = @"已过期";
+//        _shiYongStateBtn.userInteractionEnabled = NO;
+//
+//    }else if ([_model.status isEqualToString:@"0"]){//未使用
+//        _desLab.text = [NSString stringWithFormat:@"还有%@天过期",_model.expireDays];
+//        _shiYongStateLab.text = @"立即使用";
+//        [self setDontUseDefautUI];
+//        //本金卷 && 不可用  ｜｜ 新手体验金 && 没有可投新手标
+//        if(([[NSString stringWithFormat:@"%@",model.type]isEqualToString:@"11"] && [[NSString stringWithFormat:@"%@",model.disable] isEqualToString:@"0"]) || ([[NSString stringWithFormat:@"%@",model.type]isEqualToString:@"14"] && [[NSString stringWithFormat:@"%@",model.experienceGoldId] isEqualToString:@"no"])){
+//            _shiYongStateBtn.userInteractionEnabled = NO;
+//            _shiYongStateLab.textColor = CommonHelpTextColor;
+//            _backImageView.image = [UIImage imageNamed:@"My_Fuli_Guoqi"];
+//
+//        }else{
+//            _shiYongStateBtn.userInteractionEnabled = YES;
+//            _shiYongStateLab.textColor = ThemeBackgroundColor;
+//            _backImageView.image = [UIImage imageNamed:@"My_Fuli_ShiYong"];
+//
+//        }
+//    }else if ([_model.status isEqualToString:@"1"]){//已使用
+//        [self setHaveBeenUsedOrExpiredDefautUI];
+//        _desLab.text = @"已使用";
+//        _shiYongStateLab.text = @"已使用";
+//        _shiYongStateBtn.userInteractionEnabled = NO;
+//
+//    }else if ([_model.status isEqualToString:@"101"]){//未激活
+//        _desLab.text = [NSString stringWithFormat:@"还有%@天过期",_model.expireDays];
+//        _shiYongStateLab.text = @"未激活";
+//        [self setDontUseDefautUI];
+//        _shiYongStateBtn.userInteractionEnabled = NO;
+//    }else if ([_model.status isEqualToString:@"102"]){//已激活
+//        [self setHaveBeenUsedOrExpiredDefautUI];
+//        _desLab.text = @"已激活";
+//        _shiYongStateLab.text = @"已激活";
+//        _shiYongStateBtn.userInteractionEnabled = NO;
+//        
+//    }else{
+//        
+//    }
+//}
+#pragma mark --设置未使用默认UI
+- (void)setDontUseDefautUI{
+//    [_backImageView styteWithCornerRadius:0.2 shadowColor:ThemeBackgroundColor shadowOffset:CGSizeMake(0, 2) shadowOpacity:0.6 shadowRadius:2];
+    _backImageView.image = [UIImage imageNamed:@"My_Fuli_ShiYong"];
+    _percentageLab.textColor = ThemeBackgroundColor;
+    _titleLab.textColor = CommonImpTextColor;
+    _desLab.textColor = CommonYellowTextColor;
+    _detailLab.textColor = CommonGrayTextColor;
+    _dateLab.textColor = CommonGrayTextColor;
+    _shiYongStateLab.textColor = ThemeBackgroundColor;
+}
+#pragma mark --设置已过期和已使用的m默认UI 全部暗色调
+- (void)setHaveBeenUsedOrExpiredDefautUI{
+//    [_backImageView styteWithCornerRadius:0.2 shadowColor:CommonHelpTextColor shadowOffset:CGSizeMake(0, 2) shadowOpacity:0.6 shadowRadius:5];
+
+    _backImageView.image = [UIImage imageNamed:@"My_Fuli_Guoqi"];
+    _percentageLab.textColor = CommonGrayTextColor;
+    _titleLab.textColor = CommonGrayTextColor;
+    _desLab.textColor = CommonHelpTextColor;
+    _detailLab.textColor = CommonHelpTextColor;
+    _dateLab.textColor = CommonHelpTextColor;
+    _shiYongStateLab.textColor = CommonHelpTextColor;
+    
+}
+
+
+
+
+- (void)setModel:(CMT_MyWelfareListModel *)model{
+    _model = model;
+    NSString *rateStr = [NSString stringWithFormat:@"%@",model.rate];
+    NSString *danWeiStr = @"元";
+    NSString *benJinTotalStr = [NSString stringWithFormat:@"%@%@",rateStr,danWeiStr];
+    _percentageLab.attributedText = [NSMutableAttributedString attributeWithTotalStr:benJinTotalStr subStr:danWeiStr subStrFont:UIFont24];
+    _detailLab.text = [NSString stringWithFormat:@"·%@",_model.details];
+    _dateLab.text = [NSString stringWithFormat:@"有效期至:%@",_model.endDate];
+    _titleLab.text = [NSString stringWithFormat:@"%@",_model.ticketName];
+
+    //卷的类型  0:加息券；11：本金券 14 体验金 99 红包
+    NSInteger type =  [_model.type integerValue];
+    switch (type) {
+            
+            //加息卷
+        case 0:{
+            NSString *fuHaoStr = @"%";
+            NSString *rateTotalStr = [NSString stringWithFormat:@"%@%@",rateStr,fuHaoStr];
+            _percentageLab.attributedText = [NSMutableAttributedString attributeWithTotalStr:rateTotalStr subStr:fuHaoStr subStrFont:UIFont24];
+        }
+            break;
+            //本金券
+        case 11:{
+            
+        }
+            break;
+            //体验金
+        case 14:{
+            
+        }
+            break;
+            //红包
+        case 99:{
+            
+        }
+            break;
+            
+        default:
+            break;
+    }
+    
+    
+    //状态（-1：已过期  0：未使用  1：已使用）    101：未激活  102：已激活
+    NSInteger status =  [model.status integerValue];
+    switch (status) {
+            //已过期
+        case -1:{
+            [self inThePastStatusUI];
+            _desLab.text = @"已过期";
+            _shiYongStateLab.text = @"已过期";
+
+        }
+            break;
+            //未使用
+        case 0:{
+            _desLab.text = [NSString stringWithFormat:@"还有%@天过期",_model.expireDays];
+            _shiYongStateLab.text = @"立即使用";
+            //本金卷 && 不可用  ｜｜ 新手体验金 && 没有可投新手标
+            if(([[NSString stringWithFormat:@"%@",model.type]isEqualToString:@"11"] && [[NSString stringWithFormat:@"%@",model.disable] isEqualToString:@"0"]) || ([[NSString stringWithFormat:@"%@",model.type]isEqualToString:@"14"] && [[NSString stringWithFormat:@"%@",model.experienceGoldId] isEqualToString:@"no"])){
+                [self theOngoingButNoUseStatusUI];
+                
+            }else{
+                [self theOngoingStatusUI];
+            }
+        }
+            break;
+            //已使用
+        case 1:{
+            [self inThePastStatusUI];
+            _desLab.text = @"已使用";
+            _shiYongStateLab.text = @"已使用";
+        }
+            break;
+            //未激活
+        case 101:{
+            _desLab.text = [NSString stringWithFormat:@"还有%@天过期",_model.expireDays];
+            _shiYongStateLab.text = @"未激活";
+            [self theOngoingStatusUI];
+            _shiYongStateBtn.userInteractionEnabled = NO;
+
+        }
+            break;
+            //已激活
+        case 102:{
+            [self inThePastStatusUI];
+            _desLab.text = @"已激活";
+            _shiYongStateLab.text = @"已激活";
+        }
+            break;
+        default:
+            break;
+    }
+}
+
+////正在进行的状态 －－ 未使用
+- (void)theOngoingStatusUI{
+    _backImageView.image = [UIImage imageNamed:@"My_Fuli_ShiYong"];
+    _percentageLab.textColor = ThemeBackgroundColor;
+    _titleLab.textColor = CommonImpTextColor;
+    _desLab.textColor = CommonYellowTextColor;
+    _detailLab.textColor = CommonGrayTextColor;
+    _dateLab.textColor = CommonGrayTextColor;
+    _shiYongStateLab.textColor = ThemeBackgroundColor;
+    _shiYongStateBtn.userInteractionEnabled = YES;
+
+}
+
+//已经过去的状态  －－－ 已过期 已使用
+- (void)inThePastStatusUI{
+    _backImageView.image = [UIImage imageNamed:@"My_Fuli_Guoqi"];
+    _percentageLab.textColor = CommonGrayTextColor;
+    _titleLab.textColor = CommonGrayTextColor;
+    _desLab.textColor = CommonHelpTextColor;
+    _detailLab.textColor = CommonHelpTextColor;
+    _dateLab.textColor = CommonHelpTextColor;
+    _shiYongStateLab.textColor = CommonHelpTextColor;
+    _shiYongStateBtn.userInteractionEnabled = NO;
+
+}
+
+//正在进行但是不可使用状态
+- (void)theOngoingButNoUseStatusUI{
+    _backImageView.image = [UIImage imageNamed:@"My_Fuli_Guoqi"];
+    _percentageLab.textColor = ThemeBackgroundColor;
+    _titleLab.textColor = CommonImpTextColor;
+    _desLab.textColor = CommonYellowTextColor;
+    _detailLab.textColor = CommonGrayTextColor;
+    _dateLab.textColor = CommonGrayTextColor;
+    _shiYongStateLab.textColor = CommonHelpTextColor;
+    _shiYongStateBtn.userInteractionEnabled = NO;
+}
+- (void)layoutSubviews{
+    [super layoutSubviews];
+    _lineViewH.constant = 0.5;
+}
+- (void)setSelected:(BOOL)selected animated:(BOOL)animated {
+    [super setSelected:selected animated:animated];
+
+    // Configure the view for the selected state
+}
+
+@end

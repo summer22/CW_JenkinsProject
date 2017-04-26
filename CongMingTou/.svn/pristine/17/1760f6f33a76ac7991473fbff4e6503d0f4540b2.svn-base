@@ -1,0 +1,245 @@
+//
+//  CMT_productDetHeadView.m
+//  CongMingTou
+//
+//  Created by summer on 16/5/13.
+//  Copyright © 2016年 wzh. All rights reserved.
+//
+
+#import "CMT_productDetHeadView.h"
+#import "markImageView.h"
+#import "CMT_ProductDetModel.h"
+
+@interface CMT_productDetHeadView()
+
+/** 进度条 */
+@property (nonatomic,strong)UIProgressView *progress;
+/** 进度值 */
+@property (nonatomic,strong)UILabel *pencentLabel;
+/** 手标类型图 */
+@property (nonatomic,strong)markImageView *topLeftView;
+/** 年收益率值*/
+@property (nonatomic,strong)UILabel *profitLabel;
+/** 加息率 */
+@property (nonatomic,strong)UILabel *addPencentLabel;
+/** 项目总额 */
+@property (nonatomic,strong)UILabel *projectNumLabel;
+/** 可投金额 */
+@property (nonatomic,strong)UILabel *toPayLabel;
+/** 加息券张数或者加息数 */
+@property (nonatomic,strong)UILabel *ticketLabel;
+/** 背景视图 */
+@property (nonatomic,strong)UIView *bgView;
+/** 体验金处控件的父视图  */
+@property (nonatomic,strong)UIView *testView;
+/** bottomLine */
+@property (nonatomic,strong)UIView *lineView;
+/** 预期年化收益率 */
+@property (nonatomic,strong)UILabel *yuqiLabel;
+@end
+
+@implementation CMT_productDetHeadView
+
+- (instancetype)initWithFrame:(CGRect)frame
+{
+    if (self = [super initWithFrame:frame])
+    {
+        [self creatHeadSubView];
+    }
+    return self;
+}
+
+//创建头部试图的子空间
+- (void)creatHeadSubView
+{
+   
+    UIView *topBgView = [[UIView alloc] initWithFrame:CMT_CGRECTMAKE(0, 0, CMT_ScreenWidth,  250 * CMT_6PERCENTY)];
+    topBgView.backgroundColor = CommonWhiteColor;
+    topBgView.userInteractionEnabled = YES;
+    self.bgView = topBgView;
+    [self addSubview:topBgView];
+    
+    //左上角的状态图片view
+    markImageView *topLeftView = [[markImageView alloc] initWithFrame:CMT_CGRECTMAKE(15 , 10, 161 , 22)];
+    self.topLeftView = topLeftView;
+    [topBgView addSubview:topLeftView];
+    
+    //预期年化收益率15%
+    CGSize profitLabelSize = [CMT_Tools getStrSize:@"12.5%" fontSize:36 * CMT_6PERCENTY];
+    UILabel *profitLabel = [CMT_Tools getLabel:@"12.5%" textFont:36 * CMT_6PERCENTY viewFrame:CMT_CGRECTMAKE(0, 45 *CMT_6PERCENTY, profitLabelSize.width,profitLabelSize.height) textAlignments:NSTextAlignmentCenter textColors:CommonYellowTextColor];
+    profitLabel.centerX = topBgView.centerX;
+    profitLabel.attributedText = [CMT_Tools HeadAttributedString:@"12.5" backAttributedString:@" %" NSheadForegroundColorAttributeName:CommonYellowTextColor NSbackForegroundColorAttributeName:CommonYellowTextColor NSheadFontAttributeName:36 * CMT_6PERCENTY NSbackFontAttributeName:15 * CMT_6PERCENTY];
+    self.profitLabel = profitLabel;
+    [topBgView addSubview:profitLabel];
+    
+//    //加息率
+//    CGSize rateLabelSize = [CMT_Tools getStrSize:@"＋0.50%" fontSize:18 * CMT_6PERCENTY];
+//    UILabel *rateLabel = [CMT_Tools getLabel:@"＋0.50%" textFont:18 * CMT_6PERCENTY viewFrame:CMT_CGRECTMAKE(profitLabel.right - 8  , 0, rateLabelSize.width,rateLabelSize.height) textAlignments:NSTextAlignmentCenter textColors:CommonYellowTextColor];
+//    rateLabel.centerY = profitLabel.centerY+5 * CMT_6PERCENTY;
+//    rateLabel.attributedText = [CMT_Tools HeadAttributedString:@"＋0.50" backAttributedString:@"%" NSheadForegroundColorAttributeName:CommonYellowTextColor NSbackForegroundColorAttributeName:CommonYellowTextColor NSheadFontAttributeName:18 * CMT_6PERCENTY NSbackFontAttributeName:11 * CMT_6PERCENTY];
+//    self.addPencentLabel = rateLabel;
+//    [topBgView addSubview:rateLabel];
+    
+    //预期年化收益率
+    CGSize profitBottomLabelSize = [CMT_Tools getStrSize:@"预期年化收益率" fontSize:12 * CMT_6PERCENTY];
+    UILabel *profitBottomLabel = [CMT_Tools getLabel:@"预期年化收益率" textFont:12 * CMT_6PERCENTY viewFrame:CMT_CGRECTMAKE(0, profitLabel.bottom + 5 * CMT_6PERCENTY, profitBottomLabelSize.width,profitBottomLabelSize.height) textAlignments:NSTextAlignmentCenter textColors:CommonImpTextColor];
+    profitBottomLabel.centerX = topBgView.centerX;
+    self.yuqiLabel = profitBottomLabel;
+    [topBgView addSubview:profitBottomLabel];
+
+
+    UIProgressView *progress = [[UIProgressView alloc] initWithProgressViewStyle:UIProgressViewStyleBar];
+    progress.frame = CMT_CGRECTMAKE(15 , profitBottomLabel.bottom + 20 * CMT_6PERCENTY, CMT_ScreenWidth - 80 * CMT_6PERCENTY, 20 * CMT_6PERCENTY);
+    progress.transform = CGAffineTransformMakeScale(1.0f,2.0f);
+    progress.layer.cornerRadius = 3;
+    progress.layer.masksToBounds = YES;
+    progress.progressTintColor = ThemeBackgroundColor;
+    progress.trackTintColor = customColor(@"#e6f0f7");
+    progress.progress = 0.5;
+    self.progress = progress;
+    [topBgView addSubview:progress];
+    
+    UILabel *pencentLabel = [CMT_Tools getLabel: @"100%" textFont:14 * CMT_6PERCENTY viewFrame:CMT_CGRECTMAKE(progress.right + 10 * CMT_6PERCENTY, 0, 40 *CMT_6PERCENTY, 30 * CMT_6PERCENTY) textAlignments:NSTextAlignmentCenter textColors:ThemeBackgroundColor];
+    pencentLabel.centerY = progress.centerY;
+    self.pencentLabel = pencentLabel;
+    [topBgView addSubview:pencentLabel];
+    
+    //左边视图
+    UIView *leftBgView = [[UIView alloc] initWithFrame:CMT_CGRECTMAKE(0, progress.bottom, CMT_ScreenWidth/2, 77.5 * CMT_6PERCENTY)];
+    [topBgView addSubview:leftBgView];
+    
+    //总额额度
+    CGSize totleLabelSize = [CMT_Tools getStrSize:@"500000000.00元" fontSize:18 * CMT_6PERCENTY];
+    UILabel *totleLabel = [CMT_Tools getLabel:@"500000000.00元" textFont:18 * CMT_6PERCENTY viewFrame:CMT_CGRECTMAKE(0, 20 * CMT_6PERCENTY, totleLabelSize.width,totleLabelSize.height) textAlignments:NSTextAlignmentCenter textColors:CommonImpTextColor];
+    totleLabel.centerX = leftBgView.centerX;
+    totleLabel.attributedText = [CMT_Tools HeadAttributedString:@"500000000.00" backAttributedString:@" 元" NSheadForegroundColorAttributeName:CommonImpTextColor NSbackForegroundColorAttributeName:CommonImpTextColor NSheadFontAttributeName:18 * CMT_6PERCENTY NSbackFontAttributeName:10 * CMT_6PERCENTY];
+    self.projectNumLabel = totleLabel;
+    [leftBgView addSubview:totleLabel];
+    
+    //项目总额
+    CGSize LabelSize = [CMT_Tools getStrSize:@"项目总额" fontSize:11];
+    UILabel *projectLabel = [CMT_Tools getLabel:@"项目总额" textFont:11 viewFrame:CMT_CGRECTMAKE(0, 0, LabelSize.width,LabelSize.height) textAlignments:NSTextAlignmentCenter textColors:CommonGrayTextColor];
+    projectLabel.centerX = totleLabel.centerX;
+    projectLabel.centerY = totleLabel.bottom + 10 * CMT_6PERCENTY;
+    [leftBgView addSubview:projectLabel];
+    
+    //右边视图
+    UIView *rightBgView = [[UIView alloc] initWithFrame:CMT_CGRECTMAKE(leftBgView.right, 0, CMT_ScreenWidth/2, 77.5 *CMT_6PERCENTY)];
+    rightBgView.centerY = leftBgView.centerY;
+    [topBgView addSubview:rightBgView];
+    
+    //可投金额数字
+    CGSize numLabelSize = [CMT_Tools getStrSize:@"3,344.8800元" fontSize:18 * CMT_6PERCENTY];
+    UILabel *numLabel = [CMT_Tools getLabel:@"3,344.88元" textFont:18 * CMT_6PERCENTY viewFrame:CMT_CGRECTMAKE((rightBgView.width - numLabelSize.width)/2, 20 * CMT_6PERCENTY, numLabelSize.width,numLabelSize.height) textAlignments:NSTextAlignmentCenter textColors:CommonImpTextColor];
+    numLabel.attributedText = [CMT_Tools HeadAttributedString:@"3,344.88" backAttributedString:@" 元" NSheadForegroundColorAttributeName:CommonImpTextColor NSbackForegroundColorAttributeName:CommonImpTextColor NSheadFontAttributeName:18 * CMT_6PERCENTY NSbackFontAttributeName:10 * CMT_6PERCENTY];
+    self.toPayLabel = numLabel;
+    [rightBgView addSubview:numLabel];
+    
+    //可投金额文字
+    CGSize avilableLabelSize = [CMT_Tools getStrSize:@"可投金额" fontSize:11 * CMT_6PERCENTY];
+    UILabel *avilableLabel = [CMT_Tools getLabel:@"可投金额" textFont:11 * CMT_6PERCENTY viewFrame:CMT_CGRECTMAKE(0, 0, avilableLabelSize.width,avilableLabelSize.height) textAlignments:NSTextAlignmentCenter textColors:CommonGrayTextColor];
+    avilableLabel.centerX = numLabel.centerX;
+    avilableLabel.centerY = numLabel.bottom + 10 * CMT_6PERCENTY;
+    [rightBgView addSubview:avilableLabel];
+
+    //线条
+    UIView *Line = [[UIView alloc] initWithFrame:CMT_CGRECTMAKE(0, rightBgView.bottom, CMT_ScreenWidth, 0.5)];
+    Line.backgroundColor = CommonLineColor;
+    self.lineView = Line;
+    [topBgView addSubview:Line];
+
+    
+    UIView *testView = [[UIView alloc] initWithFrame:CMT_CGRECTMAKE(0,  Line.bottom, CMT_ScreenWidth, 45 * CMT_6PERCENTY)];
+    self.testView = testView;
+    [topBgView addSubview:testView];
+    
+    //体验金文字
+    CGSize copLabelSize = [CMT_Tools getStrSize:@"体验金" fontSize:14 * CMT_6PERCENTY];
+    UILabel *copLabel = [CMT_Tools getLabel:@"体验金" textFont:14 * CMT_6PERCENTY viewFrame:CMT_CGRECTMAKE(15, (43 * CMT_6PERCENTY - copLabelSize.height)/2, copLabelSize.width,copLabelSize.height) textAlignments:NSTextAlignmentCenter textColors:CommonImpTextColor];
+    [testView addSubview:copLabel];
+    
+    //体验金额度
+    CGSize copNumLabelSize = [CMT_Tools getStrSize:@"10000元" fontSize:18 * CMT_6PERCENTY];
+    UILabel *copNumLabel = [CMT_Tools getLabel:@"1000元" textFont:14 * CMT_6PERCENTY viewFrame:CMT_CGRECTMAKE(CMT_ScreenWidth - 15 - copNumLabelSize.width, (43 * CMT_6PERCENTY - copLabelSize.height)/2, copNumLabelSize.width,copNumLabelSize.height) textAlignments:NSTextAlignmentRight textColors:CommonYellowTextColor];
+    self.ticketLabel = copNumLabel;
+    [testView addSubview:copNumLabel];
+
+}
+
+#pragma mark -- 数据交互处
+/**
+ * 两大状态
+   －、新手标
+      1、可投资壮状态 2、已售罄状态
+      2、体验金是否有
+   二、不是新手标
+      1、可投资壮状态 2、已售罄状态
+      2、是否适用
+ *
+ */
+- (void)setModel:(CMT_ProductDetModel *)model
+{
+    _model = model;
+    
+    NSString *status = self.markStatus;//标的状态
+    NSString *cashInvestAmount = model.cashInvestAmount;//是否有体验金的状态判断
+    
+    //处理不同类型的图片
+    self.topLeftView.markStatus = self.markStatus;
+    self.topLeftView.productDetModel = _model;
+
+    if ([cashInvestAmount isEqualToString:@"no"] || [cashInvestAmount isEqualToString:@"0"]) {
+        self.ticketLabel.text = @"暂无";
+        self.ticketLabel.textColor = CommonGrayTextColor;
+    }else{
+        self.ticketLabel.text = [cashInvestAmount stringByAppendingString:@"元"];
+        self.ticketLabel.textColor = CommonYellowTextColor;
+    }    
+    self.progress.progress = [_model.loanSchedule floatValue]/100;//借款进度
+    self.pencentLabel.attributedText= [CMT_Tools HeadAttributedString:_model.loanSchedule backAttributedString:@"%" NSheadForegroundColorAttributeName:ThemeBackgroundColor NSbackForegroundColorAttributeName:ThemeBackgroundColor NSheadFontAttributeName:14 * CMT_6PERCENTY NSbackFontAttributeName:14 * CMT_6PERCENTY];//进度文字
+    self.projectNumLabel.attributedText = [CMT_Tools HeadAttributedString:_model.amount backAttributedString:@" 元" NSheadForegroundColorAttributeName:CommonImpTextColor NSbackForegroundColorAttributeName:CommonImpTextColor NSheadFontAttributeName:18 * CMT_6PERCENTY NSbackFontAttributeName:10 * CMT_6PERCENTY];//项目总额
+     self.toPayLabel.attributedText = [CMT_Tools HeadAttributedString:_model.leftAmount backAttributedString:@" 元" NSheadForegroundColorAttributeName:CommonImpTextColor NSbackForegroundColorAttributeName:CommonImpTextColor NSheadFontAttributeName:18 * CMT_6PERCENTY NSbackFontAttributeName:10 * CMT_6PERCENTY];//可投金额
+    
+    if ([status isEqualToString:@"2"]) {
+            //可投资
+        self.profitLabel.attributedText = [CMT_Tools HeadAttributedString:_model.apr backAttributedString:@" %" NSheadForegroundColorAttributeName:CommonYellowTextColor NSbackForegroundColorAttributeName:CommonYellowTextColor NSheadFontAttributeName:36 * CMT_6PERCENTY NSbackFontAttributeName:15 * CMT_6PERCENTY];
+        self.addPencentLabel.attributedText = [CMT_Tools HeadAttributedString:[NSString stringWithFormat:@"+%@",_addRate] backAttributedString:@"%" NSheadForegroundColorAttributeName:CommonYellowTextColor NSbackForegroundColorAttributeName:CommonYellowTextColor NSheadFontAttributeName:18 * CMT_6PERCENTY NSbackFontAttributeName:11 * CMT_6PERCENTY];
+        self.yuqiLabel.textColor = CommonImpTextColor;
+
+    }else{
+            //已售罄
+        self.profitLabel.attributedText = [CMT_Tools HeadAttributedString:_model.apr backAttributedString:@" %" NSheadForegroundColorAttributeName:CommonGrayTextColor NSbackForegroundColorAttributeName:CommonGrayTextColor NSheadFontAttributeName:36 * CMT_6PERCENTY NSbackFontAttributeName:15 * CMT_6PERCENTY];
+        self.addPencentLabel.attributedText = [CMT_Tools HeadAttributedString:[NSString stringWithFormat:@"+%@",_addRate] backAttributedString:@"%" NSheadForegroundColorAttributeName:CommonGrayTextColor NSbackForegroundColorAttributeName:CommonGrayTextColor NSheadFontAttributeName:18 * CMT_6PERCENTY NSbackFontAttributeName:11 * CMT_6PERCENTY];
+        self.yuqiLabel.textColor = CommonGrayTextColor;
+        self.ticketLabel.textColor = CommonGrayTextColor;
+    }
+    
+    [self layoutSubviews];
+}
+
+/**
+ *  根据是否是新手标视图高度动态变化，且判断是否隐藏体验金那一块
+ */
+- (void)setNewMarkType:(BOOL)newMarkType
+{
+    _newMarkType = newMarkType;
+    self.bgView.height = _newMarkType == YES ?  250  * CMT_6PERCENTY :  205  * CMT_6PERCENTY;
+    self.testView.hidden = !_newMarkType;
+    self.lineView.hidden = !_newMarkType;
+}
+
+//是否有加息率判断
+- (void)setAddRate:(NSString *)addRate
+{
+    _addRate = addRate;
+    
+    self.addPencentLabel.attributedText = [CMT_Tools HeadAttributedString:[NSString stringWithFormat:@"+%@",_addRate] backAttributedString:@" %" NSheadForegroundColorAttributeName:CommonYellowTextColor NSbackForegroundColorAttributeName:CommonYellowTextColor NSheadFontAttributeName:18 NSbackFontAttributeName:11];
+
+    if (_addRate) {
+        self.addPencentLabel.hidden = NO;
+    }else{
+        self.addPencentLabel.hidden = YES;
+    }
+}
+
+@end

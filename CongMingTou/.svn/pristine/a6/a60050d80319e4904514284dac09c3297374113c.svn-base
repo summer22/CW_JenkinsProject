@@ -1,0 +1,13 @@
+//
+//  CMT_SupportBankViewController.h
+//  CongMingTou
+//
+//  Created by wzh on 16/7/1.
+//  Copyright © 2016年 QiYuan. All rights reserved.
+//
+
+#import "CMT_WebBaseViewController.h"
+
+@interface CMT_SupportBankViewController : CMT_WebBaseViewController
+
+@end

@@ -1,0 +1,42 @@
+//
+//  CMT_CreditorsRightsListTableViewCell.h
+//  CongMingTou
+//
+//  Created by wzh on 16/6/22.
+//  Copyright © 2016年 QiYuan. All rights reserved.
+//
+
+#import <UIKit/UIKit.h>
+#import "CMT_CreditorModel.h"
+
+@interface CMT_CreditorsRightsListTableViewCell : UITableViewCell
+@property (strong, nonatomic) IBOutlet NSLayoutConstraint *oneLineH;
+@property (strong, nonatomic) IBOutlet NSLayoutConstraint *threeLineH;
+
+/**
+ *  借款方
+ */
+@property (strong, nonatomic) IBOutlet UILabel *nameLab;
+/**
+ *  身份证号或者营业执照标题
+ */
+//@property (strong, nonatomic) IBOutlet UILabel *idCardOrBusinessLicenseTitleLab;
+///**
+// *  身份证号或者营业执照 号码
+// */
+//@property (strong, nonatomic) IBOutlet UILabel *idCardOrBusinessLicenseLab;
+/**
+ *  借款金额
+ */
+@property (strong, nonatomic) IBOutlet UILabel *borrowingMoneyLab;
+
+/**
+ *  借款期限
+ */
+@property (strong, nonatomic) IBOutlet UILabel *borrowingTimeLimitLab;
++ (CMT_CreditorsRightsListTableViewCell *)cellWithTablebView:(UITableView *)tableView;
+
+- (void)setModel:(CMT_CreditorModel *)model;
+
+
+@end

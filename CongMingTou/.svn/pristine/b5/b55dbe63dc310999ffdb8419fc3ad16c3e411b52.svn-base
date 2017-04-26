@@ -1,0 +1,57 @@
+//
+//  CMT_TenderTypeNoNperView.m
+//  CongMingTou
+//
+//  Created by wzh on 16/5/27.
+//  Copyright © 2016年 QiYuan. All rights reserved.
+//
+
+#import "CMT_TenderTypeNoNperView.h"
+@interface CMT_TenderTypeNoNperView ()
+@property (nonatomic, strong) IBOutlet UIView *view;
+@end
+
+@implementation CMT_TenderTypeNoNperView
+
+- (instancetype)initWithFrame:(CGRect)frame{
+    if(self = [super initWithFrame:frame]){
+        
+        [self setUI];
+        
+    }
+    return self;
+}
+
+- (instancetype)initWithCoder:(NSCoder *)aDecoder{
+    
+    if (self = [super initWithCoder:aDecoder]) {
+        
+        [self setUI];
+    }
+    
+    return self;
+}
+
+- (void)setUI{
+    [[NSBundle mainBundle] loadNibNamed:@"CMT_TenderTypeNoNperView" owner:self options:nil];
+    [self addSubview:self.view];
+}
+
+- (void)layoutSubviews{
+    [super layoutSubviews];
+    self.view.frame = self.bounds; //填一下自动布局的坑！最好要写这一句
+    [self sendSubviewToBack:self.view];
+}
+
+- (void)yuYueAndShuHuiTenderStr:(NSString *)tenderStr andTenderType:(CMTTenderType)tenderType{
+    if(tenderType == CMTTenderTypeNewStandard){
+        _backImageView.image = [UIImage imageNamed:@"TenderRed"];
+    }else if (tenderType == CMTTenderType30Day || tenderType == CMTTenderType90Day){
+        _backImageView.image = [UIImage imageNamed:@"TenderYellow"];
+    }else if (tenderType == CMTTenderType180Day || tenderType == CMTTenderType360Day){
+        _backImageView.image = [UIImage imageNamed:@"TenderBlue"];
+        
+    }
+    _titleLab.attributedText = [NSMutableAttributedString attributeWithTotalStr:tenderStr andWholeTiltSize:0.2];
+}
+@end

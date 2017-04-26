@@ -1,0 +1,134 @@
+//
+//  CMT_FinancialHeadView.m
+//  CongMingTou
+//
+//  Created by summer on 16/5/13.
+//  Copyright © 2016年 wzh. All rights reserved.
+//
+
+#import "CMT_FinancialHeadView.h"
+#import "CMT_TabBarController.h"
+#import "CMT_NavigationController.h"
+#import "AppDelegate.h"
+#import "CMT_productDetViewController.h"
+
+@interface CMT_FinancialHeadView()
+{
+    NSTimer *timer;
+}
+/** 倒计时lable */
+@property (nonatomic,strong)UILabel *rightLabel;
+/** bannerImg */
+@property (nonatomic,strong)UIImageView *bannerImg;
+
+@end
+
+@implementation CMT_FinancialHeadView
+
+- (instancetype)initWithFrame:(CGRect)frame
+{
+    if (self = [super initWithFrame:frame])
+    {
+        [self creatImg];
+        [self creatDownTimeView];
+    }
+    return self;
+}
+
+//imageView
+- (void)creatImg
+{
+    UIImageView *img = [[UIImageView alloc] initWithFrame:CMT_CGRECTMAKE(0, 0, self.width, 205 * CMT_6PERCENTY)];
+    self.bannerImg = img;
+    [self addSubview:self.bannerImg];
+    [self setImgUrl:nil];
+}
+
+-(void)setImgUrl:(NSString *)imgUrl
+{
+    [self.bannerImg sd_setImageWithURL:[NSURL URLWithString:imgUrl] placeholderImage:[UIImage imageNamed:@"firstBanner"]];
+}
+
+//倒计时
+- (void)creatDownTimeView
+{
+    UIView *bgView = [[UIView alloc] initWithFrame:CMT_CGRECTMAKE(0, 205 * CMT_6PERCENTY, CMT_ScreenWidth, 35 * CMT_6PERCENTY)];
+    bgView.backgroundColor =  customColor(@"FFFAE7");
+    [self addSubview:bgView];
+
+    UIView *rightLine = [[UIView alloc] initWithFrame:CMT_CGRECTMAKE(0, 0, 5, 35 * CMT_6PERCENTY)];
+    rightLine.backgroundColor =  CommonYellowTextColor;
+    [bgView addSubview:rightLine];
+    
+    UILabel *leftLabel = [CMT_Tools getLabel:@"每日08:00开售" textFont:14 viewFrame:CMT_CGRECTMAKE(20, 0, CMT_ScreenWidth/2,35 * CMT_6PERCENTY) textAlignments:NSTextAlignmentLeft textColors:CommonYellowTextColor];
+    [bgView addSubview:leftLabel];
+    
+    UIView *lineView = [CMT_Tools getUiviewWithFrame:CMT_CGRECTMAKE(0, bgView.bottom - 0.5, CMT_ScreenWidth, 0.5) BackGroudColor:CommonLineColor];
+    [self insertSubview:lineView aboveSubview:bgView];
+
+    UILabel *rightLabel = [CMT_Tools getLabel:@"距离下次开售 00:00:16" textFont:12 viewFrame:CMT_CGRECTMAKE(CMT_ScreenWidth/2, 0, CMT_ScreenWidth/2-15,35 * CMT_6PERCENTY) textAlignments:NSTextAlignmentRight textColors:CommonYellowTextColor];
+     rightLabel.attributedText = [CMT_Tools strHeadAttributedString:@"距离下次开售" midAttributedString:@" 00:00:16" backAttributedString:@"" NSheadForegroundColorAttributeName:CommonGrayTextColor NSbackForegroundColorAttributeName:CommonYellowTextColor NSbackForegroundColorAttributeName:CommonYellowTextColor NSheadFontAttributeName:12  NSbackFontAttributeName:12  NSbackFontAttributeName:12];
+    self.rightLabel = rightLabel;
+    [bgView addSubview:rightLabel];
+    
+    timer = [NSTimer scheduledTimerWithTimeInterval:1 target:self selector:@selector(cycleTime) userInfo:nil repeats:YES];
+    [timer fire];
+    
+}
+
+- (void)cycleTime{
+    [self reloadTime];
+}
+
+//刷新倒计时时间
+- (void)reloadTime
+{
+   self.rightLabel.attributedText = [CMT_Tools strHeadAttributedString:@"距离下次开售" midAttributedString:[self cutDownDay:[self GetTomorrowDay]] backAttributedString:@"" NSheadForegroundColorAttributeName:CommonGrayTextColor NSbackForegroundColorAttributeName:CommonYellowTextColor NSbackForegroundColorAttributeName:CommonYellowTextColor NSheadFontAttributeName:12  NSbackFontAttributeName:12  NSbackFontAttributeName:12];
+}
+
+-(NSDate *)GetTomorrowDay
+{
+    NSCalendar *gregorian = [[NSCalendar alloc] initWithCalendarIdentifier:NSCalendarIdentifierGregorian];
+    NSDateComponents *components = [gregorian components:NSCalendarUnitWeekday | NSCalendarUnitYear | NSCalendarUnitMonth | NSCalendarUnitDay fromDate:[NSDate date]];
+    [components setDay:([components day]+1)];
+    [components setHour:8];
+    
+    NSDate *beginningOfWeek = [gregorian dateFromComponents:components];
+    return beginningOfWeek;
+}
+
+- (NSString *)cutDownDay:(NSDate *)nextdate
+{
+    NSDate *now = [NSDate date];
+    // 当前日历
+    NSCalendar *calendar = [NSCalendar currentCalendar];
+    // 需要对比的时间数据
+    NSCalendarUnit unit = NSCalendarUnitYear | NSCalendarUnitMonth
+    | NSCalendarUnitDay | NSCalendarUnitHour | NSCalendarUnitMinute | NSCalendarUnitSecond;
+    // 对比时间差
+    NSDateComponents *dateCom = [calendar components:unit fromDate:now toDate:nextdate options:0];
+    
+    NSInteger hours = dateCom.hour;
+    NSInteger minute = dateCom.minute;
+    NSInteger second = dateCom.second;
+    
+    NSString *hourStr = [NSString stringWithFormat:@"%ld",(long)hours];
+    NSString *minuteStr = [NSString stringWithFormat:@"%ld",(long)minute];
+    NSString *secondStr = [NSString stringWithFormat:@"%ld",(long)second];
+    
+    if (1 == hourStr.length) {
+        hourStr = [NSString stringWithFormat:@"0%ld",(long)hours];
+    }
+    if(1 == minuteStr.length) {
+        minuteStr = [NSString stringWithFormat:@"0%ld",(long)minute];
+    }
+    if(1 == secondStr.length){
+        secondStr = [NSString stringWithFormat:@"0%ld",(long)second];
+    }
+    
+    NSString *str = [NSString stringWithFormat:@"%@:%@:%@",hourStr,minuteStr,secondStr];
+    
+    return str;
+}
+
+@end

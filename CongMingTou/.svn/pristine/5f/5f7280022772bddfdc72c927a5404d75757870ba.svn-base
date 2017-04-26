@@ -1,0 +1,16 @@
+//
+//  CMT_GetVerificationcodeModel.h
+//  CongMingTou
+//
+//  Created by wzh on 16/5/19.
+//  Copyright © 2016年 QiYuan. All rights reserved.
+//
+
+#import <Foundation/Foundation.h>
+#import "CMT_BaseModel.h"
+@interface CMT_GetVerificationcodeModel : CMT_BaseModel
+
++ (CMT_GetVerificationcodeModel *)getVerificationcodeModelWithDict:(NSDictionary *)dic;
+
+
+@end

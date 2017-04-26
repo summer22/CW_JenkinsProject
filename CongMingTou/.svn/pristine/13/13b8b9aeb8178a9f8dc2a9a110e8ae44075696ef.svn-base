@@ -1,0 +1,16 @@
+//
+//  CMT_RegisteredViewController.h
+//  CongMingTou
+//
+//  Created by wzh on 16/5/12.
+//  Copyright © 2016年 wzh. All rights reserved.
+//
+
+#import "CMT_BaseVIewController.h"
+
+
+
+@interface CMT_RegisteredViewController : CMT_BaseVIewController
+@property (nonatomic, assign) CMTEnterLoginType enterLoginType;
+
+@end

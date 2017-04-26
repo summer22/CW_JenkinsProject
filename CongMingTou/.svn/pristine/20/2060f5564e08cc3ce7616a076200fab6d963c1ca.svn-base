@@ -1,0 +1,30 @@
+//
+//  CMT_SinglePointLoginTool.m
+//  CongMingTou
+//
+//  Created by wzh on 16/6/18.
+//  Copyright © 2016年 QiYuan. All rights reserved.
+//
+
+#import "CMT_SinglePointLoginTool.h"
+#import "CMT_LoginViewController.h"
+#import "CMT_Tools.h"
+
+#define AfterDelay 3
+#define YOffset -100
+@implementation CMT_SinglePointLoginTool
++ (void)addSinglePointLoginWithSelfVC:(UIViewController *)selfVC{
+    if([CMT_Tools LoginOutToDealWithAccountAndGesturePassword]){
+        
+        [selfVC showHint:CMT_ErrorOtherEquipmentLogin yOffset:YOffset andAfterDelay:AfterDelay];
+        
+        
+        CMT_LoginViewController *loginVc = [[CMT_LoginViewController alloc]init];
+        loginVc.enterLoginType = CMTEnterLoginTypeBeLoginOut;
+        loginVc.preVc = selfVC;
+        CMT_NavigationController *loginNav = [[CMT_NavigationController alloc]initWithRootViewController:loginVc];
+        [selfVC presentViewController:loginNav animated:YES completion:nil];
+    }
+}
+
+@end

@@ -1,0 +1,49 @@
+//
+//  CMT_ShouYiMingXIListModel.h
+//  CongMingTou
+//
+//  Created by wzh on 16/5/26.
+//  Copyright © 2016年 QiYuan. All rights reserved.
+//
+
+#import <Foundation/Foundation.h>
+
+@interface CMT_ShouYiMingXIListModel : NSObject
+
+/**
+ *  标的名称
+ */
+@property (copy, nonatomic) NSString *title;
+/**
+ *  投资记录
+ */
+@property (copy, nonatomic) NSString *invest_id;
+/**
+ *  本期投资金额本金
+ */
+@property (copy, nonatomic) NSString *receive_corpus;
+/**
+ *  该日收益
+ */
+//@property (copy, nonatomic) NSString *receive_interest;
+@property (copy, nonatomic) NSString *receive_interestString;
+
+/**
+ *  收益时间
+ */
+@property (copy, nonatomic) NSString *time;
+/**
+ *  标的借款期限
+ */
+@property (copy, nonatomic) NSString *period;
+/**
+ * 收益时间
+ */
+@property (copy, nonatomic) NSString *receive_timeString;
+
+@property (copy, nonatomic) NSString *receive_time;
+@property (copy, nonatomic) NSString *investment;
+@property (copy, nonatomic) NSString *type;
+
++ (CMT_ShouYiMingXIListModel *)shouYiMingXiListModelWith:(NSDictionary *)dic;
+@end

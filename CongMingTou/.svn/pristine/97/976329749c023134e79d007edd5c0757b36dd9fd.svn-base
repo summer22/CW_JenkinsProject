@@ -1,0 +1,50 @@
+//
+//  CMT_StepServiceAgreementViewController.m
+//  CongMingTou
+//
+//  Created by wzh on 16/6/13.
+//  Copyright © 2016年 QiYuan. All rights reserved.
+//
+
+#import "CMT_StepServiceAgreementViewController.h"
+
+@interface CMT_StepServiceAgreementViewController ()
+
+@end
+
+@implementation CMT_StepServiceAgreementViewController
+
+- (void)viewDidLoad {
+    [super viewDidLoad];
+    // Do any additional setup after loading the view from its nib.
+    self.title = [NSString stringWithFormat:@"%@",CMT_Title_BeforeTheInvestmentSecond];
+
+    [self createUIWeb];
+}
+
+- (void)didReceiveMemoryWarning {
+    [super didReceiveMemoryWarning];
+    // Dispose of any resources that can be recreated.
+}
+- (void)createUIWeb{
+    //    self.webView.height =  CMT_ScreenHeight - CMT_NAV_Height - CMT_TAB_Height;
+    NSString *urlStr = [NSString stringWithFormat:@"%@%@",CMT_H5SERVEr_URL,CMT_H5RiskWarningBook];
+    CMT_Log(@"%@",urlStr);
+    NSURLRequest *request =[NSURLRequest requestWithURL:[NSURL URLWithString:urlStr]];
+    [self.webView loadRequest:request];
+}
+
+- (void)noNetWorkbtnClicked:(UIButton *)button{
+    [self createUIWeb];
+}
+/*
+#pragma mark - Navigation
+
+// In a storyboard-based application, you will often want to do a little preparation before navigation
+- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
+    // Get the new view controller using [segue destinationViewController].
+    // Pass the selected object to the new view controller.
+}
+*/
+
+@end

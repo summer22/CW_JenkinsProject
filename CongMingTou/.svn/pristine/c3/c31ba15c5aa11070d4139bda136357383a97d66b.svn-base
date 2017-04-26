@@ -1,0 +1,19 @@
+//
+//  CMT_MyInTheHoldInvestmentModel.h
+//  CongMingTou
+//
+//  Created by wzh on 16/5/20.
+//  Copyright © 2016年 QiYuan. All rights reserved.
+//
+
+#import "CMT_BaseModel.h"
+
+@interface CMT_MyInTheHoldInvestmentModel : CMT_BaseModel
+
+
+/**
+ *  临时
+ */
+@property (nonatomic, assign) int huanXiFangShi;
+@property (nonatomic, assign) int yuYueState;
+@end

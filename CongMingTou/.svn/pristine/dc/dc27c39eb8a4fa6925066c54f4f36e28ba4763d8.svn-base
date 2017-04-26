@@ -1,0 +1,140 @@
+//
+//  CMT_MessageDetailViewController.m
+//  CongMingTou
+//
+//  Created by wzh on 16/5/24.
+//  Copyright © 2016年 QiYuan. All rights reserved.
+//
+
+#import "CMT_MessageDetailViewController.h"
+#import "CMT_Tools.h"
+#import <CoreText/CoreText.h>
+@interface CMT_MessageDetailViewController (){
+    /**
+     *  接口是否调用成功
+     */
+    BOOL _isLodaDataOk;
+}
+@property (strong, nonatomic) IBOutlet UIScrollView *backScrollView;
+@property (strong, nonatomic) IBOutlet UIView *backView;
+@property (strong, nonatomic) IBOutlet UIView *desView;
+@property (strong, nonatomic) IBOutlet UILabel *titleLab;
+@property (strong, nonatomic) IBOutlet UILabel *titleDateLab;
+@property (strong, nonatomic) IBOutlet UILabel *desLab;
+@property (strong, nonatomic) IBOutlet UILabel *gongSiLuoKuanLab;
+@property (strong, nonatomic) IBOutlet UILabel *bottomDateLab;
+
+@property (strong, nonatomic) IBOutlet NSLayoutConstraint *leftMid;
+@property (strong, nonatomic) IBOutlet NSLayoutConstraint *rightMid;
+
+@end
+
+@implementation CMT_MessageDetailViewController
+
+- (void)viewDidLoad {
+    [super viewDidLoad];
+    self.navigationItem.title = @"消息详情";
+
+    _isLodaDataOk = NO;
+    // Do any additional setup after loading the view from its nib.
+//    [self setDefautUI];
+    [self loadDataWithMessageId:_newsId];
+}
+- (void)viewWillAppear:(BOOL)animated{
+    [super viewWillAppear:animated];
+    if ([self.navigationController respondsToSelector:@selector(interactivePopGestureRecognizer)]) {
+        self.navigationController.interactivePopGestureRecognizer.enabled = NO;
+    }
+}
+- (void)viewWillDisappear:(BOOL)animated{
+    [super viewWillDisappear:animated];
+    if ([self.navigationController respondsToSelector:@selector(interactivePopGestureRecognizer)]) {
+        self.navigationController.interactivePopGestureRecognizer.enabled = YES;
+    }
+}
+
+- (void)back{
+    if(_isLodaDataOk){
+        self.backBlock();
+    }
+    [super back];
+}
+
+- (void)loadDataWithMessageId:(NSString *)messageId{
+    [self showHudInView:self.view hint:CMT_LoadDataWaiting];
+    [CMT_ProcessTheDataTool getNewsDetailWithId:messageId andBlock:^(CMT_GetNewsListModel *model, NSError *error) {
+        [self hideHud];
+        if(!error){
+            if([model.status isEqualToString:@"1"]){
+                _isLodaDataOk = YES;
+                [self setLoadDataUIWithModel:model];
+                
+            }else if ([model.status isEqualToString:CMT_SinglePointCode]){
+                [CMT_SinglePointLoginTool addSinglePointLoginWithSelfVC:self];
+            }else{
+                [self showHint:model.msg];
+            }
+        }else{
+            [self showHint:CMT_Error_NotNetWork];
+        }
+
+    }];
+}
+
+- (void)setLoadDataUIWithModel:(CMT_GetNewsListModel *)model{
+    _backScrollView.frame = CGRectMake(0, 0, CMT_ScreenWidth, CMT_ScreenHeight);
+    _backView.frame = CGRectMake(_backView.x, _backView.y, CMT_ScreenWidth, 0);
+    [_backScrollView addSubview:_backView];
+    _titleLab.text = [NSString stringWithFormat:@"%@",model.msgTitle];
+    _titleDateLab.text = [NSString stringWithFormat:@"%@",model.msgDate];
+    _desLab.text = [NSString stringWithFormat:@"%@",model.msg];
+//    _desLab.text = [NSString stringWithFormat:@"%@%@%@%@%@",model.msg,model.msg,model.msg,model.msg,model.msg];
+    _desLab.numberOfLines = 0;
+    //创建NSMutableAttributedString实例，并将text传入
+    NSMutableAttributedString *attStr = [[NSMutableAttributedString alloc]initWithString:_desLab.text];
+    //创建NSMutableParagraphStyle实例
+    NSMutableParagraphStyle *style = [[NSMutableParagraphStyle alloc]init];
+    //设置行距
+    [style setLineSpacing:10.0f];
+    //判断内容长度是否大于Label内容宽度，如果不大于，则设置内容宽度为行宽（内容如果小于行宽，Label长度太短，如果Label有背景颜色，将影响布局效果）
+    NSInteger leng = _desLab.width;
+    if (attStr.length < leng) {
+        leng = attStr.length;
+    }
+    //根据给定长度与style设置attStr式样
+    [attStr addAttribute:NSParagraphStyleAttributeName value:style range:NSMakeRange(0, leng)];
+    //Label获取attStr式样
+    _desLab.attributedText = attStr;
+    [_desLab sizeToFit];
+    
+    _bottomDateLab.text = [NSString stringWithFormat:@"%@",model.msgDateChinese];
+    _backView.height = CGRectGetMaxY(_desView.frame);
+    _backScrollView.contentSize = CGSizeMake(0, CGRectGetMaxY(_backView.frame));
+}
+- (void)didReceiveMemoryWarning {
+    [super didReceiveMemoryWarning];
+    // Dispose of any resources that can be recreated.
+    
+}
+- (void)viewDidLayoutSubviews{
+    [super viewDidLayoutSubviews];
+    if(CMT_6pAnd6ps){//6p 或 6ps 或者更大
+        _leftMid.constant = CMT_ScreenLeftMid *CMT_ProportionX;
+        _rightMid.constant = CMT_ScreenRightMid *CMT_ProportionX;
+    }
+    _backView.height = CGRectGetMaxY(_desView.frame) +150;
+    _backScrollView.contentSize = CGSizeMake(0, CGRectGetMaxY(_backView.frame));
+
+}
+
+/*
+#pragma mark - Navigation
+
+// In a storyboard-based application, you will often want to do a little preparation before navigation
+- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
+    // Get the new view controller using [segue destinationViewController].
+    // Pass the selected object to the new view controller.
+}
+*/
+
+@end

@@ -1,0 +1,18 @@
+//
+//  CMT_AccountAndPasswordTableViewCell.h
+//  CongMingTou
+//
+//  Created by wzh on 16/5/16.
+//  Copyright © 2016年 QiYuan. All rights reserved.
+//
+
+#import <UIKit/UIKit.h>
+
+@interface CMT_AccountAndPasswordTableViewCell : CMT_BaseTableViewCell
+@property (strong, nonatomic) IBOutlet UILabel *titleLab;
+@property (strong, nonatomic) IBOutlet UILabel *desLab;
+@property (strong, nonatomic) IBOutlet UIButton *nextBtn;
+@property (strong, nonatomic) IBOutlet NSLayoutConstraint *desRight;
+@property (strong, nonatomic) IBOutlet UISwitch *mySwitch;
++ (CMT_AccountAndPasswordTableViewCell *)cellWithTablebView:(UITableView *)tableView andIndexPath:(NSIndexPath *)indexPath;
+@end

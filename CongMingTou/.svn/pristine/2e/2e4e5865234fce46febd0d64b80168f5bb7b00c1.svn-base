@@ -1,0 +1,16 @@
+//
+//  CMT_AccountAndSecurityTableViewCell.h
+//  CongMingTou
+//
+//  Created by wzh on 16/5/16.
+//  Copyright © 2016年 QiYuan. All rights reserved.
+//
+
+#import <UIKit/UIKit.h>
+
+@interface CMT_AccountAndSecurityTableViewCell : CMT_BaseTableViewCell
+@property (strong, nonatomic) IBOutlet UILabel *titleLab;
+@property (strong, nonatomic) IBOutlet UILabel *desLab;
+@property (strong, nonatomic) IBOutlet UIButton *nextBtn;
++ (CMT_AccountAndSecurityTableViewCell *)cellWithTablebView:(UITableView *)tableView andIndexPath:(NSIndexPath *)indexPath;
+@end

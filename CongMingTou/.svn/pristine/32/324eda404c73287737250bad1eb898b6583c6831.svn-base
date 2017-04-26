@@ -1,0 +1,16 @@
+//
+//  CMT_FinancialTableViewCell.h
+//  CongMingTou
+//
+//  Created by summer on 16/5/13.
+//  Copyright © 2016年 wzh. All rights reserved.
+//
+
+#import <UIKit/UIKit.h>
+#import "CMT_financialModel.h"
+
+@interface CMT_FinancialTableViewCell : UITableViewCell
+/** 数据模型 */
+@property (nonatomic,strong)CMT_financialModel *model;
+
+@end

@@ -1,0 +1,19 @@
+//
+//  CMT_FinancialHeadView.h
+//  CongMingTou
+//
+//  Created by summer on 16/5/13.
+//  Copyright © 2016年 wzh. All rights reserved.
+//
+
+#import <UIKit/UIKit.h>
+
+@interface CMT_FinancialHeadView : UIView
+
+- (instancetype)initWithFrame:(CGRect)frame;
+/** 距离下从开售事件 */
+- (void)reloadTime;
+//banner图片Url
+-(void)setImgUrl:(NSString *)imgUrl;
+
+@end

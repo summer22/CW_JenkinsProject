@@ -1,0 +1,45 @@
+//
+//  CMT_IDCardInforModel.m
+//  CongMingTou
+//
+//  Created by wzh on 16/5/24.
+//  Copyright © 2016年 QiYuan. All rights reserved.
+//
+
+#import "CMT_IDCardInforModel.h"
+
+@implementation CMT_IDCardInforModel
++ (CMT_IDCardInforModel *)IDCardInforModelWithDic:(NSDictionary *)dic{
+    return  [[self alloc]initWithDic:dic];
+}
+- (id)initWithDic:(NSDictionary *)dic{
+    if(self = [super init]){
+        [self setValuesForKeysWithDictionary:dic];
+    }
+    return self;
+}
+- (void)setValue:(id)value forUndefinedKey:(NSString *)key{
+    [super setValue: value forUndefinedKey:key];
+    if([key isEqualToString:@"data"]){
+        _dataModel = [CMT_IDCardInforDataModel IDCardInforDataModelWithDic:value[@"userBank"]];
+    }
+}
+@end
+
+
+@implementation CMT_IDCardInforDataModel
++ (CMT_IDCardInforDataModel *)IDCardInforDataModelWithDic:(NSDictionary *)dic{
+    return  [[self alloc]initWithDic:dic];
+}
+- (id)initWithDic:(NSDictionary *)dic{
+    if(self = [super init]){
+        [self setValuesForKeysWithDictionary:dic];
+    }
+    return self;
+}
+- (void)setValue:(id)value forUndefinedKey:(NSString *)key{
+//    if([key isEqualToString:@"balance"]){
+//        _balanceStr = [NSString stringWithFormat:@"%.2f",[value doubleValue]];
+//    }
+}
+@end

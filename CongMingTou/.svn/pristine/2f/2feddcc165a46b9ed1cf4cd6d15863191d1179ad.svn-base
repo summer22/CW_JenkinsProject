@@ -1,0 +1,13 @@
+//
+//  CMT_ServiceAgreementViewController.h
+//  CongMingTou
+//
+//  Created by wzh on 16/6/12.
+//  Copyright © 2016年 QiYuan. All rights reserved.
+//
+
+#import "CMT_WebBaseViewController.h"
+
+@interface CMT_MyServiceAgreementViewController : CMT_WebBaseViewController
+
+@end

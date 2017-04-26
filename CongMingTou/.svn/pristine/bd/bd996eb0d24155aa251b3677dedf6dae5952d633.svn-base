@@ -1,0 +1,22 @@
+//
+//  CMT_CreditorModel.h
+//  CongMingTou
+//
+//  Created by summer on 16/7/1.
+//  Copyright © 2016年 QiYuan. All rights reserved.
+//
+
+#import <Foundation/Foundation.h>
+
+@interface CMT_CreditorModel : NSObject
+
+/** 金额 */
+@property (nonatomic,copy)NSString *amount;
+/** 身份证号 */
+@property (nonatomic,copy)NSString *loanNumber;
+/** 借款人姓名 */
+@property (nonatomic,copy)NSString *loanName;
+/** 债权期限 */
+@property (nonatomic,copy)NSString *perid;
+
+@end

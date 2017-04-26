@@ -1,0 +1,19 @@
+//
+//  CMT_MySetTableViewCell.h
+//  CongMingTou
+//
+//  Created by wzh on 16/5/16.
+//  Copyright © 2016年 QiYuan. All rights reserved.
+//
+
+#import <UIKit/UIKit.h>
+
+@interface CMT_MySetTableViewCell : CMT_BaseTableViewCell
+@property (strong, nonatomic) IBOutlet UIImageView *iconImaeView;
+@property (strong, nonatomic) IBOutlet UIButton *nextBtn;
+@property (strong, nonatomic) IBOutlet UILabel *titleLab;
+@property (strong, nonatomic) IBOutlet UISwitch *messageSwitch;
+@property (strong, nonatomic) IBOutlet UILabel *phoneLab;
+@property (strong, nonatomic) IBOutlet UILabel *versonLab;
++ (CMT_MySetTableViewCell *)cellWithTablebView:(UITableView *)tableView andIndexPath:(NSIndexPath *)indexPath;
+@end

@@ -1,0 +1,26 @@
+//
+//  CMT_InvestInforModel.m
+//  CongMingTou
+//
+//  Created by wzh on 16/6/1.
+//  Copyright © 2016年 QiYuan. All rights reserved.
+//
+
+#import "CMT_InvestInforModel.h"
+
+@implementation CMT_InvestInforModel
+
++ (CMT_InvestInforModel *)investInforModelWithDic:(NSDictionary *)dic{
+    return [[self alloc]initWithDic:dic];
+}
+
+- (id)initWithDic:(NSDictionary *)dic{
+    if(self = [super init]){
+        [self setValuesForKeysWithDictionary:dic];
+    }
+    return self;
+}
+- (void)setValue:(id)value forUndefinedKey:(NSString *)key{
+    
+}
+@end

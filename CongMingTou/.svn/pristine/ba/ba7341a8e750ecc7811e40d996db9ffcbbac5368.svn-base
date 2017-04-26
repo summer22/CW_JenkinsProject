@@ -1,0 +1,12 @@
+//
+//  CMT_NavigationController.h
+//  CongMingTou
+//
+//  Created by wzh on 16/5/6.
+//  Copyright © 2016年 QiYuan All rights reserved.
+//
+
+#import <UIKit/UIKit.h>
+
+@interface CMT_NavigationController : UINavigationController
+@end

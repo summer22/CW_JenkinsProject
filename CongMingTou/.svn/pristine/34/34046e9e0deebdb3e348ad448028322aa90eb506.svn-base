@@ -1,0 +1,46 @@
+//
+//  UIBarButtonItem+Extension.m
+//  CongMingTou
+//
+//  Created by wzh on 16/3/22.
+//  Copyright © 2016年 QiYuan All rights reserved.
+//
+
+#import "UIBarButtonItem+Extension.h"
+#import "UIView+Extension.h"
+@implementation UIBarButtonItem (Extension)
+
++ (instancetype)itemWithImage:(NSString *)image highImage:(NSString *)highImage target:(id)target action:(SEL)action
+{
+    UIButton *btn = [[UIButton alloc] init];
+    [btn setBackgroundImage:[UIImage imageWithName:image] forState:UIControlStateNormal];
+    [btn setBackgroundImage:[UIImage imageWithName:highImage] forState:UIControlStateHighlighted];
+    btn.size = btn.currentBackgroundImage.size;
+    [btn addTarget:target action:action forControlEvents:UIControlEventTouchUpInside];
+    return [[UIBarButtonItem alloc] initWithCustomView:btn];
+}
+
++ (UIBarButtonItem *)itemWithImageName:(NSString *)imageName target:(id)target action:(SEL)action
+{
+    UIButton *button = [[UIButton alloc] init];
+    [button setBackgroundImage:[UIImage imageNamed:imageName] forState:UIControlStateNormal];
+    
+    // 设置按钮的尺寸为背景图片的尺寸
+    button.size = button.currentBackgroundImage.size;
+//    button.showsTouchWhenHighlighted = YES;
+    // 监听按钮点击
+    [button addTarget:target action:action forControlEvents:UIControlEventTouchUpInside];
+    return [[UIBarButtonItem alloc] initWithCustomView:button];
+}
+
++ (UIBarButtonItem *)itemWithTitle:(NSString *)title target:(id)target action:(SEL)action{
+    UIButton *button = [UIButton buttonWithType:UIButtonTypeCustom];
+    button.frame = CGRectMake(0, 0, 65, 20);
+    button.titleLabel.font = UIFont30;
+    [button setTitle:title forState:UIControlStateNormal];
+    [button setTitleEdgeInsets:UIEdgeInsetsMake(0, 0, 0, -20)];
+    [button addTarget:target action:action forControlEvents:UIControlEventTouchUpInside];
+    return [[UIBarButtonItem alloc] initWithCustomView:button];
+}
+
+@end

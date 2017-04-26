@@ -1,0 +1,21 @@
+//
+//  CMT_ShufflingView.m
+//  CongMingTou
+//
+//  Created by wzh on 16/6/3.
+//  Copyright © 2016年 QiYuan. All rights reserved.
+//
+
+#import "CMT_ShufflingView.h"
+
+@implementation CMT_ShufflingView
+
+/*
+// Only override drawRect: if you perform custom drawing.
+// An empty implementation adversely affects performance during animation.
+- (void)drawRect:(CGRect)rect {
+    // Drawing code
+}
+*/
+
+@end

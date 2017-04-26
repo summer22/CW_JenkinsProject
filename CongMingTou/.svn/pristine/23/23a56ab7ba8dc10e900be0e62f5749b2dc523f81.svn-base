@@ -1,0 +1,32 @@
+//
+//  CMT_BitAndInvestModel.m
+//  CongMingTou
+//
+//  Created by wzh on 16/6/1.
+//  Copyright © 2016年 QiYuan. All rights reserved.
+//
+
+#import "CMT_BitAndInvestModel.h"
+
+@implementation CMT_BitAndInvestModel
+
++ (CMT_BitAndInvestModel *)bitAndInvestModelWithDic:(NSDictionary *)dic{
+    return [[self alloc]initWithDic:dic];
+}
+
+
+- (void)setValue:(id)value forUndefinedKey:(NSString *)key{
+    if([key isEqualToString:@"bids"]){
+        self.bitInforModel = [CMT_BitInforModel bitInforModelWithDic:value];
+    }
+    if([key isEqualToString:@"investDetails"]){
+        NSMutableArray *dataArray = [NSMutableArray array];
+        for (NSDictionary *subDic in (NSArray *)value) {
+            CMT_InvestInforModel *model = [CMT_InvestInforModel investInforModelWithDic:subDic];
+            [dataArray addObject:model];
+        }
+        self.investInforListArray = [NSArray arrayWithArray:dataArray];
+
+    }
+}
+@end

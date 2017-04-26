@@ -1,0 +1,14 @@
+//
+//  CMT_TotalAssetsASubsidiaryViewController.h
+//  CongMingTou
+//
+//  Created by wzh on 16/5/17.
+//  Copyright © 2016年 QiYuan. All rights reserved.
+//
+
+#import "CMT_WebBaseViewController.h"
+@interface CMT_TotalAssetsASubsidiaryViewController : CMT_WebBaseViewController
+
+@property (nonatomic, copy) NSString *totalAssetsUrl;
+
+@end

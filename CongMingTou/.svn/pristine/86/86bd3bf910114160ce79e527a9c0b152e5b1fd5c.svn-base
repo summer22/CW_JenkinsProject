@@ -1,0 +1,57 @@
+//
+//  CMT_productDetViewController.h
+//  CongMingTou
+//
+//  Created by summer on 16/5/12.
+//  Copyright © 2016年 wzh. All rights reserved.
+//
+
+#import "CMT_BaseVIewController.h"
+
+typedef NS_ENUM(NSInteger, CELL_TYPE) {
+    //以下是枚举成员
+    //项目详情
+    PRODUCTDET = 0,
+    //风险控制
+    HOLDDEG = 1,
+    //投资记录
+    RECORD = 2,
+};
+
+//是不是新手标的枚举判断
+typedef NS_ENUM(NSInteger, MARK_TYPE) {
+    //以下是枚举成员
+    //新手标
+    NEWMARK = 0,
+    //其它类型标
+    OTHERMARK = 1,
+};
+
+//标的状态 1、已售罄 2、可投资
+typedef NS_ENUM(NSInteger, MARKSTATE) {
+//   可投资
+    MARKAVILIBALE = 0,
+//   已售罄
+    MARKFINISH = 1,
+};
+
+@interface CMT_productDetViewController : CMT_BaseVIewController
+/** 不同table枚举类型*/
+@property (nonatomic,assign)CELL_TYPE myTableType;
+/** 标的id */
+@property (nonatomic,copy)NSString *markIdStr;
+/** 用户投资的id */
+@property (nonatomic,copy)NSString *investId;
+/** 标的类型枚举*/
+@property (nonatomic,assign)MARK_TYPE markType;
+//从哪里跳转来的判断
+@property (nonatomic,assign)COMEFROMCLASS fromType;
+/** 标的状态*/
+@property (nonatomic,assign)MARKSTATE markState;
+/** 加息率 */
+@property (nonatomic,copy)NSString *rateStr;
+/** 标的日期 */
+@property (nonatomic,copy)NSString *period;
+/** 产品顺序*/
+@property (nonatomic,assign)NSInteger sectionNo;
+@end

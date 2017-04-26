@@ -1,0 +1,15 @@
+//
+//  CMT_YuYueTouZiViewController.h
+//  CongMingTou
+//
+//  Created by 雷博 on 16/5/17.
+//  Copyright © 2016年 QiYuan. All rights reserved.
+//
+
+#import "CMT_BaseVIewController.h"
+
+@interface CMT_YuYueTouZiViewController : CMT_BaseVIewController
+
+@property (nonatomic, copy) NSString *investIdStr;
+
+@end

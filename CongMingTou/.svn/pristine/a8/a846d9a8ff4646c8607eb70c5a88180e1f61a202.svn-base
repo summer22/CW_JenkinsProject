@@ -1,0 +1,13 @@
+//
+//  CMT_ProductDetModel.m
+//  CongMingTou
+//
+//  Created by summer on 16/5/24.
+//  Copyright © 2016年 QiYuan. All rights reserved.
+//
+
+#import "CMT_ProductDetModel.h"
+
+@implementation CMT_ProductDetModel
+
+@end

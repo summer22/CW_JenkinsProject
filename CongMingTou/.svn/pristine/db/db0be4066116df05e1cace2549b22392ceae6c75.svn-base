@@ -1,0 +1,15 @@
+//
+//  CMT_Barrage.h
+//  demos
+//
+//  Created by summer on 16/6/6.
+//  Copyright © 2016年 smartHeader. All rights reserved.
+//
+
+#import <Foundation/Foundation.h>
+#import <UIKit/UIKit.h>
+#import <QuartzCore/QuartzCore.h>
+
+@interface CMT_Barrage : NSObject
++ (void)showTopWithText:(NSString *)text topOffset:(CGFloat)topOffset leftOffset:(CGFloat)leftoffset duration:(CGFloat)duration;
+@end

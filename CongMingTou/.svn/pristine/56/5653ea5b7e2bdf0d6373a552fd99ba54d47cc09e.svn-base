@@ -1,0 +1,84 @@
+//
+//  CMT_MyInverstmentListModel.h
+//  CongMingTou
+//
+//  Created by wzh on 16/5/27.
+//  Copyright © 2016年 QiYuan. All rights reserved.
+//
+
+#import <Foundation/Foundation.h>
+
+@interface CMT_MyInverstmentListModel : NSObject
+
+@property (nonatomic, assign) int currentIndex;
+
+/**
+ *  还款方式
+ */
+@property (nonatomic, copy) NSString *repaymentType;
+/**
+ *  投资金额或者预约金额
+ */
+@property (nonatomic, copy) NSString *amount;
+/**
+ *  收益（只有已赎回页面有）
+ */
+@property (nonatomic, copy) NSString *receiveInterest;
+
+/**
+ *  该标是否可以预约（0：可以，1不可以。只有持有中页面有）
+ */
+@property (nonatomic, copy) NSString *preInvestFlag;
+/**
+ *  	是否可以取消预约,0:可以1：不可以(预约中页面)
+ */
+@property (nonatomic, copy) NSString *cancelPreInvestFlag;
+/**
+ *  标的Id
+ */
+@property (nonatomic, copy) NSString *bidId;
+/**
+ *  标的名称
+ */
+@property (nonatomic, copy) NSString *bidTitle;
+/**
+ *  标的期数
+ */
+@property (nonatomic, copy) NSString *bidNumber;
+/**
+ *  用户投资记录Id
+ */
+@property (nonatomic, copy) NSString *investId;
+
+/**
+ *  预约id
+ */
+@property (nonatomic, copy) NSString *preInvestId;
+/**
+ *  持有中剩余到期时间
+ */
+@property (nonatomic, copy) NSString *expireDays;
+/**
+ *  预约中剩余期限
+ */
+@property (nonatomic, copy) NSString *daysLeftPreInvest;
+/**
+ *  投资期限
+ */
+@property (nonatomic, copy) NSString *period;
+
+/**
+ *   标的类型  "标的类型: bidType, 新手标:0,    30天计划:1，   90天计划:2,   180天计划:3,   360天计划：4"
+ */
+@property (nonatomic, copy) NSString *bidType;
+
+
+
+
+//period	预约周期
+//receiveInterest	"
+//"
+//addRate	预约投资加息率（只有持有中页面有）
+
++ (CMT_MyInverstmentListModel *)myInverstmentListModelWithDic:(NSDictionary *)dic;
+@end

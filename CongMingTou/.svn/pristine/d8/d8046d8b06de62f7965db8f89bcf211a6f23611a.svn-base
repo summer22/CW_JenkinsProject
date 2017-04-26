@@ -1,0 +1,51 @@
+//
+//  CMT_SecurityController.m
+//  CongMingTou
+//
+//  Created by wzh on 16/5/10.
+//  Copyright © 2016年 QiYuan All rights reserved.
+//
+
+#import "CMT_SecurityController.h"
+@interface CMT_SecurityController ()<UIWebViewDelegate>
+
+@end
+
+
+@implementation CMT_SecurityController
+
+
+- (void)viewWillAppear:(BOOL)animated{
+    [super viewWillAppear:animated];
+    self.webView.scrollView.contentOffset = CGPointMake(0, 0);
+}
+
+- (void)viewDidLoad {
+    [super viewDidLoad];
+    [self createUIWeb];
+}
+- (void)createUIWeb{
+    self.webView.height =  CMT_ScreenHeight - CMT_NAV_Height;
+    self.webView.scrollView.contentInset = UIEdgeInsetsMake(0, 0, CMT_TAB_Height, 0);
+    self.webView.delegate = self;
+    NSString *urlStr = [NSString stringWithFormat:@"%@%@",CMT_H5SERVEr_URL,CMT_H5SecurityVC];
+    NSURLRequest *request =[NSURLRequest requestWithURL:[NSURL URLWithString:urlStr]];
+    [self.webView loadRequest:request];
+}
+- (BOOL)webView:(UIWebView *)webView shouldStartLoadWithRequest:(NSURLRequest *)request navigationType:(UIWebViewNavigationType)navigationType{
+    
+    if ([request.URL.absoluteString isEqual:@"about:blank"]) {
+        return NO;
+    }
+      return YES;
+}
+
+- (void)didReceiveMemoryWarning {
+    [super didReceiveMemoryWarning];
+    // Dispose of any resources that can be recreated.
+}
+
+- (void)noNetWorkbtnClicked:(UIButton *)button{
+    [self createUIWeb];
+}
+@end

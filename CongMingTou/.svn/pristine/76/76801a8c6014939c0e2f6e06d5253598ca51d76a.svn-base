@@ -1,0 +1,269 @@
+//
+//  CMT_InvestResultViewController.m
+//  CongMingTou
+//
+//  Created by summer on 16/5/25.
+//  Copyright © 2016年 QiYuan. All rights reserved.
+//
+
+#import "CMT_InvestResultViewController.h"
+#import "CMT_CouponViewController.h"
+#import "CMT_MyInvestmentViewController.h"
+#import "CMT_MyWelfareViewController.h"
+#import "CMT_ShareSuccessfulView.h"
+
+@interface CMT_InvestResultViewController ()<UMSocialUIDelegate>
+@property (weak, nonatomic) IBOutlet UIScrollView *bgScrollView;
+@property (strong, nonatomic) IBOutlet UIView *contentBgView;
+@property (weak, nonatomic) IBOutlet UIView *topHalfView;
+@property (weak, nonatomic) IBOutlet UIImageView *iconImgView;
+@property (weak, nonatomic) IBOutlet UILabel *shareLabel;//分享label
+@property (weak, nonatomic) IBOutlet UILabel *successLabel;//投资成功
+@property (weak, nonatomic) IBOutlet UIView *bottomHalfView;
+@property (weak, nonatomic) IBOutlet UILabel *InvestStyleLabel;//投资标名字
+@property (weak, nonatomic) IBOutlet UIView *topLine;
+@property (weak, nonatomic) IBOutlet UIView *bottomLine;
+@property (weak, nonatomic) IBOutlet UILabel *investShowLabel;
+@property (weak, nonatomic) IBOutlet UILabel *investNumLabel;//投资金额
+@property (weak, nonatomic) IBOutlet UILabel *ticketCountLabel;//加息率
+@property (weak, nonatomic) IBOutlet UIButton *shareBtn;//分享按钮
+@property (weak, nonatomic) IBOutlet UILabel *toUseTicketLabel;
+/** 计算分享收益 */
+@property (nonatomic,copy)NSString *shareProfit;
+
+@end
+
+@implementation CMT_InvestResultViewController
+
+- (void)viewDidLoad {
+    [super viewDidLoad];
+    
+    self.title = @"投资结果";
+    //合并两个xib view
+    [self getSuperView];
+    //设置界面控件的样式
+    [self setStyleShow];
+    //数据处理
+    [self setSubViewsData];
+}
+
+- (void)getSuperView
+{
+    [self.bgScrollView addSubview:self.contentBgView];
+    self.bgScrollView.showsVerticalScrollIndicator = NO;
+    self.bgScrollView.frame  =CGRectMake(0, 0, CMT_ScreenWidth, CMT_ScreenHeight - 64);
+    self.contentBgView.frame = CGRectMake(0, 0, CMT_ScreenWidth, 550);
+    self.bgScrollView.contentSize = CGSizeMake(CMT_ScreenWidth,CGRectGetMaxY(self.contentBgView.frame));
+}
+
+- (void)setStyleShow
+{
+    self.bgScrollView.backgroundColor = [UIColor clearColor];
+    self.contentBgView.backgroundColor = [UIColor clearColor];
+    self.topHalfView.backgroundColor = ThemeBackgroundColor;
+    self.bottomHalfView.backgroundColor = CommonWhiteColor;
+    self.successLabel.textColor = CommonWhiteColor;
+    self.shareLabel.textColor = CommonWhiteColor;
+    self.topLine.backgroundColor = CommonLineColor;
+    self.bottomLine.backgroundColor = CommonLineColor;
+    self.toUseTicketLabel.textColor = CommonImpTextColor;
+    self.InvestStyleLabel.textColor = CommonImpTextColor;
+    self.investShowLabel.textColor = CommonImpTextColor;
+    self.ticketCountLabel.textColor = CommonYellowTextColor;
+    self.investNumLabel.textColor = CommonYellowTextColor;
+    
+    self.shareBtn.backgroundColor = CommonYellowTextColor;
+    [self.shareBtn styteWithCornerRadius:25 shadowColor:CommonYellowTextColor shadowOffset:CGSizeMake(0, 2) shadowOpacity:0.5 shadowRadius:5];
+}
+
+- (void)setSubViewsData
+{
+    //新手表体验金
+    CGFloat cashAmount;
+    if ([self.model.cashInvestAmount isEqualToString:@"no"]) {
+        cashAmount = 0;
+    }else{
+        cashAmount = [self.model.cashInvestAmount floatValue];
+    }
+    self.shareProfit = [CMT_Tools apr:0 addPercent:0.2 amount:[self.investAmount floatValue] + cashAmount investDay:[self.model.period integerValue]];
+    
+    NSString *percent = @"%";
+    self.shareLabel.text = [NSString stringWithFormat:@"分享给好友再加息0.2%@，您可多收入%@",percent,self.shareProfit];
+    
+    NSString *totalInvestnNmb = [NSString stringWithFormat:@"%.2f",[self.investAmount doubleValue] + cashAmount];
+    self.investNumLabel.text = [totalInvestnNmb stringByAppendingString:@"元"];
+    self.ticketCountLabel.text = self.rateTicket;
+    self.InvestStyleLabel.text = self.markNameAndDate;
+}
+
+- (IBAction)shareBtnClickEvent:(id)sender {
+    
+    //分享事件
+    [self loadDataGetShareContent];
+}
+
+- (void)loadDataGetShareContent{
+    [self showHudInView:self.view hint:CMT_LoadDataWaiting];
+    [CMT_ProcessTheDataTool getShareContentWithUserId:[CMT_AccountTool accountModel].userId andBlock:^(CMT_GetShareContentModel *model, NSError *error) {
+        [self hideHud];
+        if(!error){
+            if([model.status isEqualToString:@"1"]){
+                [self setShareContentWithModel:model];
+            }else if ([model.status isEqualToString:CMT_SinglePointCode]){
+                [CMT_SinglePointLoginTool addSinglePointLoginWithSelfVC:self];
+            }else{
+                [self showHint:model.msg];
+            }
+        }else{
+            [self showHint:CMT_Error_NotNetWork];
+        }
+    }];
+}
+#pragma mark - -设置分享
+- (void)setShareContentWithModel:(CMT_GetShareContentModel *)model{
+    __block UIImage *iconImage = nil;
+    [[SDWebImageManager sharedManager] downloadImageWithURL:[NSURL URLWithString:model.imgUrl] options:0 progress:^(NSInteger receivedSize, NSInteger expectedSize){
+        //处理下载进度
+    } completed:^(UIImage *image, NSError *error, SDImageCacheType cacheType, BOOL finished, NSURL *imageURL) {
+        if (error) {//加载失败
+            iconImage = [UIImage imageNamed:@"default_image"];
+        }else{
+            iconImage = image;
+        }
+                
+        // 分享到微信朋友圈
+        [CMT_ShareTool wechatTimelineWithTitle:model.title url:model.link shareText:model.desc shareImage:iconImage];
+        // 分享到微信好友
+        [CMT_ShareTool wechatSessionWithTitle:model.title url:model.link shareText:model.desc shareImage:iconImage];
+        //qq好友
+        [CMT_ShareTool qqWithTitle:model.title url:model.link shareText:model.desc shareImage:iconImage ];
+        //qq空间
+        [CMT_ShareTool qqQzoneWithTitle:model.title url:model.link shareText:model.desc shareImage:iconImage];
+        [UMSocialSnsService presentSnsIconSheetView:self
+                                             appKey:CMT_UmengAppkey
+                                          shareText:model.desc
+                                         shareImage:iconImage
+                                    shareToSnsNames:[NSArray arrayWithObjects:UMShareToWechatTimeline,UMShareToWechatSession,UMShareToQQ,UMShareToQzone,nil]
+                                           delegate:self];
+        
+    }];
+}
+
+#pragma mark - 友盟代理方法
+-(void)didSelectSocialPlatform:(NSString *)platformName withSocialData:(UMSocialData *)socialData{
+    MySetObjectForKey([NSNumber numberWithInt:1], CMT_Share_key);
+    
+    CMT_AccountModel *accoutModel = [CMT_AccountTool accountModel];
+    [self showHudInView:self.view hint:CMT_LoadDataWaiting];
+    
+    //新手表体验金
+    CGFloat cashAmount;
+    if ([self.model.cashInvestAmount isEqualToString:@"no"]) {
+        cashAmount = 0;
+    }else{
+        cashAmount = [self.model.cashInvestAmount floatValue];
+    }
+
+    self.investAmount = [NSString stringWithFormat:@"%lf",[self.investAmount doubleValue] + cashAmount];
+    
+    [CMT_ProcessTheDataTool shareSuccessAddRatesWithPhoneNum:accoutModel.mobileNo bitId:_markId investId:self.investId amount:self.investAmount andBlock:^(CMT_BaseModel *model, NSError *error) {
+        [self hideHud];
+        if(!error){
+            if([model.status isEqualToString:@"1"]){
+//                [self showHint:CMT_LoadDataShareSuccessful];
+                CMT_Log(@"分享获取加息成功");
+                self.shareBtn.alpha = 0.5;
+                self.shareBtn.userInteractionEnabled = NO;
+
+            }else if ([model.status isEqualToString:CMT_SinglePointCode]){
+                [CMT_SinglePointLoginTool addSinglePointLoginWithSelfVC:self];
+            }else{
+                [self showHint:model.msg];
+            }
+        }else{
+            [self showHint:CMT_Error_NotNetWork];
+        }
+        
+    }];
+
+}
+
+-(void)didFinishGetUMSocialDataInViewController:(UMSocialResponseEntity *)response
+{
+    [CMT_ShareSuccessfulView shareSuccessfulViewWithResponse:response.responseCode];
+
+    if (response.responseCode == UMSResponseCodeSuccess) {
+//        [CMT_ShareSuccessfulView shareSuccessfulViewWithPromptStr:CMT_LoadDataShareSuccessful];
+        NSString *platName;
+        //得到分享到的平台名
+        if ([[[response.data allKeys] objectAtIndex:0] isEqualToString:@"wxtimeline"]) {
+            platName = @"微信朋友圈";
+        }else if ([[[response.data allKeys] objectAtIndex:0] isEqualToString:@"wxsession"]){
+            platName = @"微信好友";
+        }else if ([[[response.data allKeys] objectAtIndex:0] isEqualToString:@"qzone"]){
+            platName = @"QQ空间";
+        }else if ([[[response.data allKeys] objectAtIndex:0] isEqualToString:@"qq"]){
+            platName = @"QQ好友";
+        }
+        
+        //神策数据采集
+        SensorsAnalyticsSDK *sdk = [SensorsAnalyticsSDK sharedInstance];
+        if (sdk != nil) {
+            [sdk track:@"share" withProperties:@{@"shareType": [NSString convertNull:platName],
+                                                 @"shareContent": @"投资分享",
+                                                 @"distinctId": [NSString convertNull:[CMT_AnalyticsTool userID]]}];
+        }
+        
+    }
+}
+
+- (void)back
+{
+    if (self.fromType == FROMYUYUEINVEST) {
+        
+        for (UIViewController *invest in self.navigationController.viewControllers) {
+           //来自预约
+            if([invest isKindOfClass:[CMT_MyInvestmentViewController class]]){
+                [self.navigationController popToViewController:invest animated:YES];
+            }
+        }
+
+    }else if(self.fromType == FROMFINANCIAL){
+        [self.navigationController popToRootViewControllerAnimated:YES];//来自理财列表
+       
+    }else if(self.fromType == FROMCOUPON){
+        
+        for (UIViewController *invest in self.navigationController.viewControllers) {
+            //来自加息券列表
+            if([invest isKindOfClass:[CMT_CouponViewController class]]){
+                [self.navigationController popToViewController:invest animated:YES];
+            }
+        }
+    }else if(self.fromType == FROMYFULI){
+        
+        for (UIViewController *invest in self.navigationController.viewControllers) {
+            //来自我的福利列表
+            if([invest isKindOfClass:[CMT_MyWelfareViewController class]]){
+                [self.navigationController popToViewController:invest animated:YES];
+            }
+        }
+    }
+
+}
+
+- (void)didReceiveMemoryWarning {
+    [super didReceiveMemoryWarning];
+    // Dispose of any resources that can be recreated.
+}
+
+/*
+#pragma mark - Navigation
+
+// In a storyboard-based application, you will often want to do a little preparation before navigation
+- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
+    // Get the new view controller using [segue destinationViewController].
+    // Pass the selected object to the new view controller.
+}
+*/
+
+@end

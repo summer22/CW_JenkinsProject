@@ -1,0 +1,28 @@
+//
+//  CMT_BaseVIewController.h
+//  CongMingTou
+//
+//  Created by wzh on 16/5/10.
+//  Copyright © 2016年 wzh. All rights reserved.
+//
+
+#import <UIKit/UIKit.h>
+
+@interface CMT_BaseVIewController : UIViewController
+/** 无网络状态或者加载失败点击btn */
+@property (nonatomic,strong)UIButton *netBtn;
+/** button */
+@property (nonatomic,strong)UIButton *netBtnStatus;
+
+/** 兼容首页无网络状态或者加载失败点击btn */
+@property (nonatomic,strong)UIView *financialNetView;
+
+- (void)setLeftNavItemButton;
+- (void)back;
+//点击加载按钮调取的事件
+- (void)netReloadData;
+//加载后没有数据改变图片
+- (void)changeStatusBtn;
+//无路由下加载view
+- (void)noNetView:(BOOL)isHide;
+@end

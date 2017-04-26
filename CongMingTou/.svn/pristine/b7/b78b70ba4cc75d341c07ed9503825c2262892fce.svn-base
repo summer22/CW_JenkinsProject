@@ -1,0 +1,96 @@
+//
+//  CMT_NavigationController.m
+//  CongMingTou
+//
+//  Created by wzh on 16/5/6.
+//  Copyright © 2016年 QiYuan All rights reserved.
+//
+
+#import "CMT_NavigationController.h"
+
+@interface CMT_NavigationController ()
+
+@end
+
+@implementation CMT_NavigationController
+/**
+ *  当第一次使用这个类的时候调用1次
+ */
++ (void)initialize
+{
+    // 1.设置导航栏主题
+    [self setupNavTheme];
+}
+
+/**
+ * 设置导航栏主题
+ */
++ (void)setupNavTheme
+{
+    // 1.获得appearance对象, 就能修改主题
+    UINavigationBar *navBar = [UINavigationBar appearance];
+    //设置导航背景
+    [navBar setBackgroundImage:[UIImage createImageWithColor:ThemeBackgroundColor] forBarMetrics:UIBarMetricsDefault];
+    [navBar setShadowImage:[[UIImage alloc] init] ];
+
+    NSMutableDictionary *textAttrs = [NSMutableDictionary dictionary];
+    // 设置文字颜色
+    textAttrs[NSForegroundColorAttributeName] = CommonWhiteColor;
+    [navBar setTitleTextAttributes:textAttrs];
+    
+}
+
+- (void)viewDidLoad {
+    [super viewDidLoad];
+    // Do any additional setup after loading the view.
+    if (iOS7) {
+        // 清空手势识别器的代理, 恢复以前滑动移除控制器的功能
+        self.interactivePopGestureRecognizer.delegate = nil;
+    }
+}
+
+- (void)viewWillAppear:(BOOL)animated{
+    [super viewWillAppear:animated];
+    
+}
+
+- (void)pushViewController:(UIViewController *)viewController animated:(BOOL)animated
+{
+    if (self.viewControllers.count > 0) { // 如果push的不是根控制器(不是栈底控制器)
+        viewController.hidesBottomBarWhenPushed = YES;
+        // 左上角的返回
+        
+//        viewController.navigationItem.leftBarButtonItem = [UIBarButtonItem itemWithImageName:@"NavBarBack" target:self action:@selector(back)];
+//        // 右上角的更多
+//        viewController.navigationItem.rightBarButtonItem = [UIBarButtonItem itemWithImage:@"navigationbar_more" highImage:@"navigationbar_more_highlighted" target:self action:@selector(more)];
+    }
+    [super pushViewController:viewController animated:animated];
+}
+
+//- (void)back
+//{
+//    [self popViewControllerAnimated:YES];
+//}
+
+//- (void)more
+//{
+//    [self popToRootViewControllerAnimated:YES];
+//}
+
+
+- (void)didReceiveMemoryWarning {
+    [super didReceiveMemoryWarning];
+    // Dispose of any resources that can be recreated.
+}
+
+/*
+#pragma mark - Navigation
+
+// In a storyboard-based application, you will often want to do a little preparation before navigation
+- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
+    // Get the new view controller using [segue destinationViewController].
+    // Pass the selected object to the new view controller.
+}
+*/
+
+@end

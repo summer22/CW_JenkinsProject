@@ -1,0 +1,27 @@
+//
+//  CMT_GetNewsModel.m
+//  CongMingTou
+//
+//  Created by wzh on 16/5/24.
+//  Copyright © 2016年 QiYuan. All rights reserved.
+//
+
+#import "CMT_GetNewsModel.h"
+
+@implementation CMT_GetNewsModel
++ (CMT_GetNewsModel *)getNewsModelWithDic:(NSDictionary *)dic{
+   return  [[self alloc]initWithDic:dic];
+}
+
+
+- (void)setValue:(id)value forUndefinedKey:(NSString *)key{
+    if([key isEqualToString:@"newsList"]){
+        NSMutableArray *dataArray = [NSMutableArray array];
+        for (NSDictionary *subDic in (NSArray *)value) {
+            CMT_GetNewsListModel *model = [CMT_GetNewsListModel getNewsListModelWithDic:subDic];
+            [dataArray addObject:model];
+        }
+        self.newsListArray = [NSArray arrayWithArray:dataArray];
+    }
+}
+@end

@@ -1,0 +1,38 @@
+//
+//  CMT_CongZhiOrTiXianView.m
+//  CongMingTou
+//
+//  Created by wzh on 16/5/13.
+//  Copyright © 2016年 wzh. All rights reserved.
+//
+
+#import "CMT_ChongZhiOrTiXianView.h"
+#define kPasswordLength  6
+#define kLineTag 1000
+#define kDotTag 3000
+@implementation CMT_ChongZhiOrTiXianView
+
+- (instancetype)initWithFrame:(CGRect)frame{
+    if(self = [super initWithFrame:frame]){
+        self =  [[[NSBundle mainBundle]loadNibNamed:@"CMT_ChongZhiOrTiXianView" owner:nil options:nil]lastObject];
+
+        _inputView.layer.masksToBounds = YES;
+        _inputView.layer.cornerRadius = 5;
+        _inputView.layer.borderColor = ThemeBackgroundColor.CGColor;
+        _inputView.layer.borderWidth = 1;
+        _inputView.backgroundColor = [UIColor whiteColor];
+        _inputView.midLineColor = ThemeBackgroundColor;
+        _inputView.pointColor = ThemeBackgroundColor;
+        _inputView.pointRadius = 10;
+    }
+    return self;
+}
+/*
+// Only override drawRect: if you perform custom drawing.
+// An empty implementation adversely affects performance during animation.
+- (void)drawRect:(CGRect)rect {
+    // Drawing code
+}
+*/
+
+@end

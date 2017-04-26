@@ -1,0 +1,221 @@
+//
+//  CMT_MessageViewController.m
+//  CongMingTou
+//
+//  Created by wzh on 16/5/12.
+//  Copyright © 2016年 wzh. All rights reserved.
+//
+
+#import "CMT_MessageViewController.h"
+#import "CMT_MessageTableViewCell.h"
+#import "CMT_MessageDetailViewController.h"
+#import "CMT_StateView.h"
+
+#define Cellheight 74
+#define ListOneNum 10
+@interface CMT_MessageViewController ()<UITableViewDataSource, UITableViewDelegate>{
+    int _pageIndex;
+    int _pageSize;
+    /**
+     *  是否可以点击全部已读 yes 可以 no 不可以
+     */
+    BOOL _isCanAllReadClicked;
+//    int _
+}
+@property (weak, nonatomic) IBOutlet UITableView *tableView;
+@property (nonatomic, strong) NSMutableArray *dataArray;
+
+@end
+
+@implementation CMT_MessageViewController
+- (NSMutableArray *)dataArray{
+
+    if(!_dataArray){
+        _dataArray = [NSMutableArray array];
+    }
+    return _dataArray;
+}
+- (void)viewDidLoad {
+    [super viewDidLoad];
+    self.navigationItem.title = @"消息通知";
+
+    // Do any additional setup after loading the view from its nib.
+    _tableView.rowHeight = Cellheight ;
+    _tableView.separatorColor = [UIColor clearColor];
+    CMT_StateView *stateView = [[CMT_StateView alloc]initWithFrame:_tableView.bounds];
+    [stateView.stateButton addTarget:self action:@selector(stateButtonClicked:) forControlEvents:UIControlEventTouchUpInside];
+    _tableView.backgroundView = stateView;
+    _pageIndex = 0;
+    _pageSize = ListOneNum;
+    [self setupNav];
+    [self createRefreshing];
+    [self loadDataNewList];
+
+}
+
+- (void)stateButtonClicked:(UIButton *)button{
+    [self loadDataNewList];
+}
+
+/**
+ *  设置导航栏内容
+ */
+- (void)setupNav
+{
+   UIButton *rightItemBtn = [UIButton buttonWithType:UIButtonTypeCustom];
+    [rightItemBtn addTarget:self action:@selector(allReadBtnClicked:) forControlEvents:UIControlEventTouchUpInside];
+    [rightItemBtn setTitle:@"全部已读" forState:UIControlStateNormal];
+    rightItemBtn.size = CGSizeMake(80, 44);
+    UIBarButtonItem *rightItem = [[UIBarButtonItem alloc]initWithCustomView:rightItemBtn];
+    self.navigationItem.rightBarButtonItem = rightItem;
+    
+}
+- (void)allReadBtnClicked:(UIButton *)button{
+    CMT_Log(@"点击了全部已读按钮");
+//    [_tableView.mj_header beginRefreshing];
+    if([self isCanAllReadClicked]){
+        [self loadDataIsReadOKWithUserId:[CMT_AccountTool accountModel].userId];
+    }else{
+        [self showHint:@"没有未读的新消息哦"];
+    }
+}
+- (void)didReceiveMemoryWarning {
+    [super didReceiveMemoryWarning];
+    // Dispose of any resources that can be recreated.
+}
+
+- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView{
+    return 1;
+}
+
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section{
+    return _dataArray.count;
+}
+
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath{
+    CMT_MessageTableViewCell *cell = [CMT_MessageTableViewCell cellWithTablebView:tableView];
+    cell.bottomLineView.hidden = indexPath.row == _dataArray.count - 1 ? YES : NO;
+    cell.model = _dataArray[indexPath.row];
+    return cell;
+}
+
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
+    CMT_MessageDetailViewController *messageDetailVC = [[CMT_MessageDetailViewController alloc]init];
+    messageDetailVC.newsId = ((CMT_GetNewsListModel *)_dataArray[indexPath.row]).messageId;
+    messageDetailVC.backBlock = ^void(){
+        CMT_GetNewsListModel *model = _dataArray[indexPath.row];
+        model.read = @"1";
+        [_tableView reloadRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
+    };
+    [self.navigationController pushViewController:messageDetailVC animated:YES];
+}
+
+
+#pragma mark -- createRefreshing
+- (void)createRefreshing{
+    // 下拉刷新
+    _tableView.mj_header= [MJRefreshNormalHeader headerWithRefreshingBlock:^{
+        [self loadDataNewList];
+
+    }];
+    
+    // 设置自动切换透明度(在导航栏下面自动隐藏)
+    _tableView.mj_header.automaticallyChangeAlpha = YES;
+    
+    // 上拉刷新
+    _tableView.mj_footer = [MJRefreshBackNormalFooter footerWithRefreshingBlock:^{
+        [self loadDataNewList];
+
+    }];
+}
+
+#pragma mark -- loadData
+- (void)loadDataNewList{
+    [self showHudInView:self.view hint:CMT_LoadDataWaiting];
+    if(_tableView.mj_header.isRefreshing){//下拉
+        _pageIndex = 0;
+    }
+    [CMT_ProcessTheDataTool getNewsListWithUserId:[CMT_AccountTool accountModel].userId start:_pageIndex end:_pageSize andBlock:^(CMT_GetNewsModel *model, NSError *error) {
+        
+        [self hideHud];
+        if(!error){
+            if([[NSString stringWithFormat:@"%@",model.status] isEqualToString:@"1"]){
+                if(_pageIndex == 0){//下拉刷新
+                    [self.dataArray removeAllObjects];
+                }
+                [self.dataArray addObjectsFromArray:model.newsListArray];
+                _pageIndex = _pageIndex + (int)_dataArray.count;
+                [_tableView reloadData];
+                
+            }else if ([[NSString stringWithFormat:@"%@",model.status] isEqualToString:CMT_SinglePointCode]){
+                [CMT_SinglePointLoginTool addSinglePointLoginWithSelfVC:self];
+            }else{
+                [self showHint:model.msg];
+            }
+        }else{
+            [self showHint:CMT_Error_NotNetWork];
+        }
+        ((CMT_StateView *)self.tableView.backgroundView).dataArray =  self.dataArray;
+        [_tableView.mj_footer endRefreshing];
+        [_tableView.mj_header endRefreshing];
+  
+    }];
+}
+#pragma mark -- 全部标记已读
+- (void)loadDataIsReadOKWithUserId:(NSString *)userId{
+    [self showHudInView:self.view hint:CMT_LoadDataWaiting];
+    [CMT_ProcessTheDataTool allReadWithUserId:userId andBlock:^(CMT_BaseModel *model, NSError *error) {
+        
+        [self hideHud];
+        if(!error){
+            if([[NSString stringWithFormat:@"%@",model.status] isEqualToString:@"1"]){
+                for (CMT_GetNewsListModel *listMdoel in _dataArray) {
+                    listMdoel.read = @"1";
+                }
+                [_tableView reloadData];
+                [self showHint:@"操作成功"];
+
+            }else if ([[NSString stringWithFormat:@"%@",model.status] isEqualToString:CMT_SinglePointCode]){
+                [CMT_SinglePointLoginTool addSinglePointLoginWithSelfVC:self];
+            }else{
+                [self showHint:model.msg];
+            }
+        }else{
+            [self showHint:CMT_Error_NotNetWork];
+        }
+    }];
+
+}
+
+/**
+ *   是否可以点击全部已读
+ *
+ *  @return yes 可以 no 不可以
+ */
+- (BOOL)isCanAllReadClicked{
+    BOOL isCanAllReadClicked = NO;
+    for (CMT_GetNewsListModel *listMdoel in self.dataArray) {
+        if([listMdoel.read isEqualToString:@"0"]){
+            isCanAllReadClicked = YES;
+        }
+    }
+    return isCanAllReadClicked;
+}
+
+- (void)viewDidLayoutSubviews{
+    [super viewDidLayoutSubviews];
+    if(CMT_6pAnd6ps){//6p 或 6ps 或者更大
+        _tableView.rowHeight = Cellheight *CMT_ProportionX;
+    }
+}
+/*
+#pragma mark - Navigation
+
+// In a storyboard-based application, you will often want to do a little preparation before navigation
+- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
+    // Get the new view controller using [segue destinationViewController].
+    // Pass the selected object to the new view controller.
+}
+*/
+
+@end

@@ -1,0 +1,103 @@
+//
+//  CMT_ProductAlertMaskView.m
+//  CongMingTou
+//
+//  Created by summer on 16/5/17.
+//  Copyright © 2016年 QiYuan. All rights reserved.
+//
+
+#import "CMT_ProductAlertMaskView.h"
+#import "AppDelegate.h"
+#import "CALayer+Animation.h"
+
+@implementation CMT_ProductAlertMaskView
+
+- (instancetype)initWithFrame:(CGRect)frame
+{
+    if (self = [super initWithFrame:frame])
+    {
+        [self creatSubView];
+        self.backgroundColor = CMT_RGBACOLOR(0.2392, 0.1333, 0.1294, 0.5);
+    }
+    return self;
+}
+
+- (void)creatSubView
+{
+    //弹框父视图
+    UIView *bgView = [CMT_Tools getUiviewWithFrame:CMT_CGRECTMAKE(0, 0, CMT_ScreenWidth - 100 * CMT_6PERCENTY, 220 * CMT_6PERCENTY) BackGroudColor:[UIColor clearColor]];
+    bgView.centerX = self.centerX;
+    bgView.centerY = self.centerY - 30;
+    [self addSubview:bgView];
+    
+    UIView *topBgView  = [CMT_Tools getUiviewWithFrame:CMT_CGRECTMAKE(0, 0, bgView.width, 170 * CMT_6PERCENTY) BackGroudColor:CommonWhiteColor];
+    topBgView.layer.cornerRadius = 8;
+    topBgView.layer.masksToBounds = YES;
+    [bgView addSubview:topBgView];
+    
+    UILabel *titleLables  = [CMT_Tools getLabel:@"选择还款方式" textFont:14 viewFrame:CMT_CGRECTMAKE((topBgView.width - 100 * CMT_6PERCENTY)/2, 15 * CMT_6PERCENTY, 100 * CMT_6PERCENTY, 20 * CMT_6PERCENTY) textAlignments:NSTextAlignmentCenter textColors:CommonImpTextColor];
+    [topBgView addSubview:titleLables];
+
+    
+    UIView *topLineView = [CMT_Tools getUiviewWithFrame:CMT_CGRECTMAKE(0, 50 * CMT_6PERCENTY, topBgView.width, 0.5) BackGroudColor:CommonLineColor];
+    [topBgView addSubview:topLineView];
+    
+    UILabel *topLable  = [CMT_Tools getLabel:@"每月返息，到期还本" textFont:13 viewFrame:CMT_CGRECTMAKE(15, topLineView.bottom + 20 * CMT_6PERCENTY, 150 * CMT_6PERCENTY, 20 * CMT_6PERCENTY) textAlignments:NSTextAlignmentLeft textColors:CommonYellowTextColor];
+    [topBgView addSubview:topLable];
+    
+    UIButton *button = [UIButton buttonWithType:UIButtonTypeCustom];
+    button.backgroundColor = [UIColor clearColor];
+    button.frame = CMT_CGRECTMAKE(topBgView.width - 15 - 30 * CMT_6PERCENTY , 0 , 30 * CMT_6PERCENTY, 30 * CMT_6PERCENTY);
+    button.centerY = topLable.centerY;
+    [button addTarget:self action:@selector(selelctBtnClick:) forControlEvents:UIControlEventTouchUpInside];
+    CMT_BTN_SELECT(button, @"CMT_ProAlertSelect");
+    [topBgView addSubview:button];
+    
+    UIView *bottomLineView = [CMT_Tools getUiviewWithFrame:CMT_CGRECTMAKE(0, button.bottom + 20 * CMT_6PERCENTY, topBgView.width, 0.5) BackGroudColor:CommonLineColor];
+    [topBgView addSubview:bottomLineView];
+    
+    UILabel *bottomLables  = [CMT_Tools getLabel:@"本息一次性返还" textFont:13 viewFrame:CMT_CGRECTMAKE(15, bottomLineView.bottom + 15 * CMT_6PERCENTY, 150 * CMT_6PERCENTY, 20 * CMT_6PERCENTY) textAlignments:NSTextAlignmentLeft textColors:CommonImpTextColor];
+    [topBgView addSubview:bottomLables];
+    
+    
+    UIView *bottomDelView = [CMT_Tools getUiviewWithFrame:CMT_CGRECTMAKE(0, topBgView.bottom, topBgView.width, 60 * CMT_6PERCENTY) BackGroudColor:[UIColor clearColor]];
+    [bgView addSubview:bottomDelView];
+    
+    UIButton *delBtn = [UIButton buttonWithType:UIButtonTypeCustom];
+    delBtn.backgroundColor = [UIColor clearColor];
+    delBtn.frame = CMT_CGRECTMAKE(0, 0 , 20 * CMT_6PERCENTY, 20 * CMT_6PERCENTY);
+    delBtn.centerY = bottomDelView.centerY;
+    delBtn.centerX = bottomDelView.centerX;
+    [delBtn addTarget:self action:@selector(delBtnClick:) forControlEvents:UIControlEventTouchUpInside];
+    CMT_BTN_NORMAL(delBtn, @"CMT_ProAlertDele");
+    [bgView addSubview:delBtn];
+
+    [topBgView.layer addBeatingAnimationWithDuration2:1.5];
+  
+}
+
+//选择事件
+- (void)selelctBtnClick:(UIButton *)sender
+{
+    sender.selected = !sender.selected;
+    
+    if ([self.delegate respondsToSelector:@selector(sendBtnStatue:)]) {
+        [self.delegate sendBtnStatue:sender.selected];
+    }
+}
+
+- (void)delBtnClick:(UIButton *)sender
+{
+    [self removeFromSuperview];
+}
+
++ (void)showWithDelegate:(id)target;
+{
+    CMT_ProductAlertMaskView *alertMaskView = [[CMT_ProductAlertMaskView alloc] initWithFrame:CMT_CGRECTMAKE(0, 0, CMT_ScreenWidth, CMT_ScreenHeight)];
+    alertMaskView.delegate = target;
+    AppDelegate *appDel = (AppDelegate *)[UIApplication sharedApplication].delegate;
+    [appDel.window addSubview:alertMaskView];
+
+}
+
+@end

@@ -1,0 +1,14 @@
+//
+//  CMT_RealNameAuthenticateModel.h
+//  CongMingTou
+//
+//  Created by wzh on 16/5/23.
+//  Copyright © 2016年 QiYuan. All rights reserved.
+//
+
+#import <Foundation/Foundation.h>
+@interface CMT_RealNameAuthenticateModel : NSObject
+@property (nonatomic ,copy) NSNumber *code;
+@property (nonatomic ,copy) NSString *message;
+- (id)initWithDic:(NSDictionary *)dic;
+@end

@@ -1,0 +1,13 @@
+//
+//  CMT_JiaoYiJiLuViewController.h
+//  CongMingTou
+//
+//  Created by wzh on 16/5/12.
+//  Copyright © 2016年 wzh. All rights reserved.
+//
+
+#import <UIKit/UIKit.h>
+
+@interface CMT_JiaoYiJiLuViewController : CMT_BaseVIewController
+
+@end

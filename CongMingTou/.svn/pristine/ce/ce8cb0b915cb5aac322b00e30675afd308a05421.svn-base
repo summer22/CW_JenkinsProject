@@ -1,0 +1,67 @@
+//
+//  CMT_ChongZhiOrTixXianTableViewCell.m
+//  CongMingTou
+//
+//  Created by wzh on 16/5/12.
+//  Copyright © 2016年 wzh. All rights reserved.
+//
+
+#import "CMT_ChongZhiOrTixXianTableViewCell.h"
+
+@interface CMT_ChongZhiOrTixXianTableViewCell()
+@property (strong, nonatomic) IBOutlet NSLayoutConstraint *leftX;
+@property (strong, nonatomic) IBOutlet NSLayoutConstraint *rightX;
+
+
+@end
+
+@implementation CMT_ChongZhiOrTixXianTableViewCell
+
+- (void)awakeFromNib {
+    // Initialization code
+    self.selectionStyle = UITableViewCellSelectionStyleNone;
+
+}
++ (CMT_ChongZhiOrTixXianTableViewCell *)cellWithTablebView:(UITableView *)tableView{
+    static NSString *indent = @"chongZhicell";
+    [tableView registerNib:[UINib nibWithNibName:@"CMT_ChongZhiOrTixXianTableViewCell" bundle:nil] forCellReuseIdentifier:indent];
+    CMT_ChongZhiOrTixXianTableViewCell  *cell = [tableView dequeueReusableCellWithIdentifier:indent];
+    cell.selectionStyle = UITableViewCellSelectionStyleNone;
+    return cell;
+    
+}
+
+- (void)setModel:(CMT_ChongZhiTiXianListModel *)model{
+    _model = model;
+    _titleLab.text = [NSString stringWithFormat:@"%@",_model.operation];
+    _dateLab.text = [NSString stringWithFormat:@"%@",_model.time];
+    _moneyDesLab.text = [NSString stringWithFormat:@"%@",_model.amount];
+    
+    _titleLab.textColor = CommonImpTextColor;
+    if(self.currentIndex == 0){//充值
+        
+    }else{//提现
+        if([_model.withdrawFlag isEqualToString:@"0"]){//提现成功
+    
+        }else{//提现失败
+            _titleLab.textColor = [UIColor redColor];
+
+        }
+    }
+}
+- (void)setSelected:(BOOL)selected animated:(BOOL)animated {
+    [super setSelected:selected animated:animated];
+
+    // Configure the view for the selected state
+}
+
+- (void)layoutSubviews{
+    [super layoutSubviews];
+    if(CMT_6pAnd6ps){
+        _leftX.constant  = CMT_ScreenCellLeftMid *CMT_ProportionX;
+        _rightX.constant  = CMT_ScreenCellRightMid *CMT_ProportionX;
+    }
+    self.bottomLineView.height = 0.5;
+    self.topLineView.height = 0.5;
+}
+@end

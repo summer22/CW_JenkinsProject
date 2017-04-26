@@ -1,0 +1,16 @@
+//
+//  CMT_MessageDetailViewController.h
+//  CongMingTou
+//
+//  Created by wzh on 16/5/24.
+//  Copyright © 2016年 QiYuan. All rights reserved.
+//
+
+#import "CMT_BaseVIewController.h"
+
+@interface CMT_MessageDetailViewController : CMT_BaseVIewController
+//@property (nonatomic, strong) CMT_GetNewsListModel *model;
+@property (nonatomic, copy) NSString *newsId;
+@property (nonatomic, copy) void(^backBlock)();
+
+@end

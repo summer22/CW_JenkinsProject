@@ -1,0 +1,104 @@
+//
+//  CMT_ChongZhiAndTiXianSuccessfulViewController.m
+//  CongMingTou
+//
+//  Created by wzh on 16/5/24.
+//  Copyright © 2016年 QiYuan. All rights reserved.
+//
+
+#import "CMT_ChongZhiAndTiXianSuccessfulViewController.h"
+#import "CMT_MyViewController.h"
+#import "CMT_productDetViewController.h"
+@interface CMT_ChongZhiAndTiXianSuccessfulViewController ()
+@property (strong, nonatomic) IBOutlet UILabel *chongZhiAndTixianTitleLab;
+@property (strong, nonatomic) IBOutlet UILabel *chongZhiAndTixianDesLab;
+@property (strong, nonatomic) IBOutlet UILabel *shenQingTimeAndChongZhiMoneyDesLab;
+@property (strong, nonatomic) IBOutlet UILabel *keTouAndTIXianMoneyDesLab;
+
+@property (strong, nonatomic) IBOutlet UILabel *shenQingTimeAndChongZhiMoneyLab;
+@property (strong, nonatomic) IBOutlet UILabel *keTouAndTIXianMoneyLab;
+@property (strong, nonatomic) IBOutlet UIButton *commitBtn;
+@property (strong, nonatomic) IBOutlet NSLayoutConstraint *desViewH;
+@property (strong, nonatomic) IBOutlet NSLayoutConstraint *lineViewH;
+@property (strong, nonatomic) IBOutlet UIView *lineView;
+
+@end
+
+@implementation CMT_ChongZhiAndTiXianSuccessfulViewController
+
+- (void)viewDidLoad {
+    [super viewDidLoad];
+    // Do any additional setup after loading the view from its nib.
+    [self setDefautUI];
+    
+}
+
+- (void)back{
+    
+    for (UIViewController *subVc in self.navigationController.viewControllers) {
+        //我的界面 和 产品详情
+        if([subVc isKindOfClass:[CMT_MyViewController class]] || [subVc isKindOfClass:[CMT_productDetViewController class]]){
+            [self.navigationController popToViewController:subVc animated:YES];
+        }
+    }
+}
+
+- (void)setDefautUI{
+    _lineViewH.constant = 0.5;
+    [_commitBtn styteWithCornerRadius:_commitBtn.height / 2 shadowColor:_commitBtn.backgroundColor shadowOffset:CGSizeMake(0, 5) shadowOpacity:0.6 shadowRadius:5];
+    if(_enterType == EnterTypeChongZhiType){
+        _desViewH.constant = 43;
+        self.navigationItem.title = @"充值结果";
+        _chongZhiAndTixianTitleLab.text = @"您已充值完成";
+        _chongZhiAndTixianDesLab.text = @"2分钟内到账";
+        _shenQingTimeAndChongZhiMoneyDesLab.text = @"充值金额";
+        
+        _keTouAndTIXianMoneyDesLab.text = @"可投金额";
+        
+        NSLog(@"[_chongZhiOrTiXianMoneyStr doubleValue]  == %f[_zhangHuYuEStr doubleValue] === %f",[_chongZhiOrTiXianMoneyStr doubleValue],[_zhangHuYuEStr doubleValue]);
+        _keTouAndTIXianMoneyLab.text =[NSString stringWithFormat:@"%.2f元",[_chongZhiOrTiXianMoneyStr doubleValue] + [_zhangHuYuEStr doubleValue]];
+        _shenQingTimeAndChongZhiMoneyLab.text = [NSString stringWithFormat:@"%@元",_chongZhiOrTiXianMoneyStr];
+        _keTouAndTIXianMoneyDesLab.hidden = YES;
+        _keTouAndTIXianMoneyLab.hidden = YES;
+        _lineView.hidden = YES;
+        
+        
+    }else if (_enterType == EnterTypeTiXianType){
+        _desViewH.constant = 87;
+        self.navigationItem.title = @"提现结果";
+        _chongZhiAndTixianDesLab.text = @"预计最快1-3工作日到账";
+        _shenQingTimeAndChongZhiMoneyDesLab.text = @"申请时间";
+        _keTouAndTIXianMoneyDesLab.text = @"提现金额";
+        _chongZhiAndTixianTitleLab.text = @"您已申请提现成功";
+        NSDateFormatter* formatter = [[NSDateFormatter alloc]init];
+        [formatter setDateFormat:@"yyyy-MM-dd HH:mm"]; // ----------设置你想要的格式,hh与HH的区别:分别表示12小时制,24小时制
+        NSString *dateStr = [formatter stringFromDate:[NSDate date]];
+        _shenQingTimeAndChongZhiMoneyLab.text = [NSString stringWithFormat:@"%@",dateStr];
+        _keTouAndTIXianMoneyLab.text = [NSString stringWithFormat:@"%@元",_chongZhiOrTiXianMoneyStr];
+
+        _keTouAndTIXianMoneyDesLab.hidden = NO;
+        _keTouAndTIXianMoneyLab.hidden = NO;
+        _lineView.hidden = NO;
+        
+    }
+}
+- (IBAction)commitBtnClicked:(id)sender {
+    [self back];
+}
+
+- (void)didReceiveMemoryWarning {
+    [super didReceiveMemoryWarning];
+    // Dispose of any resources that can be recreated.
+}
+
+/*
+#pragma mark - Navigation
+
+// In a storyboard-based application, you will often want to do a little preparation before navigation
+- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
+    // Get the new view controller using [segue destinationViewController].
+    // Pass the selected object to the new view controller.
+}
+*/
+
+@end

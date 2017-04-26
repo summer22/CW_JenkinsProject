@@ -1,0 +1,164 @@
+//  CMT_CreditorsRightsListViewController.m
+//  CongMingTou
+//
+//  Created by wzh on 16/6/22.
+//  Copyright © 2016年 QiYuan. All rights reserved.
+//
+
+#import "CMT_CreditorsRightsListViewController.h"
+#import "CMT_CreditorsRightsListTableViewCell.h"
+#import "CMT_CreditorModel.h"
+#import "CMT_StateView.h"
+
+@interface CMT_CreditorsRightsListViewController ()<UITableViewDelegate,UITableViewDataSource>
+@property (strong, nonatomic) IBOutlet UITableView *tableView;
+/** 数目模型 */
+@property (nonatomic,strong) CMT_CreditorModel *model;
+/** 数据源 */
+@property (nonatomic,strong)NSMutableArray *dataSourceArr;
+@end
+
+@implementation CMT_CreditorsRightsListViewController
+
+- (NSMutableArray *)dataSourceArr
+{
+    if (!_dataSourceArr) {
+        _dataSourceArr = [[NSMutableArray alloc] init];
+    }
+    return  _dataSourceArr;
+}
+
+- (void)viewDidLoad {
+    [super viewDidLoad];
+    
+    self.title = @"债权列表";
+    _tableView.separatorColor = [UIColor clearColor];
+    
+    self.netBtn.hidden = NO;
+    
+    [self loadCredictorData];
+}
+
+- (void)addNONetWorkSet{
+    CMT_StateView *stateView = [[CMT_StateView alloc]initWithFrame:_tableView.bounds];
+    [stateView.stateButton addTarget:self action:@selector(stateButtonClicked:) forControlEvents:UIControlEventTouchUpInside];
+    _tableView.backgroundView = stateView;
+}
+- (void)stateButtonClicked:(UIButton *)button{
+    [self loadCredictorData];
+}
+
+//获取数据
+- (void)loadCredictorData{
+    [self showHudInView:self.view hint:@"加载中..."];
+    
+    __weak  typeof(self) weakSelf = self;
+    
+    [CMT_ProcessTheDataTool getCreditors:self.bidNo block:^(id jsonObject, NSError *error) {
+        [weakSelf hideHud];
+        
+        CMT_Log(@"债权num=%@",jsonObject);
+        
+        if(!error){
+            if([jsonObject[@"status"] isEqualToString:@"1"]){
+                
+                //                [weakSelf loadFinalCredictorData:jsonObject[@"data"][0][@"creditsId"]];
+                for (NSDictionary *dict in jsonObject[@"data"]) {
+                    weakSelf.model = [CMT_CreditorModel mj_objectWithKeyValues:dict];
+                    weakSelf.model.perid = weakSelf.perid;
+                    [weakSelf.dataSourceArr addObject:weakSelf.model];
+                }
+                weakSelf.netBtn.hidden = weakSelf.dataSourceArr > 0 ? YES : NO;
+                if (weakSelf.dataSourceArr.count == 0) {
+                    [weakSelf changeStatusBtn];
+                }
+                [weakSelf.tableView reloadData];
+            }else if ([jsonObject[@"status"] isEqualToString:@"0"]){
+                weakSelf.netBtn.hidden = NO;
+                [weakSelf changeStatusBtn];
+            }else if ([jsonObject[@"status"] isEqualToString:CMT_SinglePointCode]){
+                [CMT_SinglePointLoginTool addSinglePointLoginWithSelfVC:self];
+                
+            }else{
+                [self showHint:jsonObject[@"msg"]];
+            }
+        }else{
+            [self showHint:CMT_Error_NotNetWork];
+        }
+        
+    }];
+}
+
+//这一版本不用了 -- 搁置
+- (void)loadFinalCredictorData:(NSString *)pargram
+{
+    __weak  typeof(self) weakSelf = self;
+    
+    [CMT_ProcessTheDataTool getFinalCreditors:pargram block:^(id jsonObject, NSError *error) {
+        
+        [weakSelf hideHud];
+        
+        NSLog(@"债权列表=%@",jsonObject);
+        
+        if(!error){
+            if([jsonObject[@"status"] isEqualToString:@"1"]){
+                for (NSDictionary *dict in jsonObject[@"data"]) {
+                    weakSelf.model = [CMT_CreditorModel mj_objectWithKeyValues:dict];
+                    weakSelf.model.perid = weakSelf.perid;
+                    [weakSelf.dataSourceArr addObject:weakSelf.model];
+                }
+                weakSelf.netBtn.hidden = weakSelf.dataSourceArr > 0 ? YES : NO;
+                if (weakSelf.dataSourceArr.count == 0) {
+                    [weakSelf changeStatusBtn];
+                }
+                [weakSelf.tableView reloadData];
+                
+            }else if ([jsonObject[@"status"] isEqualToString:@"0"]){
+                weakSelf.netBtn.hidden = NO;
+                [weakSelf changeStatusBtn];
+            }else if ([jsonObject[@"status"] isEqualToString:CMT_SinglePointCode]){
+                [CMT_SinglePointLoginTool addSinglePointLoginWithSelfVC:self];
+                
+            }else{
+                [self showHint:jsonObject[@"msg"]];
+            }
+        }else{
+            [self showHint:CMT_Error_NotNetWork];
+        }
+        
+    }];
+    
+}
+
+- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView{
+    return 1;
+}
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section{
+    return self.dataSourceArr.count;
+}
+
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath{
+    CMT_CreditorsRightsListTableViewCell *cell = [CMT_CreditorsRightsListTableViewCell cellWithTablebView:tableView];
+    [cell setModel:self.dataSourceArr[indexPath.row]];
+    return cell;
+}
+
+- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath{
+    return 128;
+}
+
+- (void)didReceiveMemoryWarning {
+    [super didReceiveMemoryWarning];
+    // Dispose of any resources that can
+}
+/*
+ #pragma mark - Navigation
+ 
+ // In a storyboard-based application, you will often want to do a little preparation before navigation
+ - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
+ // Get the new view controller using [segue destinationViewController].
+ // Pass the selected object to the new view controller.
+ }
+ */
+
+@end

@@ -1,0 +1,172 @@
+//
+//  CMT_FingerprintManagerTool.m
+//  CongMingTou
+//
+//  Created by wzh on 16/5/30.
+//  Copyright © 2016年 QiYuan. All rights reserved.
+//
+
+#import "CMT_FingerprintManagerTool.h"
+#define CMT_FingerprintManagerFilepath [[ZHSandBoxPath getDocumentDirectory]stringByAppendingPathComponent:@"FingerprintManager.data"]
+
+@implementation CMT_FingerprintManagerTool
+
++ (void)save:(CMT_FingerprintManagerModel *)fingerprintManagerModel
+{
+    // 归档
+    [NSKeyedArchiver archiveRootObject:fingerprintManagerModel toFile:CMT_FingerprintManagerFilepath];
+}
+
++ (CMT_FingerprintManagerModel *)fingerprintManagerModel
+{
+    // 读取帐号
+    CMT_FingerprintManagerModel *fingerprintModel = [NSKeyedUnarchiver unarchiveObjectWithFile:CMT_FingerprintManagerFilepath];
+    
+    // 判断帐号是否已经过期
+    //    NSDate *now = [NSDate date];
+    
+    //    if ([now compare:account.expires_time] != NSOrderedAscending) { // 过期
+    //        account = nil;
+    //    }
+    return fingerprintModel;
+}
+
++ (BOOL)removeEmptyFingerprintManagerData{
+    NSFileManager *fileMgr = [NSFileManager defaultManager];
+    if ([fileMgr fileExistsAtPath:CMT_FingerprintManagerFilepath]) {
+        NSError *err;
+        return [fileMgr removeItemAtPath:CMT_FingerprintManagerFilepath error:&err];
+    }else{
+        return NO;
+    }
+}
+
+
++ (void)fingerprintValidationWithTitle:(NSString *)title Block:(void(^)(BOOL success, NSError *error, NSError *deviceError))block{
+    LAContext *myContext = [[LAContext alloc] init];
+    NSError *authError = nil;
+    if ([myContext canEvaluatePolicy:LAPolicyDeviceOwnerAuthenticationWithBiometrics error:&authError]) {
+        [myContext evaluatePolicy:LAPolicyDeviceOwnerAuthenticationWithBiometrics localizedReason:title reply:^(BOOL success, NSError *error) {
+            [[NSOperationQueue mainQueue] addOperationWithBlock:^{
+                if (success) {
+                    CMT_Log(@"指纹验证成功");
+                    if(block){
+                        block(YES,nil,nil);
+                    }
+                }else{
+                    block(NO,error,nil);
+                    CMT_Log(@"指纹验证失败");
+                }
+            }];
+        }];
+    }else{
+        CMT_Log(@"设备不支持指纹");
+        block(NO,nil,authError);
+    }
+}
+
+
+//+ (void)fingerprintValidationIsCanOpenBlock:(void(^)(BOOL success, NSError *error))block{
+//    
+//    [self fingerprintValidationWithTitle:@"请输入指纹验证是否可以指纹验证" alertTitle:@"指纹验证失败，请重新验证" andBlock:block];
+//}
+//
+//+ (void)fingerprintValidationIsCorrectBlock:(void(^)(BOOL success, NSError *error))block{
+//    [self fingerprintValidationWithTitle:@"请输入指纹" alertTitle:@"指纹验证失败，请重新验证" andBlock:block];
+//    
+//}
+//+ (void)fingerprintValidationWithTitle:(NSString *)title alertTitle:(NSString *)alertTitle andBlock:(void(^)(BOOL success, NSError *error))block{
+//    //初始化上下文对象
+//    LAContext* context = [[LAContext alloc] init];
+//    //错误对象
+//    NSError* error = nil;
+//    //首先使用canEvaluatePolicy 判断设备支持状态
+//    if ([context canEvaluatePolicy:LAPolicyDeviceOwnerAuthenticationWithBiometrics error:&error]) {
+//        //支持指纹验证
+//        [context evaluatePolicy:LAPolicyDeviceOwnerAuthenticationWithBiometrics localizedReason:title reply:^(BOOL success, NSError *error) {
+//            
+//            
+//            [[NSOperationQueue mainQueue] addOperationWithBlock:^{
+//                if (success) {
+//                    //验证成功，主线程处理UI
+//                    if (block) {
+//                        block(success,nil);
+//                    }
+//                }else{
+//                    /**
+//                     *  系统取消授权(例如其他APP切入)  用户取消Touch ID授权 用户选择输入密码
+//                     */
+//                    if(error.code == LAErrorSystemCancel || error.code == LAErrorUserCancel ||error.code == LAErrorUserFallback){
+//                        [CMT_Tools showInfoAlert:@"取消了指纹验证"];
+//                    }else{
+//                        [CMT_Tools showInfoAlert:alertTitle];
+//                    }
+//                    
+//                    
+//                    //
+//                    //    //                CMT_Log(@"%@",error.localizedDescription);
+//                    //                    switch (error.code) {
+//                    //                            //
+//                    //                        case LAErrorSystemCancel:{
+//                    //                            CMT_Log(@"Authentication was cancelled by the system");
+//                    //                            //切换到其他APP，系统取消验证Touch ID
+//                    //                            break;
+//                    //                        }
+//                    //                            //
+//                    //                        case LAErrorUserCancel:{
+//                    //                            CMT_Log(@"Authentication was cancelled by the user");
+//                    //                            //用户取消验证Touch ID
+//                    //                            break;
+//                    //                        }
+//                    //                            //
+//                    //                        case LAErrorUserFallback:{
+//                    //                            CMT_Log(@"User selected to enter custom password");
+//                    //
+//                    //                            break;
+//                    //                        }
+//                    //                        default:{
+//                    //                            break;
+//                    //                        }
+//                    //                    }
+//                }
+//            }];
+//        }];
+//        
+//    }else{
+//        [[NSOperationQueue mainQueue] addOperationWithBlock:^{
+//            [CMT_Tools showInfoAlert:@"当前设备不支持指纹验证"];
+//            
+//        }];
+//        
+//        //        //不支持指纹识别，LOG出错误详情
+//        //        switch (error.code) {
+//        //                //设备Touch ID不可用，用户未录入
+//        //            case LAErrorTouchIDNotEnrolled:{
+//        //                CMT_Log(@"TouchID is not enrolled");
+//        //                break;
+//        //            }
+//        //                //设备Touch ID不可用，例如未打开
+//        //            case LAErrorTouchIDNotAvailable:{
+//        //                CMT_Log(@"TouchID is not enrolled");
+//        //                break;
+//        //            }
+//        //                //系统未设置密码
+//        //            case LAErrorPasscodeNotSet:{
+//        //                CMT_Log(@"A passcode has not been set");
+//        //                break;
+//        //            }
+//        //                //授权失败
+//        //            case LAErrorAuthenticationFailed:{
+//        //                CMT_Log(@"A passcode has not been set");
+//        //                break;
+//        //            }
+//        //            default:{
+//        //                CMT_Log(@"TouchID not available");
+//        //                break;
+//        //            }
+//        //        }
+//        //        CMT_Log(@"%@",error.localizedDescription);
+//    }
+//    
+//}
+@end

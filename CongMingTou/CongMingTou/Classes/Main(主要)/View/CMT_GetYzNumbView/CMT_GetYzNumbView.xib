@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="11542" systemVersion="16A323" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES">
+    <device id="retina4_7" orientation="portrait">
+        <adaptation id="fullscreen"/>
+    </device>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="11524"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="CMT_GetYzNumbView">
+            <connections>
+                <outlet property="MyView" destination="iN0-l3-epB" id="tRv-zm-BIK"/>
+                <outlet property="yzBtn" destination="rTg-NT-Aj3" id="V8V-tK-UDa"/>
+                <outlet property="yzTextFiled" destination="kiR-Lz-FdE" id="xGh-Bj-jqC"/>
+            </connections>
+        </placeholder>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <view contentMode="scaleToFill" id="iN0-l3-epB">
+            <rect key="frame" x="0.0" y="0.0" width="375" height="50"/>
+            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+            <subviews>
+                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="验证码" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="PO3-oA-dDt">
+                    <rect key="frame" x="12" y="15" width="51" height="21"/>
+                    <constraints>
+                        <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="51" id="BK8-h4-KF6"/>
+                        <constraint firstAttribute="height" constant="21" id="vW0-Fs-CO1"/>
+                    </constraints>
+                    <fontDescription key="fontDescription" type="system" pointSize="15"/>
+                    <color key="textColor" red="0.20000000000000001" green="0.20000000000000001" blue="0.20000000000000001" alpha="1" colorSpace="calibratedRGB"/>
+                    <nil key="highlightedColor"/>
+                </label>
+                <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="请输入验证码" textAlignment="right" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="kiR-Lz-FdE" customClass="CMT_TextField">
+                    <rect key="frame" x="86" y="4" width="180" height="42"/>
+                    <constraints>
+                        <constraint firstAttribute="height" constant="42" id="ex6-Hf-9da"/>
+                        <constraint firstAttribute="width" constant="180" id="oda-dm-VBp"/>
+                    </constraints>
+                    <nil key="textColor"/>
+                    <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                    <textInputTraits key="textInputTraits" keyboardType="numberPad"/>
+                    <connections>
+                        <action selector="textFieldChange:" destination="-1" eventType="editingChanged" id="yQT-yT-Wcy"/>
+                    </connections>
+                </textField>
+                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="rTg-NT-Aj3">
+                    <rect key="frame" x="281" y="4" width="88" height="46"/>
+                    <constraints>
+                        <constraint firstAttribute="width" constant="88" id="T7M-7E-cQC"/>
+                        <constraint firstAttribute="height" constant="46" id="gWw-Ng-Cvk"/>
+                    </constraints>
+                    <fontDescription key="fontDescription" type="system" pointSize="12"/>
+                    <inset key="titleEdgeInsets" minX="0.0" minY="-5" maxX="0.0" maxY="0.0"/>
+                    <state key="normal" title="点击获取" backgroundImage="CMT_Qiang_Normal">
+                        <color key="titleColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                    </state>
+                    <connections>
+                        <action selector="yzBtnAction:" destination="-1" eventType="touchUpInside" id="2Wp-nf-Z9G"/>
+                    </connections>
+                </button>
+            </subviews>
+            <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+            <constraints>
+                <constraint firstAttribute="trailing" secondItem="rTg-NT-Aj3" secondAttribute="trailing" constant="6" id="MQr-DS-cOM"/>
+                <constraint firstItem="rTg-NT-Aj3" firstAttribute="centerY" secondItem="iN0-l3-epB" secondAttribute="centerY" constant="2" id="TWM-C1-5NJ"/>
+                <constraint firstItem="kiR-Lz-FdE" firstAttribute="centerY" secondItem="iN0-l3-epB" secondAttribute="centerY" id="UjZ-el-L7E"/>
+                <constraint firstItem="PO3-oA-dDt" firstAttribute="centerY" secondItem="iN0-l3-epB" secondAttribute="centerY" id="VMD-UD-QIx"/>
+                <constraint firstItem="PO3-oA-dDt" firstAttribute="leading" secondItem="iN0-l3-epB" secondAttribute="leading" constant="12" id="izT-O3-dNb"/>
+                <constraint firstItem="rTg-NT-Aj3" firstAttribute="leading" secondItem="kiR-Lz-FdE" secondAttribute="trailing" constant="15" id="tg7-dT-4Un"/>
+            </constraints>
+            <nil key="simulatedStatusBarMetrics"/>
+            <nil key="simulatedTopBarMetrics"/>
+            <nil key="simulatedBottomBarMetrics"/>
+            <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
+            <point key="canvasLocation" x="24.5" y="52"/>
+        </view>
+    </objects>
+    <resources>
+        <image name="CMT_Qiang_Normal" width="88" height="46"/>
+    </resources>
+</document>

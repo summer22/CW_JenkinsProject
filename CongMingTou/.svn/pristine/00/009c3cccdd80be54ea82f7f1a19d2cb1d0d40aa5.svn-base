@@ -1,0 +1,100 @@
+//
+//  CMT_makeSureTableViewCell.m
+//  CongMingTou
+//
+//  Created by summer on 16/5/27.
+//  Copyright © 2016年 QiYuan. All rights reserved.
+//
+
+#import "CMT_makeSureTableViewCell.h"
+
+@interface CMT_makeSureTableViewCell ()
+@property (weak, nonatomic) IBOutlet UILabel *contentLabel;
+@property (weak, nonatomic) IBOutlet UILabel *lineLabel;
+@property (weak, nonatomic) IBOutlet NSLayoutConstraint *lineConsheight;
+
+@property (weak, nonatomic) IBOutlet UILabel *titleLabel;
+@end
+
+@implementation CMT_makeSureTableViewCell
+
+- (void)awakeFromNib {
+    // Initialization code
+    self.titleLabel.textColor = CommonGrayTextColor;
+    self.contentLabel.textColor = CommonImpTextColor;
+    self.lineLabel.backgroundColor = CommonLineColor;
+    self.lineConsheight.constant = 0.5;
+}
+
+
++ (CMT_makeSureTableViewCell *)cellWithTablebView:(UITableView *)tableView indexPath:(NSIndexPath *)index modelData:(CMT_InvestConfirmModel *)model{
+    static NSString *indent = @"CMT_makeSureTableViewCell";
+    [tableView registerNib:[UINib nibWithNibName:@"CMT_makeSureTableViewCell" bundle:nil] forCellReuseIdentifier:indent];
+    CMT_makeSureTableViewCell  *cell = [tableView dequeueReusableCellWithIdentifier:indent];
+    if (index.row == 0) {
+        cell.lineLabel.hidden = YES;
+    }
+    
+    switch (index.row) {
+        case 0:
+        {
+            cell.titleLabel.text = @"投资金额";
+            cell.contentLabel.text = [NSString stringWithFormat:@"%@元",model.investMoney];
+            break;
+        }
+        case 1:
+        {
+            cell.titleLabel.text = @"预期年化收益率";
+            cell.rateStr = cell.rateStr.length == 0 ? @"0" :  cell.rateStr;
+            CGFloat totleRate =  [model.apr floatValue] + [cell.rateStr floatValue];
+            
+            CMT_Log(@"%@===%@",model.apr,cell.rateStr);
+            
+            NSString *aprStr = [[NSString stringWithFormat:@"%.2f",totleRate] stringByAppendingString:@"%"];
+            cell.contentLabel.text = aprStr;
+
+            break;
+        }
+        case 2:
+        {
+            cell.titleLabel.text = @"预期收益";
+            NSString *earnMoney =  [CMT_Tools apr:[model.apr floatValue] addPercent:[cell.rateStr floatValue] amount:[model.investMoney floatValue] investDay:[model.period integerValue]];
+            cell.contentLabel.text = earnMoney;
+
+            break;
+        }
+        case 3:
+        {
+            cell.titleLabel.text = @"投资期限";
+            cell.contentLabel.text = [NSString stringWithFormat:@"%@天",model.period];
+
+            break;
+        }
+        case 4:
+        {
+            cell.titleLabel.text = @"投资时间";
+            cell.contentLabel.text = model.investTime;
+
+            break;
+        }
+        case 5:
+        {
+            cell.titleLabel.text = @"收益返还方式";
+            cell.contentLabel.text = model.repaymentType;
+
+            break;
+        }
+
+        default:
+            break;
+    }
+    return cell;
+}
+
+- (void)setSelected:(BOOL)selected animated:(BOOL)animated {
+    [super setSelected:selected animated:animated];
+
+    // Configure the view for the selected state
+}
+
+@end

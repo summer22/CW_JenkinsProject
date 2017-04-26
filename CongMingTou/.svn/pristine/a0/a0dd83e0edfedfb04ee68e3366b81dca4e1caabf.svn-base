@@ -1,0 +1,63 @@
+//
+//  CMT_MyInverstmentTableViewCell.h
+//  CongMingTou
+//
+//  Created by wzh on 16/5/20.
+//  Copyright © 2016年 QiYuan. All rights reserved.
+//
+
+#import <UIKit/UIKit.h>
+#import "CMT_MyInverstmentListModel.h"
+#import "CMT_TenderTypeView.h"
+#import "CMT_TenderTypeNoNperView.h"
+@interface CMT_MyInverstmentTableViewCell : UITableViewCell
+@property (strong, nonatomic) IBOutlet NSLayoutConstraint *tenderW;
+@property (strong, nonatomic) IBOutlet NSLayoutConstraint *fangShiW;
+@property (strong, nonatomic) IBOutlet CMT_TenderTypeNoNperView *tenderTypeNoNperView;
+@property (strong, nonatomic) IBOutlet NSLayoutConstraint *lineViewH;
+@property (strong, nonatomic) IBOutlet CMT_TenderTypeView *tenderTypeView;
+/**
+ *  根据mdoel的currentIndex改变 0 1 2
+ *
+ */
+
+/**
+ *  0 = 立即预约  or 已预约
+ *  1 = 取消预约 （可以取消 不可以取消）
+ *  2 = 查看合同
+ */
+@property (strong, nonatomic) IBOutlet UIButton *yuYueOrQuXiaoOrHeTongBtn;
+/**
+ *  0 = 投资的金额多少
+ *  1 = 预约的金额多少
+ *  2 = 投资的金额多少
+ */
+@property (strong, nonatomic) IBOutlet UILabel *touZiOrYuYueMoneyLab;
+/**
+ *  0 = 投资的金额描述
+ *  1 = 预约的金额描述
+ *  2 = 投资的金额描述
+ */
+@property (strong, nonatomic) IBOutlet UILabel *touZiOrYuYueDesLab;
+/**
+ *  0 = 剩余预约期限
+ *  1 = 剩余投资期限
+ *  2 = 获得收益金额多少
+ */
+@property (strong, nonatomic) IBOutlet UILabel *qiXianOrGeiShouYiLab;
+/**
+ *  0 = 还息方式 （1）到期还本付息 （2）按月付息，到期还本
+ *  1 = 还息方式 （1）到期还本付息 （2）按月付息，到期还本
+ *  2 = 获得收益描述
+ */
+@property (strong, nonatomic) IBOutlet UILabel *huoDeShouYiOrHuanXiFangShiLab;
+
+
+@property (strong, nonatomic) IBOutlet NSLayoutConstraint *lineTopY;
+@property (strong, nonatomic) IBOutlet NSLayoutConstraint *tenderTypeW;
+@property (strong, nonatomic) IBOutlet NSLayoutConstraint *tenderTypeNpNperW;
+
+
+@property (strong, nonatomic) CMT_MyInverstmentListModel *model;
++ (CMT_MyInverstmentTableViewCell *)cellWithTablebView:(UITableView *)tableView;
+@end

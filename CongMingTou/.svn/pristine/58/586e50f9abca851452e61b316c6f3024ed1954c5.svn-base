@@ -1,0 +1,16 @@
+//
+//  CMT_ChongZhiAndTiXianSuccessfulViewController.h
+//  CongMingTou
+//
+//  Created by wzh on 16/5/24.
+//  Copyright © 2016年 QiYuan. All rights reserved.
+//
+
+#import "CMT_BaseVIewController.h"
+
+@interface CMT_ChongZhiAndTiXianSuccessfulViewController : CMT_BaseVIewController
+@property (nonatomic ,assign) EnterType enterType;
+@property (nonatomic, strong) NSString *chongZhiOrTiXianMoneyStr;
+@property (nonatomic, strong) NSString *zhangHuYuEStr;
+
+@end

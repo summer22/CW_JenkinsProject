@@ -1,0 +1,76 @@
+//
+//  CMT_CouponViewListHeaderView.m
+//  CongMingTou
+//
+//  Created by summer on 16/5/25.
+//  Copyright © 2016年 QiYuan. All rights reserved.
+//
+
+#import "CMT_CouponViewListHeaderView.h"
+#import "CMT_CoponTicketModel.h"
+
+@interface CMT_CouponViewListHeaderView()
+/** 加息率 */
+@property (nonatomic,strong)UILabel *rateLabel;
+/** 有效期限 */
+@property (nonatomic,strong)UILabel *endDateLabel;
+/** 剩余时间 */
+@property (nonatomic,strong)UILabel *lastTime;
+@end
+
+@implementation CMT_CouponViewListHeaderView
+
+- (instancetype)initWithFrame:(CGRect)frame
+{
+    if (self = [super initWithFrame:frame])
+    {
+        self.backgroundColor = [UIColor clearColor];
+        [self creatSubView];
+    }
+    return self;
+}
+
+- (void)creatSubView
+{
+    UIImageView *topImg = [[UIImageView alloc] initWithFrame:CMT_CGRECTMAKE(0, 10 * CMT_6PERCENTY, 345 *CMT_6PERCENTY, 125 * CMT_6PERCENTY)];
+    topImg.image = [UIImage imageNamed:@"My_useCouponTicket"];
+    [self addSubview:topImg];
+    
+    UILabel *couponLabel = [[UILabel alloc] initWithFrame:CMT_CGRECTMAKE((CMT_ScreenWidth - 200 * CMT_6PERCENTY)/2 , 35 * CMT_6PERCENTY, 200 * CMT_6PERCENTY, 30 * CMT_6PERCENTY)];
+    couponLabel.textAlignment = NSTextAlignmentCenter;
+    couponLabel.attributedText = [CMT_Tools HeadAttributedString:@"+0.555" backAttributedString:@" %" NSheadForegroundColorAttributeName:ThemeBackgroundColor NSbackForegroundColorAttributeName:ThemeBackgroundColor NSheadFontAttributeName:30 NSbackFontAttributeName:12];
+    self.rateLabel = couponLabel;
+    [topImg addSubview:couponLabel];
+    
+    UIView *lineView = [[UIView alloc] initWithFrame:CMT_CGRECTMAKE(0, couponLabel.bottom + 35 * CMT_6PERCENTY, 345 *CMT_6PERCENTY, 0.5)];
+    lineView.backgroundColor = CommonLineColor;
+    [topImg addSubview:lineView];
+    
+    UILabel *passDateLabel = [CMT_Tools getLabel:@"还有4天过期" textFont:11 viewFrame:CMT_CGRECTMAKE(15 * CMT_6PERCENTY, lineView.bottom + 5 * CMT_6PERCENTY, 100 * CMT_6PERCENTY, 15 * CMT_6PERCENTY) textAlignments:NSTextAlignmentLeft textColors:customColor(@"#FF6600")];
+    self.lastTime = passDateLabel;
+    [topImg addSubview:passDateLabel];
+    
+    UILabel *DateLabel = [CMT_Tools getLabel:@"有效期限：2016－05-20" textFont:11 viewFrame:CMT_CGRECTMAKE(topImg.right - 180 * CMT_6PERCENTY - 15 * CMT_6PERCENTY, lineView.bottom + 5 * CMT_6PERCENTY, 180 * CMT_6PERCENTY, 15 * CMT_6PERCENTY) textAlignments:NSTextAlignmentRight textColors:customColor(@"#8EA1B4")];
+    self.endDateLabel = DateLabel;
+    [topImg addSubview:DateLabel];
+}
+
+- (void)setModel:(CMT_CoponTicketModel *)model
+{
+    _model = model;
+    
+    NSString *attrStr;
+    if (self.listFromType == TICKETCLASS) {
+        attrStr = @"元";
+        
+    }else{
+        attrStr = @" %";
+    }
+    
+     self.rateLabel.attributedText = [CMT_Tools HeadAttributedString:_model.rate backAttributedString:attrStr NSheadForegroundColorAttributeName:ThemeBackgroundColor NSbackForegroundColorAttributeName:ThemeBackgroundColor NSheadFontAttributeName:30 NSbackFontAttributeName:12];
+     self.endDateLabel.text = [NSString stringWithFormat:@"有效期限：%@",_model.endDate];
+     self.lastTime.text = [NSString stringWithFormat:@"还有%@天过期",_model.expireDays];
+    
+}
+
+@end

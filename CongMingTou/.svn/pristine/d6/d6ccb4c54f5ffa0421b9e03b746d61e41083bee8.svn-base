@@ -1,0 +1,40 @@
+//
+//  CMT_InvestmentEarningsTableViewCell.m
+//  CongMingTou
+//
+//  Created by wzh on 16/5/18.
+//  Copyright © 2016年 QiYuan. All rights reserved.
+//
+
+#import "CMT_InvestmentEarningsTableViewCell.h"
+
+@implementation CMT_InvestmentEarningsTableViewCell
+
+- (instancetype)initWithFrame:(CGRect)frame{
+    if(self == [super initWithFrame:frame]){
+      
+    }
+    return self;
+}
+- (void)awakeFromNib {
+    // Initialization code
+
+}
+
++ (CMT_InvestmentEarningsTableViewCell *)cellWithTablebView:(UITableView *)tableView{
+    static NSString *indent = @"CMT_InvestmentEarningsTableViewCell";
+    [tableView registerNib:[UINib nibWithNibName:@"CMT_InvestmentEarningsTableViewCell" bundle:nil] forCellReuseIdentifier:indent];
+    CMT_InvestmentEarningsTableViewCell  *cell = [tableView dequeueReusableCellWithIdentifier:indent];
+    cell.selectionStyle = UITableViewCellSelectionStyleNone;
+    return cell;
+    
+}
+
+
+- (void)setSelected:(BOOL)selected animated:(BOOL)animated {
+    [super setSelected:selected animated:animated];
+
+    // Configure the view for the selected state
+}
+
+@end

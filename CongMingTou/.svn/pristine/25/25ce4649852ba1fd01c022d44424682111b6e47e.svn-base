@@ -1,0 +1,22 @@
+//
+//  CMT_CongZhiOrTiXianView.h
+//  CongMingTou
+//
+//  Created by wzh on 16/5/13.
+//  Copyright © 2016年 wzh. All rights reserved.
+//
+
+#import <UIKit/UIKit.h>
+#import "CMT_InputView.h"
+@interface CMT_ChongZhiOrTiXianView : UIView
+@property (strong, nonatomic) IBOutlet UIButton *shutDownBtn;
+@property (strong, nonatomic) IBOutlet UILabel *titleLab;
+@property (strong, nonatomic) IBOutlet UILabel *desLab;
+@property (strong, nonatomic) IBOutlet UILabel *moneyLab;
+@property (strong, nonatomic) IBOutlet UIButton *enterPasswordTypeBtn;
+@property (strong, nonatomic) IBOutlet UIButton *commitBtn;
+
+@property (strong, nonatomic) IBOutlet CMT_InputView *inputView;
+
+//@property (strong, nonatomic) CMT_PayTextFiled *inpueTextField;
+@end

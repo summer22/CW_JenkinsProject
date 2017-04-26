@@ -1,0 +1,13 @@
+//
+//  CMT_StepServiceAgreementViewController.h
+//  CongMingTou
+//
+//  Created by wzh on 16/6/13.
+//  Copyright © 2016年 QiYuan. All rights reserved.
+//
+
+#import "CMT_WebBaseViewController.h"
+
+@interface CMT_StepServiceAgreementViewController : CMT_WebBaseViewController
+
+@end

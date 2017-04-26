@@ -1,0 +1,76 @@
+//
+//  CMT_makeSureTwoSectionTableViewCell.m
+//  CongMingTou
+//
+//  Created by summer on 16/5/27.
+//  Copyright © 2016年 QiYuan. All rights reserved.
+//
+
+#import "CMT_makeSureTwoSectionTableViewCell.h"
+@interface CMT_makeSureTwoSectionTableViewCell()
+@property (weak, nonatomic) IBOutlet UILabel *titleLabel;
+@property (weak, nonatomic) IBOutlet UIButton *rightBtn;
+@property (weak, nonatomic) IBOutlet UILabel *line;
+@property (weak, nonatomic) IBOutlet NSLayoutConstraint *lineConsHeight;
+
+@end
+@implementation CMT_makeSureTwoSectionTableViewCell
+
+- (void)awakeFromNib {
+    // Initialization code
+    self.titleLabel.textColor = CommonImpTextColor;
+    [self.rightBtn setTitleColor:CommonYellowTextColor forState:UIControlStateNormal];
+    [self.rightBtn setImage:[UIImage imageNamed:@"Investment_select"] forState:UIControlStateNormal];
+    self.line.backgroundColor = CommonLineColor;
+    self.lineConsHeight.constant = 0.5;
+}
+
++ (CMT_makeSureTwoSectionTableViewCell *)cellWithTablebView:(UITableView *)tableView indexPath:(NSIndexPath *)index modelData:(CMT_InvestConfirmModel *)model{
+    
+    static NSString *indent = @"CMT_makeSureTwoSectionTableViewCell";
+    [tableView registerNib:[UINib nibWithNibName:@"CMT_makeSureTwoSectionTableViewCell" bundle:nil] forCellReuseIdentifier:indent];
+    CMT_makeSureTwoSectionTableViewCell  *cell = [tableView dequeueReusableCellWithIdentifier:indent];
+    if (index.row == 0) {
+        cell.line.hidden = YES;
+    }
+
+    switch (index.row) {
+        case 0:
+        {
+            cell.titleLabel.text = @"加息券";
+            CMT_Log(@"%@",cell.rateStr);
+            
+            if (!cell.rateStr) {
+               [cell.rightBtn setTitle:[NSString stringWithFormat:@"%@张可用",model.myInterestCount] forState:UIControlStateNormal];
+            }else{
+             [cell.rightBtn setTitle:[cell.rateStr stringByAppendingString:@"%"] forState:UIControlStateNormal];
+            }
+            break;
+        }
+        case 1:
+        {
+            cell.titleLabel.text = @"本金券";
+            if (!cell.ticketNum) {
+                [cell.rightBtn setTitle:[NSString stringWithFormat:@"%@张可用",model.myCashTicketsCount] forState:UIControlStateNormal];
+            }else{
+                [cell.rightBtn setTitle:[cell.ticketNum stringByAppendingString:@"元"] forState:UIControlStateNormal];
+            }
+            break;
+        }
+        default:
+            break;
+    }
+
+    return cell;
+}
+
+- (IBAction)btnClick:(UIButton *)sender {
+}
+
+- (void)setSelected:(BOOL)selected animated:(BOOL)animated {
+    [super setSelected:selected animated:animated];
+
+    // Configure the view for the selected state
+}
+
+@end

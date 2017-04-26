@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="11762" systemVersion="16A323" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES">
+    <device id="retina4_7" orientation="portrait">
+        <adaptation id="fullscreen"/>
+    </device>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="11757"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="CMT_LoginViewController">
+            <connections>
+                <outlet property="bottomAdverBtn" destination="Ctb-Qe-oKp" id="YAM-2o-6DP"/>
+                <outlet property="loginBtn" destination="tnf-BO-P42" id="t1R-QF-8Oi"/>
+                <outlet property="registerBtn" destination="04k-3z-pJh" id="IjQ-Ae-c6R"/>
+                <outlet property="topBgView" destination="P9v-JL-m90" id="Vv0-ir-ecD"/>
+                <outlet property="view" destination="i5M-Pr-FkT" id="sfx-zR-JGt"/>
+            </connections>
+        </placeholder>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <view clearsContextBeforeDrawing="NO" contentMode="scaleToFill" id="i5M-Pr-FkT">
+            <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+            <subviews>
+                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="P9v-JL-m90" userLabel="topBgView">
+                    <rect key="frame" x="0.0" y="0.0" width="375" height="248"/>
+                    <subviews>
+                        <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="CMT_RegisterBgImg" translatesAutoresizingMaskIntoConstraints="NO" id="aaq-fl-Ewr" userLabel="topImgView">
+                            <rect key="frame" x="0.0" y="0.0" width="375" height="248"/>
+                        </imageView>
+                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="登录" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="aVr-yO-InH">
+                            <rect key="frame" x="105" y="207" width="37" height="21"/>
+                            <constraints>
+                                <constraint firstAttribute="height" constant="21" id="Qdp-Rs-AzZ"/>
+                                <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="37" id="f9R-YJ-pwr"/>
+                            </constraints>
+                            <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                            <color key="textColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                            <nil key="highlightedColor"/>
+                        </label>
+                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="注册" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Svw-XG-g5Z">
+                            <rect key="frame" x="228" y="207" width="42" height="21"/>
+                            <constraints>
+                                <constraint firstAttribute="height" constant="21" id="0e3-Fu-RTP"/>
+                                <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="42" id="NTE-cY-aBT"/>
+                            </constraints>
+                            <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                            <color key="textColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                            <nil key="highlightedColor"/>
+                        </label>
+                        <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="CMT_RegisterLogo" translatesAutoresizingMaskIntoConstraints="NO" id="4fr-Lh-4AI">
+                            <rect key="frame" x="162" y="82" width="50" height="84"/>
+                            <constraints>
+                                <constraint firstAttribute="width" constant="50" id="Iqc-JH-MyB"/>
+                                <constraint firstAttribute="height" constant="84" id="K1A-hm-v3b"/>
+                            </constraints>
+                        </imageView>
+                        <button opaque="NO" tag="100" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="tnf-BO-P42" userLabel="登录点击按钮">
+                            <rect key="frame" x="90" y="186" width="68" height="64"/>
+                            <constraints>
+                                <constraint firstAttribute="width" constant="68" id="bVv-Q1-RF9"/>
+                                <constraint firstAttribute="height" constant="64" id="nRw-JF-BS0"/>
+                            </constraints>
+                            <inset key="imageEdgeInsets" minX="0.0" minY="55" maxX="0.0" maxY="0.0"/>
+                            <state key="normal">
+                                <color key="titleColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                            </state>
+                            <state key="selected" image="CMT_ListTop"/>
+                            <connections>
+                                <action selector="changeLoginOrRegister:" destination="-1" eventType="touchUpInside" id="F9Y-7E-f7O"/>
+                            </connections>
+                        </button>
+                        <button opaque="NO" tag="101" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="04k-3z-pJh" userLabel="注册点击按钮">
+                            <rect key="frame" x="215" y="186" width="69" height="64"/>
+                            <constraints>
+                                <constraint firstAttribute="width" constant="69" id="DsE-gM-clX"/>
+                                <constraint firstAttribute="height" constant="64" id="pF3-m4-aQ7"/>
+                            </constraints>
+                            <inset key="imageEdgeInsets" minX="0.0" minY="55" maxX="0.0" maxY="0.0"/>
+                            <state key="normal">
+                                <color key="titleColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                            </state>
+                            <state key="selected" image="CMT_ListTop"/>
+                            <connections>
+                                <action selector="changeLoginOrRegister:" destination="-1" eventType="touchUpInside" id="EvM-mI-Zx2"/>
+                            </connections>
+                        </button>
+                    </subviews>
+                    <constraints>
+                        <constraint firstAttribute="bottom" secondItem="Svw-XG-g5Z" secondAttribute="bottom" constant="20" id="3I1-TQ-VAo"/>
+                        <constraint firstItem="aVr-yO-InH" firstAttribute="leading" secondItem="P9v-JL-m90" secondAttribute="leading" constant="105" id="EfE-Kb-IZb"/>
+                        <constraint firstItem="Svw-XG-g5Z" firstAttribute="centerY" secondItem="04k-3z-pJh" secondAttribute="centerY" id="Fa6-Yg-KF0"/>
+                        <constraint firstItem="4fr-Lh-4AI" firstAttribute="centerX" secondItem="P9v-JL-m90" secondAttribute="centerX" id="IXN-QJ-AD9"/>
+                        <constraint firstAttribute="bottom" secondItem="aaq-fl-Ewr" secondAttribute="bottom" id="Sdl-Rc-AOT"/>
+                        <constraint firstItem="Svw-XG-g5Z" firstAttribute="centerX" secondItem="04k-3z-pJh" secondAttribute="centerX" id="SwA-cV-sWu"/>
+                        <constraint firstAttribute="height" constant="248" id="aNg-bR-WDB"/>
+                        <constraint firstItem="aVr-yO-InH" firstAttribute="centerY" secondItem="tnf-BO-P42" secondAttribute="centerY" id="kaF-NC-y3Y"/>
+                        <constraint firstItem="4fr-Lh-4AI" firstAttribute="centerY" secondItem="P9v-JL-m90" secondAttribute="centerY" id="nXK-Ze-zEr"/>
+                        <constraint firstItem="aaq-fl-Ewr" firstAttribute="leading" secondItem="P9v-JL-m90" secondAttribute="leading" id="p1Q-sW-WTO"/>
+                        <constraint firstItem="aVr-yO-InH" firstAttribute="centerX" secondItem="tnf-BO-P42" secondAttribute="centerX" id="pvR-jp-t9c"/>
+                        <constraint firstAttribute="bottom" secondItem="aVr-yO-InH" secondAttribute="bottom" constant="20" id="rBD-GD-QeP"/>
+                        <constraint firstAttribute="trailing" secondItem="aaq-fl-Ewr" secondAttribute="trailing" id="uKB-bv-Kuv"/>
+                        <constraint firstAttribute="trailing" secondItem="Svw-XG-g5Z" secondAttribute="trailing" constant="105" id="ute-CY-zcx"/>
+                        <constraint firstItem="aaq-fl-Ewr" firstAttribute="top" secondItem="P9v-JL-m90" secondAttribute="top" id="v1w-Nh-tST"/>
+                    </constraints>
+                </view>
+                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Ctb-Qe-oKp">
+                    <rect key="frame" x="12" y="615" width="351" height="40"/>
+                    <constraints>
+                        <constraint firstAttribute="height" constant="40" id="yLX-q0-AQa"/>
+                    </constraints>
+                    <state key="normal" backgroundImage="advertisingBottom"/>
+                    <state key="highlighted" backgroundImage="advertisingBottom"/>
+                    <connections>
+                        <action selector="advertisingBtnClicked:" destination="-1" eventType="touchUpInside" id="erM-Xg-8Ze"/>
+                    </connections>
+                </button>
+            </subviews>
+            <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+            <constraints>
+                <constraint firstItem="P9v-JL-m90" firstAttribute="leading" secondItem="i5M-Pr-FkT" secondAttribute="leading" id="FSQ-Yu-cjh"/>
+                <constraint firstAttribute="bottom" secondItem="Ctb-Qe-oKp" secondAttribute="bottom" constant="12" id="dFx-WD-O6t"/>
+                <constraint firstAttribute="trailing" secondItem="Ctb-Qe-oKp" secondAttribute="trailing" constant="12" id="epu-c2-VFy"/>
+                <constraint firstItem="P9v-JL-m90" firstAttribute="top" secondItem="i5M-Pr-FkT" secondAttribute="top" id="hEz-jZ-9xS"/>
+                <constraint firstAttribute="trailing" secondItem="P9v-JL-m90" secondAttribute="trailing" id="rfz-QD-spq"/>
+                <constraint firstItem="Ctb-Qe-oKp" firstAttribute="leading" secondItem="i5M-Pr-FkT" secondAttribute="leading" constant="12" id="vnM-So-3aJ"/>
+            </constraints>
+            <simulatedStatusBarMetrics key="simulatedStatusBarMetrics" statusBarStyle="lightContent"/>
+            <point key="canvasLocation" x="24.5" y="51.5"/>
+        </view>
+    </objects>
+    <resources>
+        <image name="CMT_ListTop" width="17" height="8"/>
+        <image name="CMT_RegisterBgImg" width="375" height="248"/>
+        <image name="CMT_RegisterLogo" width="50" height="83"/>
+        <image name="advertisingBottom" width="650" height="80"/>
+    </resources>
+</document>

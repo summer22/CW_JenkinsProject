@@ -1,0 +1,221 @@
+//
+//  CMT_TabBarController.m
+//  CongMingTou
+//
+//  Created by wzh on 16/5/6.
+//  Copyright © 2016年 QiYuan All rights reserved.
+//
+
+#import "CMT_TabBarController.h"
+#import "CMT_NavigationController.h"
+#import "CMT_FinancialController.h"
+#import "CMT_SecurityController.h"
+#import "CMT_FoundViewController.h"
+#import "CMT_MyViewController.h"
+#import "ZHTabBar.h"
+#import "CMT_TabBar.h"
+#import "CMT_LoginViewController.h"
+#import "CMT_ViewController.h"
+#import "CMT_RegisteredViewController.h"
+#import "UIApplication+ActivityViewController.h"
+#import "CMT_NoSetGesturesSwitchTool.h"
+
+@interface CMT_TabBarController ()<HNTabBarDelegate,UITabBarControllerDelegate>
+
+@property (nonatomic, strong) CMT_FoundViewController *foundVC;
+@end
+
+@implementation CMT_TabBarController
+
+- (void)viewDidLoad {
+    [super viewDidLoad];
+    // Do any additional setup after loading the view.
+    
+    // 添加所有的子控制器
+    [self addAllChildVcs];
+    
+    // 创建自定义tabbar
+    [self addCustomTabBar];
+    
+    MySetObjectForKey(@"0", @"preIndex");
+    [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(gesturesPasswordPresentVC) name:GesturesAndLoginPasswordPresentVCKey object:nil];
+    [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(gesturesPasswordPresentVC) name:UIApplicationDidEnterBackgroundNotification object:nil];
+}
+
+- (void)dealloc{
+    [[NSNotificationCenter defaultCenter]removeObserver:self name:GesturesAndLoginPasswordPresentVCKey object:nil];
+    [[NSNotificationCenter defaultCenter]removeObserver:self name:UIApplicationDidEnterBackgroundNotification object:nil];
+}
+
+/**
+ *  创建自定义tabbar
+ */
+- (void)addCustomTabBar
+{
+    // 创建自定义tabbar
+    CMT_TabBar *customTabBar = [[CMT_TabBar alloc] init];
+    customTabBar.tabBarDelegate = self;
+//    customTabBar.tabbarType = HNTabBarTypePlus;
+    // 更换系统自带的tabbar
+    [self setValue:customTabBar forKeyPath:@"tabBar"];
+//    self.tabBarController.tabBar.backgroundColor = [UIColor clearColor];
+    self.delegate = self;
+    self.tabBarController.tabBar.opaque = YES;
+}
+
+/**
+ *  添加所有的子控制器
+ */
+- (void)addAllChildVcs
+{
+    CMT_FinancialController *financialVC = [[CMT_FinancialController alloc] init];
+    [self addOneChlildVc:financialVC title:@"理财" imageName:@"TabBar_Financial_Normal" selectedImageName:@"TabBar_Financial_Select"];
+    CMT_SecurityController *securityVC = [[CMT_SecurityController alloc] init];
+    [self addOneChlildVc:securityVC title:@"保障" imageName:@"TabBar_Security_Normal" selectedImageName:@"TabBar_Security_Select"];
+    CMT_FoundViewController *foundVC = [[CMT_FoundViewController alloc] init];
+    [self addOneChlildVc:foundVC title:@"发现" imageName:@"TabBar_Found_Normal" selectedImageName:@"TabBar_Found_Select"];
+    self.foundVC = foundVC;
+    CMT_MyViewController *MyVC = [[CMT_MyViewController alloc] init];
+    [self addOneChlildVc:MyVC title:@"我的" imageName:@"TabBar_My_Normal" selectedImageName:@"TabBar_My_Select"];
+}
+
+/**
+ *  添加一个子控制器
+ *
+ *  @param childVc           子控制器对象
+ *  @param title             标题
+ *  @param imageName         图标
+ *  @param selectedImageName 选中的图标
+ */
+- (void)addOneChlildVc:(UIViewController *)childVc title:(NSString *)title imageName:(NSString *)imageName selectedImageName:(NSString *)selectedImageName
+{
+    // 设置标题
+    childVc.title = title;
+    
+    // 设置图标
+    childVc.tabBarItem.image = [UIImage imageWithName:imageName];
+    
+    // 设置tabBarItem的普通文字颜色
+    NSMutableDictionary *textAttrs = [NSMutableDictionary dictionary];
+    textAttrs[NSForegroundColorAttributeName] = CommonImpTextColor;
+//    textAttrs[NSFontAttributeName] = [UIFont systemFontOfSize:10];
+    [childVc.tabBarItem setTitleTextAttributes:textAttrs forState:UIControlStateNormal];
+    
+    // 设置tabBarItem的选中文字颜色
+    NSMutableDictionary *selectedTextAttrs = [NSMutableDictionary dictionary];
+    selectedTextAttrs[NSForegroundColorAttributeName] = ThemeBackgroundColor;
+    [childVc.tabBarItem setTitleTextAttributes:selectedTextAttrs forState:UIControlStateSelected];
+    
+    // 设置选中的图标
+    UIImage *selectedImage = [UIImage imageWithName:selectedImageName];
+    if (iOS7) {
+        // 声明这张图片用原图(别渲染)
+        selectedImage = [selectedImage imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal];
+    }
+    childVc.tabBarItem.selectedImage = selectedImage;
+    
+    // 添加为tabbar控制器的子控制器
+    CMT_NavigationController *nav = [[CMT_NavigationController alloc] initWithRootViewController:childVc];
+    [self addChildViewController:nav];
+}
+- (void)tabBarController:(UITabBarController *)tabBarController didSelectViewController:(UIViewController *)viewController{
+    CMT_Log(@"%ld",tabBarController.selectedIndex);
+    CMT_AccountModel *accoutModel = [CMT_AccountTool accountModel];
+    if(tabBarController.selectedIndex == 3){
+        if(accoutModel){
+
+        }else{
+            CMT_LoginViewController *loginVc = [[CMT_LoginViewController alloc]init];
+            loginVc.enterLoginType = CMTEnterLoginTypeTabbarMy;
+            CMT_NavigationController *loginNav = [[CMT_NavigationController alloc]initWithRootViewController:loginVc];
+            [self presentViewController:loginNav animated:YES completion:nil];
+        }
+    }
+    NSString *currentIndexStr = [NSString stringWithFormat:@"%lu",(unsigned long)tabBarController.selectedIndex];
+    if(!(!accoutModel && tabBarController.selectedIndex == 3)){//登陆
+        MySetObjectForKey(currentIndexStr, @"preIndex")
+    }
+    
+    if(tabBarController.selectedIndex == 2){
+        [self.foundVC webViewAgainLoadUrl];
+    }
+}
+- (void)tabBar:(UITabBar *)tabBar didSelectItem:(UITabBarItem *)item{
+    
+
+}
+
+- (void)didReceiveMemoryWarning {
+    [super didReceiveMemoryWarning];
+    // Dispose of any resources that can be recreated.
+}
+#pragma mark - HMTabBarDelegate
+- (void)tabBarDidClickedPlusButton:(CMT_TabBar *)tabBar
+{
+    CMT_Log(@"点击了中间按钮");
+}
+
+- (void)gesturesPasswordPresentVC{
+    //设置默认没设置手势开关的情况下手势开关开启
+    if(![CMT_NoSetGesturesSwitchTool noSetGesturesSwitchModel]){
+        CMT_NoSetGesturesSwitchModel *noSetGesturesSwitchModel = [[CMT_NoSetGesturesSwitchModel alloc]init];
+        noSetGesturesSwitchModel.noSetOpenState = 1;
+        [CMT_NoSetGesturesSwitchTool save:noSetGesturesSwitchModel];
+    }
+    
+    
+    Class class = [[[UIApplication sharedApplication] activityViewController] class];
+    //登陆过
+    if([CMT_AccountTool accountModel]){
+        //设置过手势
+        if([CMT_GesturesPasswordTool gesturesPwdModel]){
+            //登陆状态为未登陆  开启了手势登陆  手势密码界面没弹出
+//            CMT_GesturesPwdModel *model = [CMT_GesturesPasswordTool gesturesPwdModel];
+            if([CMT_GesturesPasswordTool gesturesPwdModel].loginGesturePwd == 0 && [CMT_GesturesPasswordTool gesturesPwdModel].openState == 1 && class != [CMT_ViewController class]){
+                CMT_ViewController *validation_vc = [[CMT_ViewController alloc]init];
+                validation_vc.type = GestureViewControllerTypeLogin;
+                CMT_NavigationController *validation_nav = [[CMT_NavigationController alloc]initWithRootViewController:validation_vc];
+                [self presentViewController:validation_nav animated:YES completion:^{
+                    CMT_GesturesPwdModel *model = [CMT_GesturesPasswordTool gesturesPwdModel];
+                    [CMT_GesturesPasswordTool save:model];
+                }];
+                CMT_Log(@"验证手势登陆密码");
+
+            }else{
+                CMT_Log(@"登陆过账号 － 设置过手势密码 － 弹出了手势 或者 手势登陆没有开 或者 手势已经登陆");
+                CMT_Log(@"手势登陆状态 = %d,收拾开关开启状态 = %d,当前界面 ＝%@" ,[CMT_GesturesPasswordTool gesturesPwdModel].loginGesturePwd,[CMT_GesturesPasswordTool gesturesPwdModel].openState,class);
+
+            }
+        }else{//没有设置过手势 第一次启动
+            //是否已经淡出了设置手势密码界面 
+            if(class != [CMT_ViewController class]){
+                if([CMT_NoSetGesturesSwitchTool noSetGesturesSwitchModel] && [CMT_NoSetGesturesSwitchTool noSetGesturesSwitchModel].noSetOpenState == 1){
+                    CMT_ViewController *login_vc = [[CMT_ViewController alloc]init];
+                    login_vc.type = GestureViewControllerTypeSetting;//没有设置过手势 弹出手势界面后 设置手势密码
+                    CMT_NavigationController *login_nav = [[CMT_NavigationController alloc]initWithRootViewController:login_vc];
+                    [self presentViewController:login_nav animated:YES completion:nil];
+
+                }
+            }
+        }
+    }else{
+        CMT_Log(@"没有登录帐号 － 与手势没关");
+    }
+}
+- (void)viewDidLayoutSubviews{
+    [super viewDidLayoutSubviews];
+    CMT_Log(@"viewDidLayoutSubviews");
+}
+
+
+/*
+#pragma mark - Navigation
+
+// In a storyboard-based application, you will often want to do a little preparation before navigation
+- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
+    // Get the new view controller using [segue destinationViewController].
+    // Pass the selected object to the new view controller.
+}
+*/
+
+@end

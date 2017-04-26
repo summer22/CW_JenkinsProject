@@ -1,0 +1,21 @@
+//
+//  CMT_CouponViewListHeaderView.h
+//  CongMingTou
+//
+//  Created by summer on 16/5/25.
+//  Copyright © 2016年 QiYuan. All rights reserved.
+//
+
+#import <UIKit/UIKit.h>
+@class CMT_CoponTicketModel;
+
+@interface CMT_CouponViewListHeaderView : UIView
+
+- (instancetype)initWithFrame:(CGRect)frame;
+
+/** 数据源模型 */
+@property (nonatomic,strong)CMT_CoponTicketModel *model;
+/** 列表类型判断*/
+@property (nonatomic,assign)LISTFROM_TYPE listFromType;
+
+@end

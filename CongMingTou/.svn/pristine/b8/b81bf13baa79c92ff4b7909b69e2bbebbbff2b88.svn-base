@@ -1,0 +1,245 @@
+//
+//  CMT_LoginViewController.m
+//  CongMingTou
+//
+//  Created by wzh on 16/5/9.
+//  Copyright © 2016年 QiYuan All rights reserved.
+//
+
+#import "CMT_LoginViewController.h"
+#import "CMT_RegisteredViewController.h"
+#import "CMT_LoginNavBarView.h"
+#import "CMT_LoginBgView.h"
+#import "CMT_NavigationController.h"
+#import "CMT_MyViewController.h"
+#import "JPUSHService.h"
+
+@interface CMT_LoginViewController ()<CMT_LoginNavBarViewDelegate,CMT_LoginBgViewDelegate>
+/** 父视图scrollview */
+@property (nonatomic,strong) CMT_LoginBgView *myScrolView;
+//创建navBar
+@property (nonatomic,strong) CMT_LoginNavBarView *customNavBar;
+/** 登录手机号 */
+@property (nonatomic,copy)NSString *loginTel;
+
+@end
+
+@implementation CMT_LoginViewController
+
+//自定义导航条
+- (CMT_LoginNavBarView *)customNavBar
+{
+    if (!_customNavBar) {
+        _customNavBar = [[CMT_LoginNavBarView alloc] initWithFrame:CMT_CGRECTMAKE(0, 0, CMT_ScreenWidth, 64) aboveSubview:self.myScrolView];
+        _customNavBar.delegate = self;
+    }
+    return _customNavBar;
+}
+
+//背景视图
+- (CMT_LoginBgView *)myScrolView
+{
+    if (!_myScrolView) {
+        
+        _myScrolView = [[CMT_LoginBgView alloc] initWithFrame:CMT_CGRECTMAKE(0, 0, CMT_ScreenWidth, CMT_ScreenHeight)];
+        _myScrolView.contentSize = CGSizeMake(0, CMT_ScreenHeight + 10);
+        _myScrolView.backgroundColor = self.view.backgroundColor;
+        _myScrolView.showsVerticalScrollIndicator = NO;
+        _myScrolView.userInteractionEnabled = YES;
+        _myScrolView.myDelegate = self;
+        self.automaticallyAdjustsScrollViewInsets = NO;
+    }
+    
+    return _myScrolView;
+}
+
+- (void)viewWillAppear:(BOOL)animated
+{
+    [super viewWillAppear:animated];
+    
+    [self.navigationController setNavigationBarHidden:YES animated:YES];
+}
+
+
+- (void)viewDidLoad {
+    
+    [super viewDidLoad];
+    
+    [self.view addSubview:self.myScrolView];
+
+    [self.view insertSubview:self.customNavBar aboveSubview:self.myScrolView];
+
+}
+
+#pragma mark --- CMT_LoginNavBarViewDelegate
+- (void)leftItemClick
+{
+    CMT_Log(@"back");
+    if(_enterLoginType == CMTEnterLoginTypeTabbarMy){
+        NSString *preIndexStr = MyObjectForKey(@"preIndex");
+        CMT_RootVC.selectedIndex = [preIndexStr integerValue];
+//        [self dismissViewControllerAnimated:YES completion:nil];
+
+    }else if(_enterLoginType == CMTEnterLoginTypeOutLogin){
+        for (UIViewController *subVc in _preVc.navigationController.viewControllers) {
+            if([subVc isKindOfClass:[CMT_MyViewController class]]){
+                [_preVc.navigationController popToViewController:subVc animated:YES];
+                CMT_RootVC.selectedIndex = 0;
+            }
+        }
+    }else if(_enterLoginType == CMTEnterLoginProductDetails){
+    }else if (_enterLoginType == CMTEnterLoginTypeFoundShare){
+    }else if(_enterLoginType == CMTEnterLoginTypeBeLoginOut){
+        [_preVc.navigationController popToRootViewControllerAnimated:YES];
+        CMT_RootVC.selectedIndex = 0;
+
+    }
+    [self dismissViewControllerAnimated:YES completion:nil];
+
+}
+
+//- (void)rightItemClick
+//{
+//    CMT_RegisteredViewController *registeredVC = [[CMT_RegisteredViewController alloc]init];
+//    registeredVC.enterLoginType = _enterLoginType;
+//    [self.navigationController pushViewController:registeredVC animated:YES];
+//    CMT_Log(@"注册");
+//}
+
+#pragma mark --- CMT_LoginBgViewDelegate
+
+//获取验证码点击事件
+- (void)sendPhoneNum:(NSString *)telNum
+{
+    CMT_Log(@"获取验证码点击事件");
+    //    (0:注册，1：找回密码，2：登录3：设置密码，4:其他)
+    [self loadDataGetVerificationcodeWithPhonNum:telNum type:@"2"];
+}
+
+
+//登录点击事件
+- (void)sendPhoneNum:(NSString *)telNum yzNum:(NSString *)yzNumStr
+{
+    CMT_Log(@"登录点击事件");
+    [self logingWithPhoneNum:telNum andVerificationcode:yzNumStr];
+
+}
+
+//安全注册点击事件
+- (void)toJumpRegisterVc
+{
+    CMT_Log(@"安全注册点击事件");
+    CMT_RegisteredViewController *registeredVC = [[CMT_RegisteredViewController alloc]init];
+    registeredVC.enterLoginType = _enterLoginType;
+    [self.navigationController pushViewController:registeredVC animated:YES];
+
+}
+
+- (void)viewWillDisappear:(BOOL)animated
+{
+    [super viewWillDisappear:animated];
+    
+    [self.navigationController setNavigationBarHidden:NO animated:YES];
+
+}
+
+- (void)loadDataGetVerificationcodeWithPhonNum:(NSString *)phoneNum type:(NSString *)type{
+    
+    //方法一
+//    [self showHudInView:self.view hint:@"正在加载"];
+//    [CMT_AFNetWorking getWithBaseURL:[CMT_HttpTool getVerificationcodeWithPhonNum:phoneNum] success:^(id json) {
+//        [self hideHud];
+//        CMT_Log(@"%@",json);
+//
+//    } failure:^(NSError *error) {
+//        [self hideHud];
+//
+//        CMT_Log(@"%@",error);
+//    
+//    }];
+//    
+    
+    //方法二
+    [self showHudInView:self.view hint:CMT_LoadDataWaiting];
+    [CMT_ProcessTheDataTool getVerificationcodeWithPhonNum:phoneNum type:type andBlock:^(CMT_GetVerificationcodeModel *getVerificationcodeModel, NSError *error) {
+        [self hideHud];
+        if(!error){
+            if([[NSString stringWithFormat:@"%@",getVerificationcodeModel.status] isEqualToString:@"1"]){
+                CMT_Log(@"获取验证码成功");
+                [self.myScrolView startTime];
+                [self showHint:CMT_LoadDataGetCodeSuccessful];
+            }else{
+                [self showHint:getVerificationcodeModel.msg];
+            }
+        }else{
+            [self showHint:CMT_Error_NotNetWork];
+        }
+    }];
+}
+
+- (void)logingWithPhoneNum:(NSString *)phoneNum andVerificationcode:(NSString *)verificationcode{
+    [self showHudInView:self.view hint:CMT_LoadDataWaitingLoging];
+    [CMT_ProcessTheDataTool loginWithPhoneNum:phoneNum verificatonCode:verificationcode block:^(CMT_AccountModel *loginModel, NSError *error) {
+        [self hideHud];
+        if(!error){
+            if([loginModel.status isEqualToString:@"1"]){
+                self.loginTel = phoneNum;
+                [JPUSHService setAlias:phoneNum
+                      callbackSelector:@selector(tagsAliasCallback:tags:alias:)
+                                object:self];
+                [self showHint:CMT_LoadDataLoginSuccessful];
+                [self.myScrolView destroyTimer];//倒计时定时器销毁
+                [CMT_AccountTool save:loginModel];
+                if(_enterLoginType == CMTEnterLoginTypeTabbarMy){
+                    CMT_RootVC.selectedIndex = 3;
+                }else if (_enterLoginType == CMTEnterLoginTypeOutLogin){
+
+                }else if (_enterLoginType == CMTEnterLoginProductDetails){
+                    
+                }else if(_enterLoginType == CMTEnterLoginTypeFoundShare){
+                    
+                }else if(_enterLoginType == CMTEnterLoginTypeBeLoginOut){
+                    [_preVc.navigationController popToRootViewControllerAnimated:YES];
+                    CMT_RootVC.selectedIndex = 0;
+                }
+                [self dismissViewControllerAnimated:YES completion:^{
+                    [[NSNotificationCenter defaultCenter]postNotificationName:GesturesAndLoginPasswordPresentVCKey object:nil];
+                }];
+
+               
+            }else{
+                [self.view endEditing:YES];
+                [self showHint:loginModel.msg];
+            }
+        }else{
+            [self.view endEditing:YES];
+            [self showHint:CMT_Error_NotNetWork];
+        }
+    }];
+}
+
+- (void)tagsAliasCallback:(int)iResCode tags:(NSSet*)tags alias:(NSString*)alias {
+    if (iResCode != 0) {
+        [JPUSHService setAlias: self.loginTel
+              callbackSelector:nil
+                        object:self];
+    }
+    CMT_Log(@"rescode: %d, \ntags: %@, \nalias: %@\n", iResCode, tags , alias);
+}
+
+- (void)didReceiveMemoryWarning {
+    [super didReceiveMemoryWarning];
+    // Dispose of any resources that can be recreated.
+}
+
+/*
+#pragma mark - Navigation
+
+// In a storyboard-based application, you will often want to do a little preparation before navigation
+- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
+    // Get the new view controller using [segue destinationViewController].
+    // Pass the selected object to the new view controller.
+}
+*/
+
+@end

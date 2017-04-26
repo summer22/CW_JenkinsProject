@@ -1,0 +1,65 @@
+//
+//  CMT_UserRechargeInfoModel.h
+//  CongMingTou
+//
+//  Created by wzh on 16/5/28.
+//  Copyright © 2016年 QiYuan. All rights reserved.
+//
+
+#import "CMT_BaseModel.h"
+
+@interface CMT_UserRechargeInfoModel : NSObject
+/**
+ *  账户名字
+ */
+@property (nonatomic, copy) NSString *accountName;
+/**
+ *  用户id
+ */
+@property (nonatomic, copy) NSString *userId;
+/**
+ *  银行卡号
+ */
+@property (nonatomic, copy) NSString *account;
+/**
+ * 商户号
+ */
+@property (nonatomic, copy) NSString *merchantId;
+/**
+ *  后台所用的回调地址
+ */
+@property (nonatomic, copy) NSString *backResponseUrl;
+/**
+ *  身份证号
+ */
+@property (nonatomic, copy) NSString *idNumber;
+/**
+ *  银行名字
+ */
+@property (nonatomic, copy) NSString *bankName;
+/**
+ *  手机号
+ */
+@property (nonatomic, copy) NSString *mobile;
+/**
+ *  充值金额
+ */
+@property (nonatomic, copy) NSString *amount;
+
+/**
+ *  支付令牌
+ */
+@property (nonatomic, copy) NSString *payToken;
+/**
+ *  第三方平台的交易ID
+ */
+@property (nonatomic, copy) NSString *orderNoThird;
+/**
+ * 订单id 聪明投订单号
+ */
+@property (nonatomic, copy) NSString *orderNo;
+
+
+
++ (CMT_UserRechargeInfoModel *)userRechargeInfoModelWithDic:(NSDictionary *)dic;
+@end

@@ -1,0 +1,578 @@
+//
+//  CMT_MyInvestmentViewController.m
+//  CongMingTou
+//
+//  Created by wzh on 16/5/18.
+//  Copyright © 2016年 QiYuan. All rights reserved.
+//
+
+#import "CMT_MyInvestmentViewController.h"
+#import "ScrollTitleView.h"
+#import "CMT_InvestmentEarningsTableViewCell.h"
+#import "CMT_MyTenderDetailsViewController.h"
+#import "CMT_YuYueTouZiViewController.h"
+#import "CMT_LookContractViewController.h"
+#import "CMT_MyInverstmentTableViewCell.h"
+#import "MBProgressHUD.h"
+#import "CMT_StateView.h"
+
+#import "CMT_MyInTheHoldInvestmentTableViewCell.h"
+#import "CMT_MyAppointmentInvestmentTableViewCell.h"
+#import "CMT_RetiredInvestmentTableViewCell.h"
+
+
+
+
+#define TitleHeight 37
+#define TableViewHeaderHeight 125
+#define Cellheight 130
+#define ListOneNum 10
+
+@interface CMT_MyInvestmentViewController ()<UITableViewDataSource, UITableViewDelegate, UIScrollViewDelegate,ScrollViewTitleDelegate>{
+
+    int _currentIndex;
+    int _preIndex;
+    UITableView *_currentTableView;
+    NSMutableArray *_currentDataArray;
+    
+    int _currentPageIndex;
+    int _currentPageSize;
+    //当前页数据的总条数
+    int _currentDataCount;
+    
+\
+}
+@property (strong, nonatomic) UIScrollView *backScrollView;
+@property (nonatomic, strong)  ScrollTitleView *titleView;
+@property (nonatomic, strong) NSArray *titleArray;
+@property (nonatomic, strong) NSMutableArray *allTableViewArray;
+@property (nonatomic, strong) NSMutableDictionary *allDataMutDic;
+@property (nonatomic, strong) NSMutableDictionary *allPageIndexDic;
+@property (nonatomic, strong) CMT_InvestmentEarningsTableViewCell *investmentEarningsTableHeaderView;
+@end
+
+@implementation CMT_MyInvestmentViewController
+
+- (CMT_InvestmentEarningsTableViewCell *)investmentEarningsTableHeaderView{
+    if(!_investmentEarningsTableHeaderView){
+        _investmentEarningsTableHeaderView= [[[NSBundle mainBundle]loadNibNamed:@"CMT_InvestmentEarningsTableViewCell" owner:nil options:nil]lastObject];
+        _investmentEarningsTableHeaderView.selectionStyle = UITableViewCellSelectionStyleNone;
+    }
+    return _investmentEarningsTableHeaderView;
+}
+- (NSMutableDictionary *)allPageIndexDic{
+    if(!_allPageIndexDic){
+        _allPageIndexDic = [NSMutableDictionary dictionary];
+    }
+    return _allPageIndexDic;
+}
+- (NSMutableArray *)allTableViewArray{
+    if(!_allTableViewArray){
+        _allTableViewArray = [NSMutableArray array];
+    }
+    return _allTableViewArray;
+}
+
+- (NSMutableDictionary *)allDataMutDic{
+    if(!_allDataMutDic){
+        _allDataMutDic = [NSMutableDictionary dictionary];
+    }
+    return _allDataMutDic;
+}
+- (ScrollTitleView *)titleView{
+    if(!_titleView){
+        _titleView =  [[ScrollTitleView alloc]init];
+     
+        _titleView.frame = CGRectMake(0, 0, CMT_ScreenWidth, TitleHeight);
+        if(CMT_6pAnd6ps){
+            _titleView.height = TitleHeight *CMT_ProportionX;
+        }
+        _titleView.btnTitleArray = self.titleArray;
+        _titleView.titleDelegate = self;
+        [self.view addSubview:_titleView];
+    }
+    return _titleView;
+}
+
+- (UIScrollView *)backScrollView{
+    if(!_backScrollView){
+        _backScrollView = [[UIScrollView alloc]init];
+        _backScrollView.showsHorizontalScrollIndicator = NO;
+        _backScrollView.showsVerticalScrollIndicator = NO;
+        _backScrollView.pagingEnabled = YES;
+        _backScrollView.delegate = self;
+        _backScrollView.backgroundColor = [UIColor clearColor];
+        
+    }
+    return _backScrollView;
+}
+
+- (void)viewDidLoad {
+    [super viewDidLoad];
+    // Do any additional setup after loading the view from its nib.
+    [self setDefautUI];
+
+}
+
+- (void)setDefautUI{
+    self.title = @"我的投资";
+//    self.netBtn.hidden = NO;
+    self.titleArray = @[@"持有中",@"预约中",@"已赎回"];
+    self.backScrollView.frame = CGRectMake(0, CGRectGetMaxY(self.titleView.frame), CMT_ScreenWidth, CMT_ScreenHeight - CMT_NAV_Height - self.titleView.height);
+    [self.view addSubview:self.backScrollView];
+    //设置当前索引
+    _currentIndex = 0;
+    /**
+     *  设置当前页的数据的页数
+     */
+    _currentPageIndex = 0;
+    _preIndex = 0;
+    _currentPageSize = ListOneNum;
+    //保存当前页当前数据索引及当前页数据的总条数
+    [self setSaveCurrentIndex];
+    
+    /**
+     *  创建tableView
+     */
+    [self createTableView];
+    /**
+     *  加载初始数据
+     */
+    [self loadDataMyInvestmentWithType:_currentIndex];
+    
+    [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(appointmentSuccess) name:CMT_NotifReloadKey object:nil];
+    
+}
+
+- (void)dealloc{
+    [[NSNotificationCenter defaultCenter]removeObserver:self name:CMT_NotifReloadKey object:nil];
+    
+}
+//- (void)netReloadData{
+//    [self loadDataMyInvestmentWithType:_currentIndex];
+//}
+#pragma mark -- createTableView
+- (void)createTableView{
+    for (int i = 0 ; i < self.titleArray.count; i ++) {
+        UITableView *tableView = [[UITableView alloc]initWithFrame:CGRectMake(i *CMT_ScreenWidth, 0, CMT_ScreenWidth,_backScrollView.height) style:UITableViewStylePlain];
+        tableView.tag = i;
+        tableView.separatorColor = [UIColor clearColor];
+        tableView.delegate = self;
+        tableView.dataSource  =self;
+        tableView.showsHorizontalScrollIndicator = NO;
+        tableView.showsVerticalScrollIndicator = NO;
+        tableView.backgroundColor = [UIColor clearColor];
+        CMT_StateView *stateView = [[CMT_StateView alloc]initWithFrame:tableView.bounds];
+        [stateView.stateButton addTarget:self action:@selector(stateButtonClicked:) forControlEvents:UIControlEventTouchUpInside];
+        tableView.backgroundView = stateView;
+        
+        tableView.mj_header= [MJRefreshNormalHeader headerWithRefreshingBlock:^{
+            //加载数据
+            [self loadDataMyInvestmentWithType:_currentIndex];
+            
+        }];
+        
+        // 设置自动切换透明度(在导航栏下面自动隐藏)
+        tableView.mj_header.automaticallyChangeAlpha = YES;
+        
+        // 上拉刷新
+        tableView.mj_footer = [MJRefreshBackNormalFooter footerWithRefreshingBlock:^{
+            //加载数据
+            [self loadDataMyInvestmentWithType:_currentIndex];
+        }];
+        if(i == 0){
+            tableView.tableHeaderView = self.investmentEarningsTableHeaderView;
+            tableView.tableHeaderView.height = TableViewHeaderHeight;
+        }
+        
+        [self.backScrollView addSubview:tableView];
+        [self.allTableViewArray addObject:tableView];
+    }
+    self.backScrollView.contentSize = CGSizeMake(CMT_ScreenWidth *self.titleArray.count, 1);
+}
+
+- (void)stateButtonClicked:(UIButton *)button{
+    [self loadDataMyInvestmentWithType:_currentIndex];
+}
+
+
+#pragma mark --tableview dataSource and delegate
+- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView{
+    return 1;
+}
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section{
+    
+    return _currentDataArray.count;
+}
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath{
+    
+   //方式一
+    CMT_MyInverstmentTableViewCell *cell = [CMT_MyInverstmentTableViewCell cellWithTablebView:tableView];
+    [cell.yuYueOrQuXiaoOrHeTongBtn addTarget:self action:@selector(buttonClicked:andEvent:) forControlEvents:UIControlEventTouchUpInside];
+    CMT_MyInverstmentListModel *model = _currentDataArray[indexPath.row];
+    model.currentIndex = _currentIndex;
+    cell.model = _currentDataArray[indexPath.row];
+    return cell;
+}
+
+- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath{
+    return Cellheight;
+}
+
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
+//    UIViewController *vc = nil;
+//    CMT_MyInverstmentListModel *model =  _currentDataArray[indexPath.row];
+//    if(_currentIndex == 0){
+//        CMT_Log(@"跳转到持有标的信息");
+//        CMT_MyTenderDetailsViewController *tenderDetailsVC = [[CMT_MyTenderDetailsViewController alloc]init];
+//        tenderDetailsVC.bitIdStr = model.bidId;
+//        vc = tenderDetailsVC;
+//    }else if (_currentIndex == 1){
+//        CMT_MyTenderDetailsViewController *tenderDetailsVC = [[CMT_MyTenderDetailsViewController alloc]init];
+//        tenderDetailsVC.bitIdStr = model.bidId;
+//        vc = tenderDetailsVC;
+//        CMT_Log(@"跳转到预约标的信息");
+//    }else if(_currentIndex == 2){
+//        CMT_MyTenderDetailsViewController *tenderDetailsVC = [[CMT_MyTenderDetailsViewController alloc]init];
+//        tenderDetailsVC.bitIdStr = model.bidId;
+//        tenderDetailsVC.investIdStr = model.investId;
+//
+//        vc = tenderDetailsVC;
+//          CMT_Log(@"跳转到已赎回标的信息");
+//    }
+//    if(vc){
+//        vc.title = model.bidTitle;
+//        [self.navigationController pushViewController:vc animated:YES];
+//    }
+
+    CMT_MyTenderDetailsViewController *tenderDetailsVC = [[CMT_MyTenderDetailsViewController alloc]init];
+    tenderDetailsVC.model = _currentDataArray[indexPath.row];
+    tenderDetailsVC.index = _currentIndex;
+    [self.navigationController pushViewController:tenderDetailsVC animated:YES];
+
+}
+#pragma mark -- buttonClicked
+- (void)buttonClicked:(UIButton *)button andEvent:(UIEvent *)event{
+    NSSet *touches = [event allTouches];
+    UITouch *touch = [touches anyObject];
+    // 获取点击在tableView上的位置
+    CGPoint currentTouchPosition = [touch locationInView:_currentTableView];
+    NSIndexPath *indexPath = [_currentTableView indexPathForRowAtPoint: currentTouchPosition];
+    UIViewController *vc = nil;
+    CMT_MyInverstmentListModel *model = _currentDataArray[indexPath.row];
+    if(_currentIndex == 0){
+        //判断是否已经预约
+        //        if(model && [model.bidType isEqualToString:@"0"]){//新手标不可预约
+        //            [self showHint:CMT_Error_NewBidType];
+        //        }else{
+        if(model && [model.preInvestFlag isEqualToString:@"0"]){//没有预约 可以预约
+            CMT_Log(@"点击了立即预约");
+            CMT_YuYueTouZiViewController *yuYueTouZiVc = [[CMT_YuYueTouZiViewController alloc]init];
+            yuYueTouZiVc.investIdStr = model.investId;
+            vc = yuYueTouZiVc;
+                        
+            //神策数据 －－ 发起预约
+            SensorsAnalyticsSDK *sdk = [SensorsAnalyticsSDK sharedInstance];
+            if (sdk != nil) {
+                [sdk track:@"reservationInvest_start" withProperties:
+                 @{@"productID": [NSString convertNull:model.bidId],
+                   @"productName": [NSString convertNull:model.bidTitle],
+                   @"Amount": [NSNumber numberWithDouble:[model.amount doubleValue]],
+                   @"investDayUnline": [NSNumber numberWithDouble:[model.period doubleValue]],
+                   @"distinctId": [NSString convertNull:[CMT_AnalyticsTool userID]]}];
+            }
+
+        }else{
+            [self showHint:CMT_Error_DidYuYue];
+        }
+        //        }
+        
+    }else if (_currentIndex == 1){
+        
+        //神策数据 －－ 取消预约
+        SensorsAnalyticsSDK *sdk = [SensorsAnalyticsSDK sharedInstance];
+        if (sdk != nil) {
+            [sdk track:@"cancelReservation" withProperties:
+             @{@"tab": [NSString convertNull:model.bidTitle],
+               @"returnType": [NSString convertNull:model.repaymentType],
+               @"Amount": [NSNumber numberWithDouble:[model.amount doubleValue]],
+               @"investDayUnline": [NSNumber numberWithDouble:[model.period doubleValue]],
+               @"distinctId": [NSString convertNull:[CMT_AnalyticsTool userID]]}];
+        }
+        
+
+        //判断是否可以取消预约
+        if(model && [model.cancelPreInvestFlag isEqualToString:@"0"]){
+            [self lodaDatCanCelYuYueWithInvestId:model.investId andIndexPath:indexPath];
+            //            [self showHint:@"点击了取消预约 - 可以点击"];
+        }else{
+            [self showHint:CMT_Error_NoCancelYuYue];
+        }
+        
+    }else if (_currentIndex ==2){
+        
+        [self showHudInView:self.view hint:CMT_LoadDataWaiting];
+        [CMT_ProcessTheDataTool getContractInforWithInvestId:model.investId period:model.period block:^(id jsonObject, NSError *error) {
+            CMT_Log(@"%@",jsonObject);
+            [self hideHud];
+            if(jsonObject[@"msg"] && ![jsonObject[@"msg"] isEqual:@""]){
+                CMT_LookContractViewController *lookContractVC = [[CMT_LookContractViewController alloc]init];
+                lookContractVC.contractUrl = jsonObject[@"msg"];
+                [self.navigationController pushViewController:lookContractVC animated:YES];
+            }
+        }];
+//        CMT_LookContractViewController *lookContractVC = [[CMT_LookContractViewController alloc]init];
+//        vc.title = @"查看合同";
+//        vc = lookContractVC;
+//        //        [self showHint:@"查看合同"];
+        
+    }
+    if(vc){
+        [self.navigationController pushViewController:vc animated:YES];
+        
+    }
+}
+
+#pragma mark -- 滚动条的点击事件
+- (void)willSelectBtnWithIndex:(int)currentIndex andScrollViewTitlView:(ScrollTitleView *)scrollViewTitlView{
+    NSLog(@"_currentTableView.mj_header.state == %ld",(long)_currentTableView.mj_header.state);
+    if(_currentTableView.mj_footer.isRefreshing || _currentTableView.mj_header.isRefreshing || _currentTableView.mj_footer.state == MJRefreshStatePulling || _currentTableView.mj_header.state == MJRefreshStatePulling || _backScrollView.dragging){
+        scrollViewTitlView.isAnimationMobile = NO;
+    }else{
+       scrollViewTitlView.isAnimationMobile = YES;
+    }
+}
+
+- (void)didSelectBtnWithIndex:(int)currentIndex{
+
+    _currentIndex = currentIndex;
+    [UIView animateWithDuration:0.5 animations:^{
+        _backScrollView.contentOffset = CGPointMake(CMT_ScreenWidth *_currentIndex, 0);
+    }];
+    
+    
+
+    //上一个tablView没有正在滑动 并却当前tablview有数据
+    if([NSRunLoop currentRunLoop].currentMode != UITrackingRunLoopMode){
+        [self loadDataMyInvestmentWithType:_currentIndex];
+    }else{
+        if(!_allDataMutDic[_titleArray[_currentIndex]]){
+            [self showHudInView:self.view hint:CMT_LoadDataWaiting];
+        }
+        [self performSelector:@selector(currentTableViewRespodsToSelectorScrollViewDidEndDeceleratingWithLoadData) withObject:nil afterDelay:[_currentTableView respondsToSelector:@selector(scrollViewDidEndDecelerating:)] inModes:@[NSDefaultRunLoopMode]];
+    }
+    CMT_Log(@"%d",currentIndex);
+}
+- (void)currentTableViewRespodsToSelectorScrollViewDidEndDeceleratingWithLoadData{
+    [self loadDataMyInvestmentWithType:_currentIndex];
+}
+#pragma mark -- scrollView delegate
+- (void)scrollViewDidScroll:(UIScrollView *)scrollView{
+    if(scrollView == _backScrollView){
+        
+        // 获得页码
+        CGFloat doublePage = scrollView.contentOffset.x / CMT_ScreenWidth;
+        _currentIndex = (int)(doublePage + 0.5);
+//        _currentIndex = scrollView.contentOffset.x/CMT_ScreenWidth;
+    }
+}
+
+
+- (void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView{
+    CMT_Log(@"scrollViewDidEndDecelerating");
+    [self.titleView addAnimateView:_currentIndex];
+
+    if(scrollView == _backScrollView){
+        [self loadDataMyInvestmentWithType:_currentIndex];
+    }
+}
+
+
+#pragma mark -－请求
+- (void)loadDataMyInvestmentWithType:(int)type{
+    //取出当前页当前索引
+    _currentPageIndex = [self.allPageIndexDic[_titleArray[_currentIndex]] intValue];
+    
+    //如果事上拉刷新将开始索引设置0
+    if(_currentTableView.mj_header.isRefreshing){
+        _currentPageIndex= 0;
+    }
+    //取当前页的数据 看是否第一次请求
+    _currentDataArray = _allDataMutDic[_titleArray[_currentIndex]];
+    /**
+     *  1.第一次进入当前界面 || 2.下拉刷新|| 3. 上拉刷新 
+     */
+    if(!_currentDataArray || _currentDataArray.count == 0 || _currentTableView.mj_header.isRefreshing || _currentTableView.mj_footer.isRefreshing ){
+        
+        BOOL isAdd = NO; //是否已经add了加载框 NO没有 YES 有
+        for (UIView *subView in self.view.subviews) {
+            if([subView isKindOfClass:[MBProgressHUD class]]){
+                isAdd = YES;
+            }
+        }
+        if(!isAdd){
+            [self showHudInView:self.view hint:CMT_LoadDataWaiting];
+        }
+        [CMT_ProcessTheDataTool myInvestmentWithUserId:[CMT_AccountTool accountModel].userId page:_currentPageIndex size:_currentPageSize andType:type  andBlock:^(CMT_MyInverstmentModel *model, NSError *error) {
+            NSLog(@"%d-----------------------",type);
+            [self hideHud];
+            //防止第一次请求回调没结束已经开始第二次请求
+            NSLog(@"type == %d,_currentIndex= %d",type,_currentIndex);
+            if(type != _currentIndex){
+                NSLog(@"type == %d,_currentIndex= %d",type,_currentIndex);
+                return ;
+            }
+            
+            if(!error){
+                
+                if([[NSString stringWithFormat:@"%@",model.status] isEqualToString:@"1"]){
+                    /**
+                     *     只有第一页有此数据
+                     */
+                    if(_currentIndex == 0){
+                        NSString *fuHaoStr = @"%";
+                        NSString *addRateTotalStr = [NSString stringWithFormat:@"%@%@",model.addRate,fuHaoStr];
+                        _investmentEarningsTableHeaderView.addRateLab.attributedText = [NSMutableAttributedString attributeWithTotalStr:addRateTotalStr subStr:fuHaoStr subStrFont:UIFont24];
+                    }
+                    
+                    if(_currentTableView.mj_header.isRefreshing){//上拉刷新
+                        [self.allDataMutDic setObject: model.listDataArray forKey:_titleArray[_currentIndex]];
+                    }else{//下拉刷新和第一次请求
+                        if(_currentDataArray){
+                            [self.allDataMutDic setObject: [_currentDataArray arrayByAddingObjectsFromArray:model.listDataArray] forKey:_titleArray[_currentIndex]];
+                        }else{
+                            [self.allDataMutDic setObject: model.listDataArray forKey:_titleArray[_currentIndex]];
+                        }
+                    }
+                    if(model.listDataArray.count == 0){
+                        [self showHint:CMT_LoadDataNoMoreData];
+                    }
+                    //取出当前页当前数据索引
+                    _currentPageIndex = _currentPageIndex + (int) model.listDataArray.count;
+                    //存储当前分页开始的索引
+                    [self setSaveCurrentIndex];
+                }else if ([[NSString stringWithFormat:@"%@",model.status] isEqualToString:CMT_SinglePointCode]){
+                    [CMT_SinglePointLoginTool addSinglePointLoginWithSelfVC:self];
+                }else{
+                    [self showHint:model.msg];
+                }
+            }else{
+                [self showHint:CMT_Error_NotNetWork];
+            }
+            //将最新数据给当前页的数据
+            _currentDataArray = _allDataMutDic[_titleArray[_currentIndex]];
+            //取出当前的tableview
+            _currentTableView = _allTableViewArray[_currentIndex];
+            //设置背景状态显示状态
+            
+            ((CMT_StateView *)_currentTableView.backgroundView).dataArray =  _currentDataArray;
+            [_currentTableView reloadData];
+            [_currentTableView.mj_footer endRefreshing];
+            [_currentTableView.mj_header endRefreshing];
+        }];
+    }else{
+        [self hideHud];
+        //将最新数据给当前页的数据
+        _currentDataArray = _allDataMutDic[_titleArray[_currentIndex]];
+        //取出当前的tableview
+        _currentTableView = _allTableViewArray[_currentIndex];
+        //设置背景状态显示状态
+        ((CMT_StateView *)_currentTableView.backgroundView).dataArray =  _currentDataArray;
+        //刷新tableView
+        [_currentTableView reloadData];
+        [_currentTableView.mj_footer endRefreshing];
+        [_currentTableView.mj_header endRefreshing];
+    }
+}
+
+- (void)lodaDatCanCelYuYueWithInvestId:(NSString *)investId andIndexPath:(NSIndexPath *)indexPath{
+    [self showHudInView:self.view hint:CMT_LoadDataWaiting];
+    [CMT_ProcessTheDataTool cancelYuYueInvestmentWithUserId:[CMT_AccountTool accountModel].userId investId:investId andBlock:^(CMT_BaseModel *baseModel, NSError *error) {
+        [self hideHud];
+        if(!error){
+            if([[NSString stringWithFormat:@"%@",baseModel.status] isEqualToString:@"1"]){
+                [self showHint:CMT_LoadDataWithCanccelYuYueSuccessful];
+                NSMutableArray *tmpMutArray = [NSMutableArray arrayWithArray:_currentDataArray];
+                [tmpMutArray  removeObjectAtIndex:indexPath.row];
+                [self.allDataMutDic setObject:tmpMutArray forKey:_titleArray[_currentIndex]];
+                _currentDataArray = self.allDataMutDic[_titleArray[_currentIndex]];
+                [_currentTableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
+                
+            }else{
+                [self showHint:baseModel.msg];
+            }
+        }else{
+            [self showHint:CMT_Error_NotNetWork];
+        }
+
+    }];
+}
+#pragma mark --  保存当前页当前索引
+- (void)setSaveCurrentIndex{
+    /**
+     *  保存当前页当前数据的索引
+     */
+    [self.allPageIndexDic setObject:[NSNumber numberWithInt:_currentPageIndex] forKey:_titleArray[_currentIndex]];
+}
+
+- (void)viewDidLayoutSubviews{
+    [super viewDidLayoutSubviews];
+
+}
+
+- (void)appointmentSuccess{
+//    [self loadDataMyInvestmentWithType:_currentIndex];
+    [_currentTableView.mj_header beginRefreshing];
+}
+
+- (void)didReceiveMemoryWarning {
+    [super didReceiveMemoryWarning];
+    // Dispose of any resources that can be recreated.
+}
+
+//方式二
+
+//    if(_currentIndex == 0){
+//        if(indexPath.row == 0){
+//            CMT_InvestmentEarningsTableViewCell *cell = [CMT_InvestmentEarningsTableViewCell cellWithTablebView:tableView];
+//            return cell;
+//        }else{
+//            CMT_MyInTheHoldInvestmentTableViewCell *cell = [CMT_MyInTheHoldInvestmentTableViewCell cellWithTablebView:tableView];
+//            CMT_MyInTheHoldInvestmentModel *model = [[CMT_MyInTheHoldInvestmentModel alloc]init];
+//            if(indexPath.row % 2 == 0){
+//                model.huanXiFangShi = 0;
+//                model.yuYueState = 0;
+//            }else{
+//                model.huanXiFangShi = 1;
+//                model.yuYueState = 1;
+//            }
+//            cell.myInTheHoldInvestmenModel = model;
+//            return cell;
+//        }
+//
+//    }else if (_currentIndex == 1){
+//        if(indexPath.row == 0){
+//            CMT_MyAppointmentInvestmentTableViewCell *cell = [CMT_MyAppointmentInvestmentTableViewCell cellWithTablebView:tableView];
+//            return cell;
+//        }else{
+//            CMT_MyAppointmentInvestmentTableViewCell *cell = [CMT_MyAppointmentInvestmentTableViewCell cellWithTablebView:tableView];
+//            CMT_MyAppointmentInvestmentModel *model = [[CMT_MyAppointmentInvestmentModel alloc]init];
+//            if(indexPath.row % 2 == 0){
+//                model.huanXiFangShi = 0;
+//                model.isKeYiquXiaoYuYue = 0;
+//            }else{
+//                model.huanXiFangShi = 1;
+//                model.isKeYiquXiaoYuYue = 1;
+//            }
+//            cell.myAppointmentInvestmentModel = model;
+//            return cell;
+//        }
+//    }else{
+//
+//        CMT_RetiredInvestmentTableViewCell *cell = [CMT_RetiredInvestmentTableViewCell cellWithTablebView:tableView];
+//        CMT_RetiredInvestmentModel *model = [[CMT_RetiredInvestmentModel alloc]init];
+//        cell.retiredInvestmentModel = model;
+//        return cell;
+//    }
+
+@end

@@ -1,0 +1,596 @@
+//
+//  CMT_Tools.m
+//  CongMingTou
+//
+//  Created by wzh on 16/5/6.
+//  Copyright © 2016年 QiYuan All rights reserved.
+//
+
+#import "CMT_Tools.h"
+#import <CoreText/CoreText.h>
+#import "JPUSHService.h"
+
+@interface ZHButton()
+
+@property (nonatomic, copy) MyBlock tempBlock;
+
+@end
+
+@implementation ZHButton
++ (ZHButton *)buttonWithFrame:(CGRect)frame fontSize:(int)size title:(NSString *)title type:(UIButtonType)type tag:(int)tag backgroundImage:(NSString *)backgroundImage image:(NSString *)image andBlock:(MyBlock)myBlock{
+    
+    ZHButton *button = [ZHButton buttonWithType:type];//按钮类型
+    button.frame = frame;
+    [button setTitle:title forState:UIControlStateNormal];//设置标题
+    [button.titleLabel setFont:[UIFont systemFontOfSize:size]];//字体大小
+    [button setBackgroundImage:[UIImage imageNamed:backgroundImage] forState:UIControlStateNormal];//设置背景图片
+    [button setTitleColor:[UIColor blueColor] forState:UIControlStateNormal];
+    [button setImage:[UIImage imageNamed:image] forState:UIControlStateNormal];//设置图片
+    [button addTarget:button action:@selector(buttonClicked:) forControlEvents:UIControlEventTouchUpInside];//方法
+    button.tag = tag;
+    
+    button.tempBlock = myBlock;//myBlock给tempBlock
+    
+    return button;
+}
+
+
++ (ZHButton *)buttonWithFrame:(CGRect)frame font:(UIFont *)font title:(NSString *)title normalTitleColor:(UIColor *)normalTitleColor selectTitleColor:(UIColor *)selectTitleColor andBlock:(MyBlock)myBlock{
+    
+    ZHButton *button = [ZHButton buttonWithType:UIButtonTypeCustom];//按钮类型
+    button.frame = frame;
+    [button setTitle:title forState:UIControlStateNormal];//设置默认标题
+    [button setTitleColor:normalTitleColor forState:UIControlStateNormal];
+    [button setTitleColor:selectTitleColor forState:UIControlStateSelected];
+    [button.titleLabel setFont:font];//字体大小
+    [button addTarget:button action:@selector(buttonClicked:) forControlEvents:UIControlEventTouchUpInside];//方法
+    button.tempBlock = myBlock;//myBlock给tempBlock
+    return button;
+}
+- (void)buttonClicked:(ZHButton *)button{
+    button.tempBlock(button);//返回button
+}
+
+@end
+
+@implementation CMT_Tools
++ (void)file:(char*)sourceFile function:(char*)functionName lineNumber:(int)lineNumber format:(NSString*)format, ...
+{
+#ifdef TARGET_IPHONE_DEBUG
+    //NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+    va_list ap;
+    NSString *print, *file, *function;
+    va_start(ap,format);
+    file = [[NSString alloc] initWithBytes: sourceFile length: strlen(sourceFile) encoding: NSUTF8StringEncoding];
+    
+    function = [NSString stringWithCString:functionName encoding:NSUTF8StringEncoding];
+    print = [[NSString alloc] initWithFormat: format arguments: ap];
+    va_end(ap);
+    NSLog(@"%@:%d %@; %@\n\n", [file lastPathComponent], lineNumber, function, print);
+    
+#endif
+}
+
++ (UIColor *)colorWithHexString:(NSString *)color alpha:(CGFloat)alpha
+{
+    //删除字符串中的空格
+    NSString *cString = [[color stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]] uppercaseString];
+    // String should be 6 or 8 characters
+    if ([cString length] < 6)
+    {
+        return [UIColor clearColor];
+    }
+    // strip 0X if it appears
+    //如果是0x开头的，那么截取字符串，字符串从索引为2的位置开始，一直到末尾
+    if ([cString hasPrefix:@"0X"])
+    {
+        cString = [cString substringFromIndex:2];
+    }
+    //如果是#开头的，那么截取字符串，字符串从索引为1的位置开始，一直到末尾
+    if ([cString hasPrefix:@"#"])
+    {
+        cString = [cString substringFromIndex:1];
+    }
+    if ([cString length] != 6)
+    {
+        return [UIColor clearColor];
+    }
+    
+    // Separate into r, g, b substrings
+    NSRange range;
+    range.location = 0;
+    range.length = 2;
+    //r
+    NSString *rString = [cString substringWithRange:range];
+    //g
+    range.location = 2;
+    NSString *gString = [cString substringWithRange:range];
+    //b
+    range.location = 4;
+    NSString *bString = [cString substringWithRange:range];
+    
+    // Scan values
+    unsigned int r, g, b;
+    [[NSScanner scannerWithString:rString] scanHexInt:&r];
+    [[NSScanner scannerWithString:gString] scanHexInt:&g];
+    [[NSScanner scannerWithString:bString] scanHexInt:&b];
+    return [UIColor colorWithRed:((float)r / 255.0f) green:((float)g / 255.0f) blue:((float)b / 255.0f) alpha:alpha];
+}
+//默认alpha值为1
++ (UIColor *)colorWithHexString:(NSString *)color
+{
+    return [self colorWithHexString:color alpha:1.0f];
+}
+
+//设置纯数字并且是大小标题的
++ (NSMutableAttributedString *)HeadAttributedString:(NSString *)name backAttributedString:(NSString *)smallName NSheadForegroundColorAttributeName:(UIColor *)headColor NSbackForegroundColorAttributeName:(UIColor *)backColor NSheadFontAttributeName:(CGFloat)fontSize NSbackFontAttributeName:(CGFloat)smallFontSize
+{
+    
+    NSMutableAttributedString *str = [[NSMutableAttributedString alloc] initWithString:name   attributes:@{NSForegroundColorAttributeName:headColor, NSFontAttributeName:[UIFont fontWithName:@"Aileron-Light" size:fontSize]}];
+    NSMutableAttributedString *str1 = [[NSMutableAttributedString alloc] initWithString:smallName   attributes:@{NSForegroundColorAttributeName:backColor, NSFontAttributeName:[UIFont systemFontOfSize:smallFontSize]}];
+    [str appendAttributedString:str1];
+    
+    return str;
+}
+
+//大小标题 但前段不是数字的
++ (NSMutableAttributedString *)strHeadAttributedString:(NSString *)headName midAttributedString:(NSString *)midName  backAttributedString:(NSString *)backName NSheadForegroundColorAttributeName:(UIColor *)headColor NSbackForegroundColorAttributeName:(UIColor *)midColor NSbackForegroundColorAttributeName:(UIColor *)backColor NSheadFontAttributeName:(CGFloat)headSize NSbackFontAttributeName:(CGFloat)midFontSize  NSbackFontAttributeName:(CGFloat)backFontSize
+{
+    //文字
+    NSMutableAttributedString *str = [[NSMutableAttributedString alloc] initWithString:headName   attributes:@{NSForegroundColorAttributeName:headColor, NSFontAttributeName:[UIFont systemFontOfSize:headSize]}];
+//数字
+    NSMutableAttributedString *str1 = [[NSMutableAttributedString alloc] initWithString:midName   attributes:@{NSForegroundColorAttributeName:midColor, NSFontAttributeName:[UIFont fontWithName:@"Aileron-Light" size:midFontSize]}];
+    //文字
+    NSMutableAttributedString *str2 = [[NSMutableAttributedString alloc] initWithString:backName attributes:@{NSForegroundColorAttributeName:backColor, NSFontAttributeName:[UIFont systemFontOfSize:backFontSize]}];
+
+    [str appendAttributedString:str1];
+    [str appendAttributedString:str2];
+
+    return str;
+}
+
+
+//字体倾斜和副标题拼接工具
+- (NSMutableAttributedString *)LeanString:(NSString *)allStr subString:(NSString *)subName  NSbackForegroundColorAttributeName:(UIColor *)cusColor NSheadFontAttributeName:(CGFloat)allFontSize NSbackFontAttributeName:(CGFloat)subFontSize
+{
+    NSMutableAttributedString *attrString = [[NSMutableAttributedString alloc] initWithString:allStr];
+    UIFont *boldFont = [UIFont boldSystemFontOfSize:allFontSize];
+    [attrString addAttribute:NSFontAttributeName value:boldFont range:[allStr rangeOfString:allStr]];//设置字符串的字体为粗体
+   
+    UIFont *italicFont = GetVariationOfFontWithTrait(boldFont,  //设置倾斜，需要导入coreText
+                                                     kCTFontTraitItalic);
+    [attrString addAttribute:NSFontAttributeName value:italicFont
+                       range:[allStr rangeOfString:allStr]];
+    
+    [attrString addAttribute:NSForegroundColorAttributeName // 设置颜色
+                       value:cusColor
+                       range:[allStr rangeOfString:allStr]];
+    UIFont *subboldFont = [UIFont boldSystemFontOfSize:subFontSize];
+    UIFont *subItalicFont = GetVariationOfFontWithTrait(subboldFont,  //设置倾斜，需要导入coreText
+                                                       kCTFontTraitItalic);
+    [attrString addAttribute:NSFontAttributeName value:subItalicFont range:[allStr rangeOfString:subName]];
+    
+    return attrString;
+}
+
+//字体倾斜
+- (NSMutableAttributedString *)LeanFontString:(NSString *)allStr  NSbackForegroundColorAttributeName:(UIColor *)cusColor NSheadFontAttributeName:(CGFloat)allFontSize
+{
+    NSMutableAttributedString *attrString = [[NSMutableAttributedString alloc] initWithString:allStr];
+    UIFont *boldFont = [UIFont boldSystemFontOfSize:allFontSize];
+    [attrString addAttribute:NSFontAttributeName value:boldFont range:[allStr rangeOfString:allStr]];//设置字符串的字体为粗体
+    UIFont *italicFont = GetVariationOfFontWithTrait(boldFont,  //设置倾斜，需要导入coreText
+                                                     kCTFontTraitItalic);
+    [attrString addAttribute:NSFontAttributeName value:italicFont
+                       range:[allStr rangeOfString:allStr]];
+    
+    [attrString addAttribute:NSForegroundColorAttributeName // 设置颜色
+                       value:cusColor
+                       range:[allStr rangeOfString:allStr]];
+    return attrString;
+}
+
+
+// 字体倾斜 需要导入<CoreText/CoreText.h>
+UIFont * GetVariationOfFontWithTrait(UIFont *baseFont,
+                                     CTFontSymbolicTraits trait) {
+    CGFloat fontSize = [baseFont pointSize];
+    CFStringRef
+    baseFontName = (__bridge CFStringRef)[baseFont fontName];
+    CTFontRef baseCTFont = CTFontCreateWithName(baseFontName,
+                                                fontSize, NULL);
+    CTFontRef ctFont =
+    CTFontCreateCopyWithSymbolicTraits(baseCTFont, 0, NULL,
+                                       trait, trait);
+    NSString *variantFontName =
+    CFBridgingRelease(CTFontCopyName(ctFont,
+                                     kCTFontPostScriptNameKey));
+    
+    UIFont *variantFont = [UIFont fontWithName:variantFontName
+                                          size:fontSize];
+    CFRelease(ctFont);
+    CFRelease(baseCTFont);
+    return variantFont;
+};
+
+
++ (NSAttributedString *)attributeWithTotalStr:(NSString *)totalStr
+                                       subStr:(NSString *)subStr
+                                   subStrFont:(UIFont *)subStrFont{
+
+    return [self attributeWithTotalStr:totalStr subStr:subStr subStrFont:subStrFont andSubStrColor:nil];
+}
+
+/**
+ *  返回设置好的字符串
+ *
+ *  @param totalStr   总串
+ *  @param subStr     想要设置的字符出串
+ *  @param subStrFont 想要设置的字体颜色
+ *
+ *  @return 返回设置好的字符串
+ */
++ (NSAttributedString *)attributeWithTotalStr:(NSString *)totalStr
+                                       subStr:(NSString *)subStr
+                               andSubStrColor:(UIColor *)subStrColor{
+    return [self attributeWithTotalStr:totalStr subStr:subStr subStrFont:nil andSubStrColor:subStrColor];
+
+}
+
++ (NSAttributedString *)attributeWithTotalStr:(NSString *)totalStr
+                                       subStr:(NSString *)subStr
+                                   subStrFont:(UIFont *)subStrFont
+                                  andSubStrColor:(UIColor *)subStrColor{
+    
+    
+    NSMutableAttributedString *attributeStr=  [[NSMutableAttributedString alloc]initWithString:totalStr];
+    NSRange setRange = [totalStr rangeOfString:subStr];
+    if(subStrFont){
+        [attributeStr addAttribute:NSFontAttributeName value:subStrFont range:setRange];
+    }
+    if(subStrColor){
+        [attributeStr addAttribute:NSForegroundColorAttributeName value:subStrColor range:setRange];
+    }
+    return attributeStr;
+}
+
+
++ (CGSize)getStrSize:(NSString *)sizeStr fontSize:(float)fontsize
+{
+    CGSize noReadSize = [sizeStr sizeWithAttributes:@{NSFontAttributeName:[UIFont systemFontOfSize:fontsize]}];
+    return noReadSize;
+}
+
++ (UILabel *)getLabel:(NSString *)textStr textFont:(CGFloat)fontSize viewFrame:(CGRect)frame textAlignments:(NSTextAlignment)textAlignmentType textColors:(UIColor *)Textcolor
+{
+    UILabel *Label = [[UILabel alloc] initWithFrame:frame];
+    Label.textAlignment = textAlignmentType;
+    Label.text = textStr;
+    Label.textColor = Textcolor;
+    Label.font = [UIFont systemFontOfSize:fontSize];
+    return Label;
+}
+
++ (UIView *)getUiviewWithFrame:(CGRect)range BackGroudColor:(UIColor*)backcolor
+{
+    UIView *view = [[UIView alloc]initWithFrame:range];
+    view.backgroundColor = backcolor;
+    return view;
+}
+
++ (UIImageView *)getImageViewWithFrame:(CGRect)range BackGroudColor:(UIColor *)backColor
+{
+    UIImageView *imageView = [[UIImageView alloc]initWithFrame:range];
+    imageView.backgroundColor = backColor;
+    return imageView;
+}
+
++ (UIButton *)getButtonWithFrame:(CGRect)range BackGroudColor:(UIColor*)backcolor Title:(NSString *)title TitleColor:(UIColor*)titleColor textFont:(CGFloat)fontSize
+{
+    
+    UIButton *button = [UIButton buttonWithType:UIButtonTypeCustom];
+    button.backgroundColor = backcolor;
+    button.frame = range;
+    [button setTitle:title forState:UIControlStateNormal];
+    button.titleLabel.font = [UIFont systemFontOfSize:fontSize];
+    [button setTitleColor:titleColor forState:UIControlStateNormal];
+    return  button;
+}
++ (void)showInfoAlert:(NSString*)aInfo{
+    UIAlertView *tAlert=[[UIAlertView alloc] initWithTitle:@"提示" message:aInfo delegate:nil cancelButtonTitle:@"确定" otherButtonTitles:nil];
+    [tAlert show];
+}
+
+//求label高度
++ (CGFloat)boundingRectWithStrH:(NSString*)string labStrW:(CGFloat)labStrW andFont:(UIFont *)font{
+    NSDictionary *attribute = @{NSFontAttributeName:font};
+    CGSize size = CGSizeMake(labStrW,9999);//LableWight标签宽度，固定的
+    
+    CGSize retSize = [string boundingRectWithSize:size
+                                          options:\
+                      NSStringDrawingTruncatesLastVisibleLine |
+                      NSStringDrawingUsesLineFragmentOrigin |
+                      NSStringDrawingUsesFontLeading
+                                       attributes:attribute
+                                          context:nil].size;
+    return retSize.height;
+}
+
++ (CGFloat)boundingRectWithStrW:(NSString*)string labStrH:(CGFloat)labStrH andFont:(UIFont *)font{
+    NSDictionary *attribute = @{NSFontAttributeName:font};
+    CGSize size = CGSizeMake(99999,labStrH);//LableWight标签宽度，固定的
+    
+    CGSize retSize = [string boundingRectWithSize:size
+                                          options:\
+                      NSStringDrawingTruncatesLastVisibleLine |
+                      NSStringDrawingUsesLineFragmentOrigin |
+                      NSStringDrawingUsesFontLeading
+                                       attributes:attribute
+                                          context:nil].size;
+    return retSize.width;
+}
+
+
+//正则判断手机号码地址格式
++(BOOL)isMobileNumber:(NSString *)mobileNum
+{
+    
+    NSString *all = @"^1([3-9][0-9])\\d{8}$";
+    NSPredicate *regextestct1 = [NSPredicate predicateWithFormat:@"SELF MATCHES %@", all];
+    
+    
+    if (([regextestct1 evaluateWithObject:mobileNum] == YES))
+    {
+        return YES;
+    }
+    else
+    {
+        return NO;
+    }
+}
++ (NSString *)getPhoneUuid {
+    UIDevice * device = [[UIDevice alloc]init];
+    return [device uniqueDeviceIdentifier];
+}
+
+
+
+
+//计算收益的公式 拼接元
++ (NSString *)apr:(CGFloat)aprNum  addPercent:(CGFloat)percentNum amount:(CGFloat)amountNum investDay:(CGFloat)dayNum
+{
+   CGFloat value =  (aprNum + percentNum) / 100  / 360 * dayNum * amountNum;
+    if (value <= 0) {
+        value = 0.00;
+    }
+
+    NSString * profitStr = [NSString stringWithFormat:@"%.2f元",value];
+    return profitStr;
+}
+
+//计算收益的公式 不拼接元
++ (CGFloat)myApr:(CGFloat)aprNum  addPercent:(CGFloat)percentNum amount:(CGFloat)amountNum investDay:(CGFloat)dayNum
+{
+    CGFloat value =  (aprNum + percentNum) / 100  / 360 * dayNum * amountNum;
+    if (value <= 0) {
+        value = 0.00;
+    }
+    return value;
+}
++ (UIViewController *)activityViewController{
+    
+    UIViewController* activityViewController = nil;
+    UIWindow *window = [[UIApplication sharedApplication] keyWindow];
+    if(window.windowLevel != UIWindowLevelNormal){
+        NSArray *windows = [[UIApplication sharedApplication] windows];
+        for(UIWindow *tmpWin in windows){
+            if(tmpWin.windowLevel == UIWindowLevelNormal){
+                window = tmpWin;
+                break;
+            }
+        }
+    }
+    
+    
+    NSArray *viewsArray = [window subviews];
+    if([viewsArray count] > 0){
+        UIView *frontView = [viewsArray objectAtIndex:0];
+        id nextResponder = [frontView nextResponder];
+        if([nextResponder isKindOfClass:[UIViewController class]]){
+            activityViewController = nextResponder;
+        }else{
+            activityViewController = window.rootViewController;
+        }
+    }
+    return activityViewController;
+}
+#define myDotNumbers     @"0123456789.\n"
+#define myNumbers          @"0123456789\n"
++ (BOOL)moneyInputFaultTolerantToDealWithTextField:(UITextField *)textField TotalStr:(NSString *)totalStr range:(NSRange)range andString:(NSString *)string{
+        if ([totalStr rangeOfString:@"0"].location==0 &&[totalStr rangeOfString:@"."].length!=1 ) {
+            NSUInteger nWetLoc = [textField.text rangeOfString:@"0"].location;
+            if (NSNotFound != nWetLoc) {
+                NSArray*  aerNum = @[@"1",@"2",@"3",@"4",@"5",@"6",@"7",@"8",@"9",@"0"];
+                for (int i = 0;i<aerNum.count;i++) {
+                    if ([string isEqualToString:aerNum[i]]) {
+                        return NO;
+                    }
+                }
+            }
+        }
+        if ([totalStr rangeOfString:@"."].location ==0) {
+            return NO;
+        }
+        NSUInteger nqNittLoc = [textField.text rangeOfString:@"."].location;
+        if (NSNotFound != nqNittLoc) {
+            if ([string isEqualToString:@"."]) {
+                return NO;
+            }
+        }
+        
+        NSCharacterSet *cs;
+        NSUInteger nDotLoc = [textField.text rangeOfString:@"."].location;
+        if (NSNotFound == nDotLoc && 0 != range.location) {
+            cs = [[NSCharacterSet characterSetWithCharactersInString:myNumbers]invertedSet];
+            if ([string isEqualToString:@"."]) {
+                return YES;
+            }
+        }
+        else {
+            cs = [[NSCharacterSet characterSetWithCharactersInString:myDotNumbers]invertedSet];
+        }
+        NSString *filtered = [[string componentsSeparatedByCharactersInSet:cs] componentsJoinedByString:@""];
+        BOOL basicTest = [string isEqualToString:filtered];
+        if (!basicTest) {
+            return NO;
+        }
+        if (NSNotFound != nDotLoc && range.location > nDotLoc +2 ) {//小数点后面两位
+            return NO;
+            
+        }
+        
+    return YES;
+
+}
+
++ (BOOL)LoginOutToDealWithAccountAndGesturePassword{
+    if([CMT_AccountTool removeEmptyAccountData]){
+        /**
+         *  手势登陆状态设置为未登陆
+         */
+//        [JPUSHService setAlias:@""
+//              callbackSelector:nil
+//                        object:self];
+        CMT_GesturesPwdModel *model = [CMT_GesturesPasswordTool gesturesPwdModel];
+        model.loginGesturePwd = 0;
+        [CMT_GesturesPasswordTool save:model];
+        return YES;
+    }
+    return NO;
+    
+}
+
++ (void)removeWebCacheAndCookis{
+//    //清除cookies
+//    NSHTTPCookie *cookie;
+//    NSHTTPCookieStorage *storage = [NSHTTPCookieStorage sharedHTTPCookieStorage];
+//    for (cookie in [storage cookies])
+//    {
+//        [storage deleteCookie:cookie];
+//    }
+    //清除UIWebView的缓存
+    [[NSURLCache sharedURLCache] removeAllCachedResponses];
+}
+
++ (NSInteger)returnUploadTime:(NSTimeInterval)late
+{
+    NSDate* dat = [NSDate dateWithTimeIntervalSinceNow:0];
+    NSTimeInterval now = [dat timeIntervalSince1970]*1;
+    NSString *timeString = @"";
+    NSInteger lastime = 0;
+    NSTimeInterval cha= now - late;
+    
+    if (cha/3600<1) {
+        
+        timeString = [NSString stringWithFormat:@"%f", cha];
+        timeString = [timeString substringToIndex:timeString.length-7];
+        lastime= 60 - [timeString integerValue];
+    }
+    return lastime;
+}
+
+
+static NSString *markStr = @"activityId";
++ (BOOL)isAddWithParsingUrl:(NSString *)url{
+    if(!url){
+        return NO;
+    }else{
+        //所有参数的数组
+        NSArray *parameterArray = [url componentsSeparatedByString:@"&"];
+        //参数数组中第一个参数
+        NSString *firstParameterStr = [parameterArray firstObject];
+        //第一个参数的key value数组 ，数组第一个元素是key 第二个元素是value
+        NSArray *firstKeyAndValueArray = [firstParameterStr componentsSeparatedByString:@"="];
+        if([[firstKeyAndValueArray firstObject] isEqualToString:markStr] && ![[firstKeyAndValueArray lastObject]isEqual:@""] && ![[firstKeyAndValueArray lastObject]isEqual:[NSNull null]]){
+            return YES;
+        }else{
+            return NO;
+        }
+    }
+}
+
++ (NSArray *)parsingUrl:(NSString *)url{
+    if(!url){
+        return nil;
+    }
+    //所有参数的数组
+    NSArray *parameterArray = [url componentsSeparatedByString:@"&"];
+    //参数数组中第一个参数
+    NSString *firstParameterStr = [parameterArray firstObject];
+    //第一个参数的key value数组 ，数组第一个元素是key 第二个元素是value
+    NSArray *firstKeyAndValueArray = [firstParameterStr componentsSeparatedByString:@"="];
+    if([[firstKeyAndValueArray firstObject] isEqualToString:markStr] && ![[firstKeyAndValueArray lastObject]isEqual:@""] && ![[firstKeyAndValueArray lastObject]isEqual:[NSNull null]]){
+        return firstKeyAndValueArray;
+    }else{
+        return nil;
+    }
+
+}
+
++ (NSString *)urlCompParame:(NSString *)urlStr{
+    
+    NSArray *compOneArr = [urlStr  componentsSeparatedByString:@"/"];
+    NSArray *compTwoArr = [compOneArr.lastObject  componentsSeparatedByString:@"-"];
+    NSString *totalStr=@"";
+    for( NSString *subStr in compTwoArr){
+        totalStr = [totalStr stringByAppendingString:subStr];
+    }
+    return totalStr;
+}
+
+#pragma - mark 设置cookies
++ (void)cookiesSendValueParame:(NSURL *)urlStr
+{
+  
+    NSHTTPCookie *cookie;
+    NSHTTPCookieStorage *storage = [NSHTTPCookieStorage sharedHTTPCookieStorage];
+    for (cookie in [storage cookies]) {
+        [storage deleteCookie:cookie];
+    }
+    
+    NSURL *cookieHost = urlStr;
+    NSString *userId = @"";
+    NSString *mobileNo = @"";
+    if([CMT_AccountTool accountModel]){
+        userId = [CMT_AccountTool accountModel].userId;
+        mobileNo = [CMT_AccountTool accountModel].mobileNo;
+    }
+    
+    NSDictionary *dic = @{@"userId":userId,@"mobile":mobileNo};
+    [dic enumerateKeysAndObjectsUsingBlock:^(id key, id obj, BOOL *stop) {
+        
+        // 设定 cookie
+        NSHTTPCookie *cookie = [NSHTTPCookie cookieWithProperties:
+                                
+                                [NSDictionary dictionaryWithObjectsAndKeys:
+                                 
+                                 [cookieHost host], NSHTTPCookieDomain,
+                                 
+                                 [cookieHost path], NSHTTPCookiePath,
+                                 
+                                 key,NSHTTPCookieName,
+                                 
+                                 obj,NSHTTPCookieValue,
+                                 
+                                 nil]];
+        
+        [[NSHTTPCookieStorage sharedHTTPCookieStorage] setCookie:cookie];
+        
+    }];
+    
+    CMT_Log(@"设定cookie==%@",[NSHTTPCookieStorage sharedHTTPCookieStorage].cookies);
+    
+}
+
+
+@end

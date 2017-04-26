@@ -1,0 +1,13 @@
+//
+//  CMT_InvestPreViewController.h
+//  CongMingTou
+//
+//  Created by summer on 16/5/11.
+//  Copyright © 2016年 wzh. All rights reserved.
+//
+
+#import "CMT_BaseVIewController.h"
+
+@interface CMT_InvestPreViewController : CMT_BaseVIewController
+@property  (nonatomic, assign) CMTEnterInvestmentPreparationType enterInvestmentPreparationType;
+@end

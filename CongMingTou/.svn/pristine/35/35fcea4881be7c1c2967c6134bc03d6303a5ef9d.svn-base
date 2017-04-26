@@ -1,0 +1,181 @@
+//
+//  BannerViewController.m
+//  CongMingTou
+//
+//  Created by summer on 16/7/6.
+//  Copyright © 2016年 QiYuan. All rights reserved.
+//
+
+#import "BannerViewController.h"
+#import "CMT_LoginViewController.h"
+#import "NJKWebViewProgressView.h"
+#import "NJKWebViewProgress.h"
+
+@interface BannerViewController ()<UMSocialUIDelegate,UIWebViewDelegate, NJKWebViewProgressDelegate>
+{
+    NJKWebViewProgressView *_progressView;
+    NJKWebViewProgress *_progressProxy;
+}
+@property (nonatomic, strong) NSArray *markArray;
+
+@end
+
+@implementation BannerViewController
+
+- (void)viewDidLoad {
+    [super viewDidLoad];
+
+    self.title = self.bannerModel.pageTitle;
+    
+    [self createUIWeb];
+}
+- (void)createUIWeb{
+    
+    _progressProxy = [[NJKWebViewProgress alloc] init];
+    self.webView.delegate = _progressProxy;
+    _progressProxy.webViewProxyDelegate = self;
+    _progressProxy.progressDelegate = self;
+    
+    CGFloat progressBarHeight = 2.f;
+    CGRect navigationBarBounds = self.navigationController.navigationBar.bounds;
+    CGRect barFrame = CGRectMake(0, navigationBarBounds.size.height - progressBarHeight, navigationBarBounds.size.width, progressBarHeight);
+    _progressView = [[NJKWebViewProgressView alloc] initWithFrame:barFrame];
+    _progressView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleTopMargin;
+    self.webView.height =  CMT_ScreenHeight - CMT_NAV_Height;
+
+    NSURLRequest *request =[NSURLRequest requestWithURL:[NSURL URLWithString:self.bannerModel.linkUrl]];
+    [self.webView loadRequest:request];
+}
+
+- (void)viewWillAppear:(BOOL)animated
+{
+    [super viewWillAppear:animated];
+    [self.navigationController.navigationBar addSubview:_progressView];
+}
+
+-(void)viewWillDisappear:(BOOL)animated
+{
+    [super viewWillDisappear:animated];
+    [_progressView removeFromSuperview];
+}
+#pragma mark - NJKWebViewProgressDelegate
+-(void)webViewProgress:(NJKWebViewProgress *)webViewProgress updateProgress:(float)progress
+{
+    [_progressView setProgress:progress animated:YES];
+}
+
+- (void)noNetWorkbtnClicked:(UIButton *)button{
+    
+    [self createUIWeb];
+}
+
+- (BOOL)webView:(UIWebView *)webView shouldStartLoadWithRequest:(NSURLRequest *)request navigationType:(UIWebViewNavigationType)navigationType{
+    
+    if ([request.URL.absoluteString isEqual:@"about:blank"]) {
+        return NO;
+    }
+    
+    [CMT_Tools cookiesSendValueParame:request.URL];//设定cookies传参
+
+    //根据页面url标识判断是否显示分享按钮
+    NSArray *tempArray = [CMT_Tools parsingUrl:request.URL.query];
+    _markArray = tempArray;
+    if ([CMT_Tools isAddWithParsingUrl:request.URL.query]) {
+        self.navigationItem.rightBarButtonItem = [UIBarButtonItem itemWithTitle:@"分享" target:self action:@selector(rightShareBtnClicked:)];
+    }else{
+        self.navigationItem.rightBarButtonItem = nil;
+    }
+    return YES;
+}
+
+- (void)rightShareBtnClicked:(UIButton *)button{
+    NSString *userId = @"";
+    if([CMT_AccountTool accountModel]){
+        userId = [CMT_AccountTool accountModel].userId;
+    }else{
+        userId = @"0";
+    }
+    [self getActivityShareContentWithActivityId:[_markArray lastObject] userId:userId];
+}
+
+- (void)getActivityShareContentWithActivityId:(NSString *)activity userId:(NSString *)userId{
+    [self showHudInView:self.view hint:CMT_LoadDataWaiting];
+    [CMT_ProcessTheDataTool getActivityShareContentWithActivityId:activity userId:userId andBlock:^(CMT_ActivityShareContentModel *model, NSError *error) {
+        [self hideHud];
+        if(!error){
+            if([[NSString stringWithFormat:@"%@",model.status] isEqualToString:@"1"]){
+                
+                if ([model.forceLogin isEqualToString:@"0"]) {
+                    [self setShareContentWithModel:model];
+                }if ([model.forceLogin isEqualToString:@"1"]) {
+                    CMT_LoginViewController *loginVc = [[CMT_LoginViewController alloc]init];
+                    loginVc.enterLoginType = CMTEnterLoginTypeDefaut;
+                    CMT_NavigationController *loginNav = [[CMT_NavigationController alloc]initWithRootViewController:loginVc];
+                    [self presentViewController:loginNav animated:YES completion:nil];
+                }else{
+                    return ;
+                }
+                
+            }else if ([[NSString stringWithFormat:@"%@",model.status] isEqualToString:CMT_SinglePointCode]){
+                [CMT_SinglePointLoginTool addSinglePointLoginWithSelfVC:self];
+            }else{
+                [self showHint:model.msg];
+            }
+        }else{
+            [self showHint:CMT_Error_NotNetWork];
+        }
+    }];
+}
+
+#pragma mark - -设置分享
+- (void)setShareContentWithModel:(CMT_ActivityShareContentModel *)model{
+    __block UIImage *iconImage = nil;
+    [[SDWebImageManager sharedManager] downloadImageWithURL:[NSURL URLWithString:model.imgUrl] options:0 progress:^(NSInteger receivedSize, NSInteger expectedSize){
+        //处理下载进度
+    } completed:^(UIImage *image, NSError *error, SDImageCacheType cacheType, BOOL finished, NSURL *imageURL) {
+        if (error) {//加载失败
+            iconImage = [UIImage imageNamed:@"default_image"];
+        }else{
+            iconImage = image;
+        }
+        // 分享到微信朋友圈
+        [CMT_ShareTool wechatTimelineWithTitle:model.title url:model.linkUrl shareText:model.shareInfo shareImage:iconImage];
+        // 分享到微信好友
+        [CMT_ShareTool wechatSessionWithTitle:model.title url:model.linkUrl shareText:model.shareInfo shareImage:iconImage];
+        //qq好友
+        [CMT_ShareTool qqWithTitle:model.title url:model.linkUrl shareText:model.shareInfo shareImage:iconImage ];
+        //qq空间
+        [CMT_ShareTool qqQzoneWithTitle:model.title url:model.linkUrl shareText:model.shareInfo shareImage:iconImage];
+        [UMSocialSnsService presentSnsIconSheetView:self
+                                             appKey:CMT_UmengAppkey
+                                          shareText:model.shareInfo
+                                         shareImage:iconImage
+                                    shareToSnsNames:[NSArray arrayWithObjects:UMShareToWechatTimeline,UMShareToWechatSession,UMShareToQQ,UMShareToQzone,nil]
+                                           delegate:self];
+        
+    }];
+}
+- (void)didFinishGetUMSocialDataInViewController:(UMSocialResponseEntity *)response{
+    
+}
+-(void)didSelectSocialPlatform:(NSString *)platformName withSocialData:(UMSocialData *)socialData{
+    MySetObjectForKey([NSNumber numberWithInt:1], CMT_Share_key);
+}
+
+
+- (void)didReceiveMemoryWarning {
+    [super didReceiveMemoryWarning];
+    // Dispose of any resources that can be recreated.
+}
+
+/*
+#pragma mark - Navigation
+
+// In a storyboard-based application, you will often want to do a little preparation before navigation
+- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
+    // Get the new view controller using [segue destinationViewController].
+    // Pass the selected object to the new view controller.
+}
+*/
+
+@end

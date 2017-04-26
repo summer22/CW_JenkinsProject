@@ -1,0 +1,276 @@
+//
+//  CMT_LoginBgView.m
+//  CongMingTou
+//
+//  Created by summer on 16/5/13.
+//  Copyright © 2016年 wzh. All rights reserved.
+//
+
+#import "CMT_LoginBgView.h"
+
+@interface CMT_LoginBgView()
+{
+    dispatch_source_t myTimer;
+}
+@property (nonatomic,assign) NSTimeInterval late;
+/** 手机号str */
+@property (nonatomic,copy)NSString *telStr;
+/** 验证码 */
+@property (nonatomic,copy)NSString *yzCodeStr;
+/** 登录按钮 */
+@property (nonatomic,strong)UIButton *loginBtn;
+/** 获取验证码按钮 */
+@property (nonatomic,strong)UIButton *yzBtn;
+
+@end
+@implementation CMT_LoginBgView
+
+- (instancetype)initWithFrame:(CGRect)frame
+{
+    if (self = [super initWithFrame:frame])
+    {
+        [self getSubViews];
+    }
+    return self;
+}
+
+- (void)getSubViews
+{
+    UIImageView *topHeadView = [[UIImageView alloc] initWithFrame:CMT_CGRECTMAKE(0, 0, CMT_ScreenWidth, 199 * CMT_6PERCENTY)];
+    topHeadView.backgroundColor = ThemeBackgroundColor;
+    [self addSubview:topHeadView];
+    
+    UIImageView *iconImgView = [[UIImageView alloc] initWithFrame:CMT_CGRECTMAKE(0, 0, 125 * CMT_6PERCENTY, 55 * CMT_6PERCENTY)];
+    iconImgView.centerX = topHeadView.centerX;
+    iconImgView.centerY = topHeadView.centerY + 32;
+    iconImgView.image = [UIImage imageNamed:@"loginImg"];
+    [topHeadView addSubview:iconImgView];
+    
+    UIView *midBgView = [CMT_Tools getUiviewWithFrame:CMT_CGRECTMAKE(0, topHeadView.bottom + 10 * CMT_6PERCENTY, CMT_ScreenWidth, 108 * CMT_6PERCENTY) BackGroudColor:CommonWhiteColor];
+    [self addSubview:midBgView];
+    
+    NSArray *nameArr = @[@"手机号",@"验证码"];
+    NSArray *placholdArr = @[@"请输入您的手机号",@"请输入短信验证码"];
+    
+    for (int i = 0; i < 3; i++) {
+        
+        CGFloat width = 0.0f;
+        CGFloat textFiledWidth = 0.0f;
+        CGFloat x = 0.0f;
+        
+        if (i < 2) {
+            
+            UILabel *nameLabel = [CMT_Tools getLabel:nameArr[i] textFont:15 viewFrame:CMT_CGRECTMAKE(15, 15 + i*54 * CMT_6PERCENTY, 65 * CMT_6PERCENTY, 25 * CMT_6PERCENTY) textAlignments:NSTextAlignmentLeft textColors:CommonImpTextColor];
+            [midBgView addSubview:nameLabel];
+            
+            if (i == 1) {
+                textFiledWidth = CMT_ScreenWidth - nameLabel.width - 20 - 110 * CMT_6PERCENTY;
+            }else{
+                textFiledWidth = CMT_ScreenWidth - nameLabel.width - 20;
+            }
+            
+            UITextField *inputView = [[UITextField alloc] initWithFrame:CMT_CGRECTMAKE(nameLabel.right + 5, 0, textFiledWidth, 30)];
+            inputView.placeholder = placholdArr[i];
+            inputView.keyboardType = UIKeyboardTypeNumberPad;
+            inputView.clearButtonMode = UITextFieldViewModeWhileEditing;
+            inputView.centerY = nameLabel.centerY;
+            inputView.font = [UIFont systemFontOfSize:14];
+            [inputView addTarget:self action:@selector(phoneTextFiledEdingChanged:) forControlEvents:UIControlEventEditingChanged];
+            inputView.tag = i + 3000;
+            [midBgView addSubview:inputView];
+            
+            if (i == 1) {
+                
+                UIButton *yzBtn = [CMT_Tools getButtonWithFrame:CMT_CGRECTMAKE(CMT_ScreenWidth - 92 * CMT_6PERCENTY - 15, 0, 92 * CMT_6PERCENTY, 32 *CMT_6PERCENTY) BackGroudColor:ThemeBackgroundColor Title:@"获取验证码" TitleColor:customColor(@"#FFFDFC") textFont:12];
+                yzBtn.centerY = inputView.centerY;
+                [yzBtn styteWithCornerRadius:16 * CMT_6PERCENTY shadowColor:ThemeBackgroundColor shadowOffset:CGSizeMake(0, 2) shadowOpacity:0.5 shadowRadius:5];
+                [yzBtn addTarget:self action:@selector(yzBtnClick) forControlEvents:UIControlEventTouchUpInside];
+                [yzBtn addTarget:self action:@selector(yzBtnClickTouchDown) forControlEvents:UIControlEventTouchDown];
+                [yzBtn addTarget:self action:@selector(yzBtnClickDragOutside) forControlEvents:UIControlEventTouchDragOutside];
+                
+                self.yzBtn = yzBtn;
+                [midBgView addSubview:yzBtn];
+                
+            }
+        }
+        
+        if (i == 1) {
+            width = CMT_ScreenWidth - 15;
+            x = 15;
+        }else{
+            width = CMT_ScreenWidth;
+            x = 0;
+        }
+        
+        if (i == 1) {
+            UIView *topLine = [CMT_Tools getUiviewWithFrame:CMT_CGRECTMAKE(x, 54 * CMT_6PERCENTY, width, 0.5) BackGroudColor:CommonLineColor];
+            [midBgView addSubview:topLine];
+        }
+    }
+    
+    UIButton *bottomBtn = [CMT_Tools getButtonWithFrame:CMT_CGRECTMAKE(15, midBgView.bottom + 20, CMT_ScreenWidth - 30, 45 * CMT_6PERCENTY) BackGroudColor:CommonYellowTextColor Title:@"登录" TitleColor:CommonWhiteColor textFont:14];
+    [bottomBtn styteWithCornerRadius:22.5 * CMT_6PERCENTY shadowColor:CommonYellowTextColor shadowOffset:CGSizeMake(0, 2) shadowOpacity:0.5 shadowRadius:5];
+    [bottomBtn setTintColor:CommonWhiteColor];
+    [bottomBtn addTarget:self action:@selector(bottomBtnClick) forControlEvents:UIControlEventTouchUpInside];
+    [bottomBtn addTarget:self action:@selector(bottomBtnTouchDown) forControlEvents:UIControlEventTouchDown];
+    [bottomBtn addTarget:self action:@selector(bottomBtnDragOutside) forControlEvents:UIControlEventTouchDragOutside];
+    
+    bottomBtn.userInteractionEnabled = NO;
+    self.loginBtn = bottomBtn;
+    bottomBtn.alpha = 0.5;
+    [self addSubview:bottomBtn];
+    
+    //注册跳转按钮
+    
+    CGSize toRegisterLabelSize = [CMT_Tools getStrSize:@"没有账号？现在就去" fontSize:14];
+    
+    UILabel *toRegisterLabel = [CMT_Tools getLabel:@"没有账号？现在就去" textFont:14 viewFrame:CMT_CGRECTMAKE(0, bottomBtn.bottom + 25, toRegisterLabelSize.width, 25 * CMT_6PERCENTY) textAlignments:NSTextAlignmentCenter textColors:CommonImpTextColor];
+    toRegisterLabel.centerX = bottomBtn.centerX - 25 *CMT_6PERCENTY;
+    [self addSubview:toRegisterLabel];
+    
+    CGSize toRegisterBtnSize = [CMT_Tools getStrSize:@"安全注册" fontSize:14];
+    UIButton *toRegisterBtn = [CMT_Tools getButtonWithFrame:CMT_CGRECTMAKE(toRegisterLabel.right, 0, toRegisterBtnSize.width, 25 * CMT_6PERCENTY) BackGroudColor:[UIColor clearColor] Title:@"安全注册" TitleColor:CommonYellowTextColor textFont:14];
+    [toRegisterBtn addTarget:self action:@selector(toRegisterBtnClick) forControlEvents:UIControlEventTouchUpInside];
+    toRegisterBtn.centerY = toRegisterLabel.centerY+0.5;
+    [self addSubview:toRegisterBtn];
+}
+- (void)bottomBtnTouchDown
+{
+    self.loginBtn.backgroundColor = CommonLoginBtnTouchDownBackColor;
+}
+
+- (void)bottomBtnDragOutside
+{
+    self.loginBtn.backgroundColor = CommonYellowTextColor;
+}
+
+- (void)yzBtnClickDragOutside
+{
+    self.yzBtn.backgroundColor = ThemeBackgroundColor;
+}
+
+- (void)yzBtnClickTouchDown
+{
+    self.yzBtn.backgroundColor = CommonRegisterBtnTouchDownBackColor;
+}
+
+- (void)phoneTextFiledEdingChanged:(UITextField *)textField
+{
+    UITextField *telTF = (UITextField *)[self viewWithTag:3000];
+    UITextField *yzCodeTF = (UITextField *)[self viewWithTag:3001];
+    
+    self.telStr = telTF.text;
+    self.yzCodeStr = yzCodeTF.text;
+    
+    if (self.telStr.length == 11 && self.yzCodeStr.length > 0) {
+        self.loginBtn.userInteractionEnabled = YES;
+        self.loginBtn.alpha = 1;
+    }else{
+        self.loginBtn.userInteractionEnabled = NO;
+        self.loginBtn.alpha = 0.5;
+    }
+    
+}
+//验证码点击事件
+- (void)yzBtnClick
+{
+    /**
+     *  1、点击事件处理 验证码倒计时
+     *  2、点击传递手机号
+     */
+    UITextField *telTF = (UITextField *)[self viewWithTag:3000];
+    UITextField *yzCodeTF = (UITextField *)[self viewWithTag:3001];
+    
+    [telTF resignFirstResponder];
+    [yzCodeTF resignFirstResponder];
+    
+    self.yzBtn.backgroundColor = ThemeBackgroundColor;
+    
+    if (self.telStr.length == 11) {
+        
+        if (self.myDelegate && [self.myDelegate respondsToSelector:@selector(sendPhoneNum:)]) {
+            [self.myDelegate sendPhoneNum:self.telStr];
+        }
+    }else{
+        [self showHint:@"请输入正确手机号"];
+    }
+}
+#pragma mark - 验证码倒计时
+-(void)startTime{
+    
+    [self setTimerStr];//开始记录当前时间
+    __weak typeof(self) weakself = self;
+    dispatch_queue_t queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
+    dispatch_source_t _timer = dispatch_source_create(DISPATCH_SOURCE_TYPE_TIMER, 0, 0,queue);
+    myTimer = _timer;
+    dispatch_source_set_timer(myTimer,dispatch_walltime(NULL, 0),1.0*NSEC_PER_SEC, 0); //每秒执行
+    dispatch_source_set_event_handler(myTimer, ^{
+        NSInteger timeout = [CMT_Tools returnUploadTime:weakself.late];
+        if(timeout<=0){
+            dispatch_source_cancel(myTimer);
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [weakself.yzBtn setTitle:@"获取验证码" forState:UIControlStateNormal];
+                weakself.yzBtn.alpha = 1;
+                weakself.yzBtn.userInteractionEnabled = YES;
+            });
+        }else{
+            NSInteger seconds = timeout;
+            NSString *strTime = [NSString stringWithFormat:@"%lds", (long)seconds];
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [weakself.yzBtn setTitle:[NSString stringWithFormat:@"%@后重发",strTime] forState:UIControlStateNormal];
+                weakself.yzBtn.alpha = 0.5;
+                weakself.yzBtn.userInteractionEnabled = NO;
+            });
+        }
+    });
+    dispatch_resume(myTimer);
+}
+
+- (void)destroyTimer{
+    if (myTimer) {
+        dispatch_source_cancel(myTimer);
+        myTimer = nil;
+        [self.yzBtn setTitle:@"获取验证码" forState:UIControlStateNormal];
+        self.yzBtn.alpha = 1;
+        self.yzBtn.userInteractionEnabled = YES;
+    }
+}
+
+- (void)dealloc{
+    [self destroyTimer];
+}
+
+//记录开始倒计时的时间
+- (void)setTimerStr{
+    NSDate* dat = [NSDate dateWithTimeIntervalSinceNow:0];
+    NSTimeInterval late = [dat timeIntervalSince1970]*1;
+    self.late = late;
+}
+
+//登录点击事件
+- (void)bottomBtnClick
+{
+    UITextField *telTF = (UITextField *)[self viewWithTag:3000];
+    UITextField *yzCodeTF = (UITextField *)[self viewWithTag:3001];
+    
+    [telTF resignFirstResponder];
+    [yzCodeTF resignFirstResponder];
+    
+    self.loginBtn.backgroundColor = CommonYellowTextColor;
+    
+    if (self.myDelegate && [self.myDelegate respondsToSelector:@selector(sendPhoneNum:yzNum:)]) {
+        [self.myDelegate sendPhoneNum:self.telStr yzNum:self.yzCodeStr];
+    }
+}
+
+//安全注册点击事件
+- (void)toRegisterBtnClick
+{
+    [self destroyTimer];
+    
+    if (self.myDelegate && [self.myDelegate respondsToSelector:@selector(toJumpRegisterVc)]) {
+        [self.myDelegate toJumpRegisterVc];
+    }
+}
+
+@end

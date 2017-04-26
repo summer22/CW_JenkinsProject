@@ -1,0 +1,13 @@
+//
+//  CMT_MyInTheHoldInvestmentModel.m
+//  CongMingTou
+//
+//  Created by wzh on 16/5/20.
+//  Copyright © 2016年 QiYuan. All rights reserved.
+//
+
+#import "CMT_MyInTheHoldInvestmentModel.h"
+
+@implementation CMT_MyInTheHoldInvestmentModel
+
+@end

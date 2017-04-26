@@ -1,0 +1,327 @@
+//
+//  CMT_MyViewController.m
+//  CongMingTou
+//
+//  Created by wzh on 16/5/10.
+//  Copyright © 2016年 wzh. All rights reserved.
+//
+
+#import "CMT_MyViewController.h"
+#import "CMT_ChongZhIAndTiXIanViewController.h"
+#import "CMT_MyWelfareViewController.h"
+#import "CMT_SecondInvestPreViewController.h"
+#import "CMT_MessageViewController.h"
+#import "CMT_JiaoYiJiLuViewController.h"
+#import "CMT_RegisteredViewController.h"
+#import "CMT_MySetViewController.h"
+#import "CMT_CapitalSubsidiaryViewController.h"
+#import "CMT_TotalAssetsASubsidiaryViewController.h"
+#import "CMT_InvestPreViewController.h"
+
+#import "CMT_MyInvestmentViewController.h"
+@interface CMT_MyViewController (){
+    UIButton *_leftItemBtn;
+    CMT_MyInforModel *_inforModel;
+}
+
+@property (weak, nonatomic) IBOutlet UIScrollView *backScrollView;
+@property (strong, nonatomic) IBOutlet UIView *backView;
+
+//昨日收益金额
+@property (weak, nonatomic) IBOutlet UILabel *earningsYesterdayTitleLab;
+//累计收益金额
+@property (weak, nonatomic) IBOutlet UILabel *accumulatedEarningsTitleLab;
+//总资产
+@property (weak, nonatomic) IBOutlet UILabel *totalAssetsLab;
+//可用余额
+@property (weak, nonatomic) IBOutlet UILabel *availableBalanceLab;
+//充值按钮
+@property (weak, nonatomic) IBOutlet UIButton *congZhiBtn;
+@property (strong, nonatomic) IBOutlet UIButton *chongZhiEffectBtn;
+//提现按钮
+@property (weak, nonatomic) IBOutlet UIButton *tiXianBtn;
+@property (strong, nonatomic) IBOutlet UIButton *tiXianEffectBtn;
+//我的福利图片
+@property (weak, nonatomic) IBOutlet UIImageView *woDeFuLiImageView;
+//我的投资图片
+@property (weak, nonatomic) IBOutlet UIImageView *woDeTouZIImageView;
+//交易记录土图片
+@property (weak, nonatomic) IBOutlet UIImageView *jiaoYiJiLuImageView;
+@property (strong, nonatomic) IBOutlet UIButton *woDeFuLiBtn;
+@property (strong, nonatomic) IBOutlet UIButton *jiYiJiLuBtn;
+@property (strong, nonatomic) IBOutlet UILabel *woDeTouZiBtn;
+@property (strong, nonatomic) IBOutlet UIView *midView;
+
+//适配6p和6ps用
+@property (strong, nonatomic) IBOutlet NSLayoutConstraint *topViewH;
+@property (strong, nonatomic) IBOutlet NSLayoutConstraint *topViewInternalTopY;
+@property (strong, nonatomic) IBOutlet NSLayoutConstraint *midViewH;
+@property (strong, nonatomic) IBOutlet NSLayoutConstraint *midViewInTernalTopY;
+@property (strong, nonatomic) IBOutlet NSLayoutConstraint *chongZhiAndTiXianBottomY;
+@property (strong, nonatomic) IBOutlet NSLayoutConstraint *chongZhiANdTIXianTopY;
+@property (strong, nonatomic) IBOutlet NSLayoutConstraint *itemViewTopY;
+@property (strong, nonatomic) IBOutlet NSLayoutConstraint *itemViewH;
+@property (strong, nonatomic) IBOutlet NSLayoutConstraint *itemVIewInternalH;
+@property (strong, nonatomic) IBOutlet NSLayoutConstraint *itemViewInternalTopY;
+//分割线View
+@property (strong, nonatomic) IBOutlet UIView *leftLineView;
+@property (strong, nonatomic) IBOutlet UIView *midLineView;
+@property (strong, nonatomic) IBOutlet UIView *rightLineView;
+
+@end
+
+@implementation CMT_MyViewController
+
+- (void)viewWillAppear:(BOOL)animated{
+    [super viewWillAppear:animated];
+    if([CMT_AccountTool accountModel]){
+        [self loadDataUserInforWithUserId:[CMT_AccountTool accountModel].userId];
+    }
+
+}
+- (void)viewDidLoad {
+    [super viewDidLoad];
+    // Do any additional setup after loading the view from its nib.
+    //设置导航
+    [self setupNav];
+    
+    //神策数据 －－ 用户属性
+    SensorsAnalyticsSDK *sdk = [SensorsAnalyticsSDK sharedInstance];
+    CMT_AccountModel *accountModel = [CMT_AccountTool accountModel];
+
+    if (sdk != nil) {
+        [sdk track:@"people" withProperties:
+         @{@"distinctId": [NSString convertNull:[CMT_AnalyticsTool userID]],
+           @"phoneNumber": [NSString convertNull:accountModel.mobileNo]}];
+    }
+    
+    [_backScrollView addSubview:_backView];
+
+    _congZhiBtn.exclusiveTouch = YES;
+    _tiXianBtn.exclusiveTouch = YES;
+    _woDeFuLiBtn.exclusiveTouch = YES;
+    _jiYiJiLuBtn.exclusiveTouch = YES;
+    _woDeTouZiBtn.exclusiveTouch = YES;
+}
+/**
+ *  设置导航栏内容
+ */
+- (void)setupNav
+{
+     _leftItemBtn = [UIButton buttonWithType:UIButtonTypeCustom];
+    [_leftItemBtn addTarget:self action:@selector(messageClicked:) forControlEvents:UIControlEventTouchUpInside];
+    [_leftItemBtn setBackgroundImage:[UIImage imageNamed:@"My_Message_Nav"] forState:UIControlStateNormal];
+    _leftItemBtn.size = _leftItemBtn.currentBackgroundImage.size;
+    UIBarButtonItem *leftItem = [[UIBarButtonItem alloc]initWithCustomView:_leftItemBtn];
+    self.navigationItem.leftBarButtonItem = leftItem;
+    
+    // 左右的按钮
+    self.navigationItem.rightBarButtonItem = [UIBarButtonItem itemWithImageName:@"My_Right_Nav" target:self action:@selector(setClicked:)];
+}
+
+
+
+
+#pragma mark -- 消息点击事件
+- (void)messageClicked:(UIButton *)button{
+    CMT_Log(@"点击了消息") ;
+    CMT_MessageViewController *messageVC = [[CMT_MessageViewController alloc]init];
+    [self.navigationController pushViewController: messageVC animated:YES];
+}
+
+- (void)setClicked:(UIButton *)butotn{
+    CMT_Log(@"点击了设置") ;
+    CMT_MySetViewController *setVc = [[CMT_MySetViewController alloc]init];
+    [self.navigationController pushViewController: setVc animated:YES];
+//    CMT_RegisteredViewController *vc = [[CMT_RegisteredViewController alloc]init];
+//    [self.navigationController pushViewController: vc animated:YES];
+
+}
+//充值按钮点击
+- (IBAction)chongZhiBtnClicked:(UIButton *)sender {
+    CMT_Log(@"点击了充值按钮") ;
+    if( [[CMT_AccountTool accountModel].realNameState isEqualToString:@"0"]){
+        CMT_InvestPreViewController *investPreViewVC = [[CMT_InvestPreViewController alloc]init];
+        investPreViewVC.enterInvestmentPreparationType = CMTEnterInvestmentPreparationTypeChongZhi;
+        [self.navigationController pushViewController:investPreViewVC animated:YES];
+
+    }else{
+        CMT_ChongZhIAndTiXIanViewController *chongZhiVc = [[CMT_ChongZhIAndTiXIanViewController alloc]init];
+        chongZhiVc.enterType = EnterTypeChongZhiType;
+        [self.navigationController pushViewController:chongZhiVc animated:YES];
+    }
+}
+
+
+//提现按钮点击
+- (IBAction)tiXianBtnClicked:(UIButton *)sender{
+    sender.layer.masksToBounds = YES;
+    CMT_Log(@"点击了提现按钮") ;
+    if([[CMT_AccountTool accountModel].realNameState isEqualToString:@"0"]){
+        CMT_InvestPreViewController *investPreViewVC = [[CMT_InvestPreViewController alloc]init];
+        investPreViewVC.enterInvestmentPreparationType = CMTEnterInvestmentPreparationTypeTiXian;
+        [self.navigationController pushViewController:investPreViewVC animated:YES];
+        
+    }else{
+        CMT_ChongZhIAndTiXIanViewController *tiXianVc = [[CMT_ChongZhIAndTiXIanViewController alloc]init];
+        tiXianVc.enterType = EnterTypeTiXianType;
+        [self.navigationController pushViewController:tiXianVc animated:YES];
+    }
+}
+
+//我的福利按钮点击
+- (IBAction)woDeFuLiBtnClicked:(UIButton *)sender {
+    CMT_Log(@"点击了我的福利按钮") ;
+    CMT_MyWelfareViewController *myWelfareVC = [[CMT_MyWelfareViewController alloc]init];
+    myWelfareVC.enterMyWelfareType = CMTEnterMyWelfareTypeBrowseAllList;
+    [self.navigationController pushViewController: myWelfareVC animated:YES];
+}
+
+//我的投资按钮点击
+- (IBAction)woDeTouZiBtnClicked:(UIButton *)sender {
+    CMT_Log(@"点击了我的投资按钮") ;
+    CMT_MyInvestmentViewController *myInvestmentVC = [[CMT_MyInvestmentViewController alloc]init];
+    [self.navigationController pushViewController: myInvestmentVC animated:YES];
+}
+
+
+
+//交易记录按钮点击
+- (IBAction)jiaoYiJiLuBtnClcied:(UIButton *)sender {
+    CMT_Log(@"点击了交易记录按钮") ;
+    CMT_JiaoYiJiLuViewController *jiaoYiJiLuVc = [[CMT_JiaoYiJiLuViewController alloc]init];
+    [self.navigationController pushViewController: jiaoYiJiLuVc animated:YES];
+}
+
+
+
+//资金明细
+- (IBAction)returnsDetailedBtnClicked:(id)sender{
+    CMT_CapitalSubsidiaryViewController *capitalSubsidiaryVC = [[CMT_CapitalSubsidiaryViewController alloc]init];
+    capitalSubsidiaryVC.title = @"收益明细";    
+    capitalSubsidiaryVC.daiShouShouYiStr = _inforModel.waitincome;
+    capitalSubsidiaryVC.totalShouYiStr = _inforModel.totalincome;
+    capitalSubsidiaryVC.yiShouShouYiStr = _inforModel.alreadyincome;
+    [self.navigationController pushViewController:capitalSubsidiaryVC animated:YES];
+}
+
+
+- (IBAction)totalAssetsSubsidiaryBtnClicked:(UIButton *)sender {
+    _midView.backgroundColor = [UIColor whiteColor];
+    CMT_TotalAssetsASubsidiaryViewController *totalAssetsASubsidiaryVC = [[CMT_TotalAssetsASubsidiaryViewController alloc]init];
+    totalAssetsASubsidiaryVC.totalAssetsUrl = _inforModel.totalAssetsUrl;
+    [self.navigationController pushViewController:totalAssetsASubsidiaryVC animated:YES];
+}
+- (IBAction)totalAssetsSubsidiaryTouchDragOutside:(id)sender {
+    _midView.backgroundColor = [UIColor whiteColor];
+}
+- (IBAction)totalAssetsSubsidiaryTouchDown:(id)sender {
+    _midView.backgroundColor = CommonBgColor;
+}
+- (IBAction)totalAssetsSubsidiaryTouchCancel:(id)sender {
+    _midView.backgroundColor = [UIColor whiteColor];
+}
+
+
+
+
+#pragma mark -- 加载数据
+- (void)loadDataUserInforWithUserId:(NSString *)userId{
+    [self showHudInView:self.view hint:CMT_LoadDataWaiting];
+    [CMT_ProcessTheDataTool getMyUserInforWithUserId:userId andBlock:^(CMT_MyInforModel *inforModel, NSError *error) {
+        [self hideHud];
+        if(!error){
+            if([[NSString stringWithFormat:@"%@",inforModel.status] isEqualToString:@"1"]){
+                [self setUILoadDataWithModel:inforModel];
+                _inforModel= inforModel;
+//                MySetObjectForKey(inforModel.balance, YongHuYuEKey);
+            }else if ([[NSString stringWithFormat:@"%@",inforModel.status] isEqualToString:CMT_SinglePointCode]){
+                [CMT_SinglePointLoginTool addSinglePointLoginWithSelfVC:self];
+            }else{
+                [self showHint:inforModel.msg];
+
+            }
+        }else{
+            [self showHint:CMT_Error_NotNetWork];
+        }
+    }];
+}
+- (void)setUILoadDataWithModel:(CMT_MyInforModel *)model{
+    NSString *zuorishouyiStr = [NSString stringWithFormat:@"%@",model.yesterday];
+    NSString *leijishouyiStr = [NSString stringWithFormat:@"%@",model.addUp];
+    NSString *strzongZichan = [NSString stringWithFormat:@"%@",model.totalAssets];
+    NSString *strKetYong = [NSString stringWithFormat:@"%@",model.balance];
+    NSString *yuanStr = @"元";
+    //昨日收益
+    NSString *earningsYesterdayStr = [NSString stringWithFormat:@"%@%@",zuorishouyiStr,yuanStr];
+    //累计收益
+    NSString *accumulatedEarningsStr = [NSString stringWithFormat:@"%@%@",leijishouyiStr,yuanStr];
+    //总资产
+    NSString *zongZiChanStr = [NSString stringWithFormat:@"%@%@",strzongZichan,yuanStr];
+    //可用余额
+    NSString *keYongYuEStr = [NSString stringWithFormat:@"%@%@",strKetYong,yuanStr];
+    
+    self.earningsYesterdayTitleLab.attributedText = [NSMutableAttributedString attributeWithTotalStr:earningsYesterdayStr subStr:yuanStr subStrFont:UIFont28];
+    self.accumulatedEarningsTitleLab.attributedText = [NSMutableAttributedString attributeWithTotalStr:accumulatedEarningsStr subStr:yuanStr subStrFont:UIFont20];
+    self.totalAssetsLab.attributedText = [NSMutableAttributedString attributeWithTotalStr:zongZiChanStr subStr:yuanStr subStrFont:UIFont20 andSubStrColor:[CMT_Tools colorWithHexString:@"#34495e"] ];
+    self.availableBalanceLab.attributedText = [NSMutableAttributedString attributeWithTotalStr:keYongYuEStr subStr:yuanStr subStrFont:UIFont20 andSubStrColor:[CMT_Tools colorWithHexString:@"#34495e"]];
+    
+    if([model.newsCount intValue] > 0){
+        [_leftItemBtn setBackgroundImage:[UIImage imageNamed:@"My_Message_Nav_new"] forState:UIControlStateNormal];
+    }else{
+        [_leftItemBtn setBackgroundImage:[UIImage imageNamed:@"My_Message_Nav"] forState:UIControlStateNormal];
+    }
+
+}
+
+#pragma mark -- 设置frame
+- (void)viewDidLayoutSubviews{
+    if(CMT_6pAnd6ps){
+        _topViewH.constant = CMT_ProportionX *158;
+        _topViewInternalTopY.constant = CMT_ProportionX *8;
+        _midViewH.constant = CMT_ProportionX * 77;
+        _midViewInTernalTopY.constant = CMT_ProportionX *20;
+        _chongZhiANdTIXianTopY.constant = CMT_ProportionX *20;
+        _chongZhiAndTiXianBottomY.constant = CMT_ProportionX *20;
+        _itemViewTopY.constant = CMT_ProportionX *85;
+        _itemViewH.constant = CMT_ProportionX *110;
+        _itemVIewInternalH.constant = CMT_ProportionY *28;
+        _itemViewInternalTopY.constant = CMT_ProportionY *30;
+    }
+    _leftLineView.width = 0.5;
+    _rightLineView.width = 0.5;
+    _midLineView.width = 0.5;
+    _backScrollView.showsVerticalScrollIndicator = NO;
+    _backScrollView.frame  =CGRectMake(0, 0, CMT_ScreenWidth, CMT_ScreenHeight - CMT_NAV_Height);
+    _backView.frame = CGRectMake(0, 0, CMT_ScreenWidth, 550);
+    _backScrollView.contentSize = CGSizeMake(CMT_ScreenWidth,CGRectGetMaxY(_backView.frame));
+    //设置充值按钮
+    [_congZhiBtn styleWithCornerRadius:_congZhiBtn.height/2];
+    _congZhiBtn.layer.masksToBounds = YES;
+    [_chongZhiEffectBtn setBackgroundColor:CommonBgColor];
+    [_chongZhiEffectBtn styteWithCornerRadius:_chongZhiEffectBtn.height / 2 shadowColor:ThemeBackgroundColor shadowOffset:CMT_ShadowOffset shadowOpacity:CMT_ShadowOpacity shadowRadius:CMT_ShadowRadius];
+    //设置提现按钮
+    [_tiXianBtn styleWithCornerRadius:_tiXianBtn.height / 2];
+    _tiXianBtn.layer.masksToBounds = YES;
+    [_tiXianEffectBtn setBackgroundColor:CommonBgColor];
+    [_tiXianEffectBtn styteWithCornerRadius:_tiXianBtn.height / 2 shadowColor:ThemeBackgroundColor shadowOffset:CMT_ShadowOffset shadowOpacity:0.15 shadowRadius:CMT_ShadowRadius];
+
+}
+
+- (void)didReceiveMemoryWarning {
+    [super didReceiveMemoryWarning];
+    // Dispose of any resources that can be recreated.
+}
+
+/*
+#pragma mark - Navigation
+
+// In a storyboard-based application, you will often want to do a little preparation before navigation
+- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
+    // Get the new view controller using [segue destinationViewController].
+    // Pass the selected object to the new view controller.
+}
+*/
+
+
+@end

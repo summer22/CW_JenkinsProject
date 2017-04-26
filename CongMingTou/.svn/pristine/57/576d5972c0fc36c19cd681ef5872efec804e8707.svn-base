@@ -1,0 +1,127 @@
+//
+//  CMT_makeSureMaskView.m
+//  CongMingTou
+//
+//  Created by summer on 16/5/25.
+//  Copyright © 2016年 QiYuan. All rights reserved.
+//
+
+#import "CMT_makeSureMaskView.h"
+#import "AppDelegate.h"
+
+@interface CMT_makeSureMaskView()
+/** 投资 */
+@property (nonatomic,strong) UIView *bgView;
+/** 预约金额 */
+@property (nonatomic,strong)UILabel * availableBalanceLabel;
+/** 预期收益 */
+@property (nonatomic,strong)UILabel *expectedGet;
+/** 确认预约btn */
+@property (nonatomic,strong)UIButton *makeSureBtn;
+@end
+
+@implementation CMT_makeSureMaskView
+
+- (instancetype)initWithFrame:(CGRect)frame
+{
+    if (self = [super initWithFrame:frame])
+    {
+        [self creatSubView];
+        self.backgroundColor = CMT_RGBACOLOR(0.2392, 0.1333, 0.1294, 0.5);
+        
+    }
+    return self;
+}
+
+- (void)creatSubView
+{
+    UIButton *button = [UIButton buttonWithType:UIButtonTypeCustom];
+    button.backgroundColor = [UIColor clearColor];
+    button.frame = CMT_CGRECTMAKE(0, 0, CMT_ScreenWidth,CMT_ScreenHeight - 190 * CMT_6PERCENTY);
+    [button addTarget:self action:@selector(hideBtnClick) forControlEvents:UIControlEventTouchUpInside];
+    [self addSubview:button];
+
+    //控件的父view
+    UIView *bgView = [CMT_Tools getUiviewWithFrame:CMT_CGRECTMAKE(0, CMT_ScreenHeight - 190 * CMT_6PERCENTY, CMT_ScreenWidth, 190 * CMT_6PERCENTY) BackGroudColor:CommonWhiteColor];
+    self.bgView = bgView;
+    [self addSubview:bgView];
+    
+    UILabel *topLable  = [CMT_Tools getLabel:@"您所持有的标只支持本金预约" textFont:14 viewFrame:CMT_CGRECTMAKE(15 * CMT_6PERCENTY, 10 * CMT_6PERCENTY, CMT_ScreenWidth - 30 * CMT_6PERCENTY, 20 * CMT_6PERCENTY) textAlignments:NSTextAlignmentLeft textColors:CommonImpTextColor];
+    [bgView addSubview:topLable];
+    
+    //线条
+    UIView *oneLine = [CMT_Tools getUiviewWithFrame:CMT_CGRECTMAKE(15 * CMT_6PERCENTY, 40 * CMT_6PERCENTY, CMT_ScreenWidth - 15 * CMT_6PERCENTY, 0.5) BackGroudColor:CommonLineColor];
+    [bgView addSubview:oneLine];
+    
+    //预约金额文字
+    CGSize bottomRightLableSize = [CMT_Tools getStrSize:@"100,000.00.00元" fontSize:15];
+    UILabel *bottomLeftLable  = [CMT_Tools getLabel:@"预约金额:" textFont:14 viewFrame:CMT_CGRECTMAKE(15 * CMT_6PERCENTY, oneLine.bottom + 10 * CMT_6PERCENTY, bottomRightLableSize.width, 20 * CMT_6PERCENTY) textAlignments:NSTextAlignmentLeft textColors:CommonImpTextColor];
+    [bgView addSubview:bottomLeftLable];
+    
+    //预约金额
+    UILabel *bottomRightLable  = [CMT_Tools getLabel:@"10,000.00元" textFont:14 viewFrame:CMT_CGRECTMAKE(bgView.width - bottomRightLableSize.width - 15 * CMT_6PERCENTY, 0, bottomRightLableSize.width, bottomRightLableSize.height) textAlignments:NSTextAlignmentRight textColors:CommonYellowTextColor];
+    bottomRightLable.centerY = bottomLeftLable.centerY;
+    self.availableBalanceLabel = bottomRightLable;
+    [bgView addSubview:bottomRightLable];
+    
+     //线条
+    UIView *twoLine = [CMT_Tools getUiviewWithFrame:CMT_CGRECTMAKE(15 * CMT_6PERCENTY, 80 * CMT_6PERCENTY, CMT_ScreenWidth - 15 * CMT_6PERCENTY, 0.5) BackGroudColor:CommonLineColor];
+    [bgView addSubview:twoLine];
+    
+    //预期收益
+    UILabel *LeftLable  = [CMT_Tools getLabel:@"预期收益:" textFont:14 viewFrame:CMT_CGRECTMAKE(15 * CMT_6PERCENTY, twoLine.bottom + 10 * CMT_6PERCENTY, bottomRightLableSize.width, 20 * CMT_6PERCENTY) textAlignments:NSTextAlignmentLeft textColors:CommonImpTextColor];
+    [bgView addSubview:LeftLable];
+    
+    //预期收益额度
+    UILabel *expectGetLable  = [CMT_Tools getLabel:@"00.00元" textFont:14 viewFrame:CMT_CGRECTMAKE(CMT_ScreenWidth - 15 * CMT_6PERCENTY -  180 * CMT_6PERCENTY, 0, 180 * CMT_6PERCENTY, LeftLable.height)  textAlignments:NSTextAlignmentRight textColors:CommonYellowTextColor];
+    expectGetLable.centerY = LeftLable.centerY;
+    self.expectedGet = expectGetLable;
+    [bgView addSubview:expectGetLable];
+    
+    UIView *threeLine = [CMT_Tools getUiviewWithFrame:CMT_CGRECTMAKE(0, 129 * CMT_6PERCENTY, CMT_ScreenWidth, 0.5) BackGroudColor:CommonLineColor];
+    [bgView addSubview:threeLine];
+    
+    UIButton *rightBtn = [CMT_Tools getButtonWithFrame:CMT_CGRECTMAKE(15 * CMT_6PERCENTY, threeLine.bottom + 15 * CMT_6PERCENTY, CMT_ScreenWidth - 30 * CMT_6PERCENTY, 38 * CMT_6PERCENTY) BackGroudColor:CommonYellowTextColor Title:@"确认预约" TitleColor:CommonWhiteColor textFont:15];
+    [rightBtn styteWithCornerRadius:19 shadowColor:CommonYellowTextColor shadowOffset:CGSizeMake(0, 2) shadowOpacity:0.5 shadowRadius:5];
+    [rightBtn addTarget:self action:@selector(rightBtnClick:) forControlEvents:UIControlEventTouchUpInside];
+    [bgView addSubview:rightBtn];
+    
+}
+
+- (void)hideBtnClick
+{
+    [self removeSelf];
+}
+
+- (void)removeSelf
+{
+    [self removeFromSuperview];
+}
+
++ (void)showWithDelegate:(id)target appointmentCount:(NSString *) appointmentNumStr apr:(NSString *)aprStr addPercent:(NSString *)percentStr investDay:(NSString *)days startInvestAmountStr:(NSString *)startInvestAmount;
+{
+    CMT_makeSureMaskView *pmakeSureMaskView = [[CMT_makeSureMaskView alloc] initWithFrame:CMT_CGRECTMAKE(0, 0, CMT_ScreenWidth, CMT_ScreenHeight)];
+    pmakeSureMaskView.delegate = target;
+    //预约金额
+    pmakeSureMaskView.availableBalanceLabel.text = [NSString stringWithFormat:@"%@元",appointmentNumStr];
+     pmakeSureMaskView.expectedGet.text = [CMT_Tools apr:[aprStr floatValue] addPercent:[percentStr floatValue] amount:[appointmentNumStr floatValue] investDay:[days integerValue]];
+    
+    AppDelegate *appDel = (AppDelegate *)[UIApplication sharedApplication].delegate;
+    [appDel.window addSubview:pmakeSureMaskView];
+    
+    //计算预期收益
+    pmakeSureMaskView.expectedGet.text = [CMT_Tools apr:0.125 addPercent:0.05 amount:[appointmentNumStr floatValue] investDay:90];
+
+}
+
+#pragma mark -- 确认预约点击事件
+- (void)rightBtnClick:(UIButton *)sender
+{
+    CMT_Log(@"预约点击事件");
+    if (self.delegate && [self.delegate respondsToSelector:@selector(makeSureBtnClick)]) {
+        [self.delegate makeSureBtnClick];
+    }
+    
+    [self removeSelf];
+}
+@end

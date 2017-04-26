@@ -1,0 +1,50 @@
+//
+//  CMT_LookContractViewController.m
+//  CongMingTou
+//
+//  Created by wzh on 16/6/8.
+//  Copyright © 2016年 QiYuan. All rights reserved.
+//
+
+#import "CMT_LookContractViewController.h"
+
+@interface CMT_LookContractViewController ()
+
+@end
+
+@implementation CMT_LookContractViewController
+
+- (void)viewDidLoad {
+    [super viewDidLoad];
+    // Do any additional setup after loading the view from its nib.
+    [self createUIWeb];
+    self.title = @"电子签章合同";
+}
+- (void)createUIWeb{
+    //    self.webView.height =  CMT_ScreenHeight - CMT_NAV_Height - CMT_TAB_Height;
+//    NSString *urlStr = [NSString stringWithFormat:@"%@%@%@-%@.htm",CMT_H5SERVEr_URL,CMT_ChectContractVC,_model.investId,_model.period];
+    CMT_Log(@"%@",_contractUrl);
+    NSURLRequest *request =[NSURLRequest requestWithURL:[NSURL URLWithString:_contractUrl]];
+    [self.webView loadRequest:request];
+}
+- (void)noNetWorkbtnClicked:(UIButton *)button{
+    [self createUIWeb];
+}
+- (void)didReceiveMemoryWarning {
+    [super didReceiveMemoryWarning];
+    // Dispose of any resources that can be recreated.
+}
+
+
+//{investId}-{period}.htm
+/*
+#pragma mark - Navigation
+
+// In a storyboard-based application, you will often want to do a little preparation before navigation
+- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
+    // Get the new view controller using [segue destinationViewController].
+    // Pass the selected object to the new view controller.
+}
+*/
+
+@end

@@ -1,0 +1,46 @@
+//
+//  CMT_BottomBankLogoView.m
+//  CongMingTou
+//
+//  Created by wzh on 16/5/21.
+//  Copyright © 2016年 QiYuan. All rights reserved.
+//
+
+#import "CMT_BottomBankLogoView.h"
+
+@implementation CMT_BottomBankLogoView
+
+- (instancetype)initWithFrame:(CGRect)frame{
+    if(self = [super initWithFrame:frame]){
+
+        [self setUI];
+    }
+    return self;
+}
+
+- (instancetype)initWithCoder:(NSCoder *)aDecoder{
+    
+    if (self = [super initWithCoder:aDecoder]) {
+        
+        [self setUI];
+    }
+    
+    return self;
+}
+
+- (void)setUI{
+    [[NSBundle mainBundle] loadNibNamed:@"CMT_BottomBankLogoView" owner:self options:nil];
+    [self addSubview:self.view];
+
+}
+
+- (void)layoutSubviews{
+    [super layoutSubviews];
+    [self sendSubviewToBack:self.view];
+    self.view.frame = self.bounds; //填一下自动布局的坑！最好要写这一句
+    self.inforLab.text = [NSString stringWithFormat:@"%@",CMT_BottomBankInfor];
+    NSLog(@"%@",NSStringFromCGRect(self.view.frame));
+
+}
+
+@end

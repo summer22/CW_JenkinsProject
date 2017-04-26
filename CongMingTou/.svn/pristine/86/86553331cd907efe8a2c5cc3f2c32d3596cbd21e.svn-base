@@ -1,0 +1,20 @@
+//
+//  CMT_BannerModel.h
+//  CongMingTou
+//
+//  Created by summer on 16/9/9.
+//  Copyright © 2016年 QiYuan. All rights reserved.
+//
+
+#import <Foundation/Foundation.h>
+
+@interface CMT_BannerModel : NSObject
+/**活动链接 */
+@property (nonatomic,copy)NSString *linkUrl;
+/** 活动标题 */
+@property (nonatomic,copy)NSString *pageTitle;
+/** 图片链接 */
+@property (nonatomic,copy)NSString *bannerImgUrl;
+/** 是否强制登录 */
+@property (nonatomic,copy)NSString *forceLogin;
+@end

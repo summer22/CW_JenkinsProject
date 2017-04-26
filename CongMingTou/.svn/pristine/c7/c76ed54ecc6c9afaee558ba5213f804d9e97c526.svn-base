@@ -1,0 +1,81 @@
+//
+//  CMT_detileTableViewCell.m
+//  CongMingTou
+//
+//  Created by summer on 16/5/12.
+//  Copyright © 2016年 wzh. All rights reserved.
+//
+
+#import "CMT_detileTableViewCell.h"
+@interface CMT_detileTableViewCell()
+
+@property (weak, nonatomic) IBOutlet UILabel *titleLabel;
+@property (weak, nonatomic) IBOutlet UILabel *contentLabel;
+@property (weak, nonatomic) IBOutlet UILabel *lineView;
+@property (weak, nonatomic) IBOutlet NSLayoutConstraint *lineConHeight;
+
+@end
+@implementation CMT_detileTableViewCell
+
+- (void)awakeFromNib {
+    // Initialization code
+    self.titleLabel.textColor = CommonGrayTextColor;
+    self.contentLabel.textColor = CommonImpTextColor;
+    self.lineConHeight.constant = 0.5;
+}
+
++ (CMT_detileTableViewCell *)cellWithTablebView:(UITableView *)tableView indexPath:(NSIndexPath *)index{
+    static NSString *indent = @"CMT_detileTableViewCell";
+    [tableView registerNib:[UINib nibWithNibName:@"CMT_detileTableViewCell" bundle:nil] forCellReuseIdentifier:indent];
+    CMT_detileTableViewCell  *cell = [tableView dequeueReusableCellWithIdentifier:indent];
+    cell.lineView.backgroundColor = CommonLineColor;
+    return cell;
+}
+
+//数据源处理
+- (void)setModel:(CMT_ProductDetModel *)model dataArr:(NSArray *)dataSourceArr index:(NSInteger)row
+{
+    self.titleLabel.text = dataSourceArr[row];
+    switch (row) {
+        case 0:
+        {
+            self.contentLabel.text = [NSString stringWithFormat:@"%@元",model.amount];
+            break;
+        }
+        case 1:
+        {
+            self.contentLabel.text = [NSString stringWithFormat:@"%@元",model.minInvestAmount];
+            break;
+        }
+        case 2:
+        {
+            self.contentLabel.text = [NSString stringWithFormat:@"%@天",model.period];
+            break;
+        }
+        case 3:
+        {
+            self.contentLabel.text = model.repayType;
+            break;
+        }
+        case 4:
+        {
+            self.contentLabel.text = @"今日计息";
+            break;
+        }
+        case 5:
+        {
+            self.contentLabel.text = model.endDate;
+            break;
+        }
+        default:
+            break;
+    }
+}
+
+- (void)setSelected:(BOOL)selected animated:(BOOL)animated {
+    [super setSelected:selected animated:animated];
+
+    // Configure the view for the selected state
+}
+
+@end

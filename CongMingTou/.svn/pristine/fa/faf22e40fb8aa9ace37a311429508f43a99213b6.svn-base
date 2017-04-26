@@ -1,0 +1,13 @@
+//
+//  CMT_CreditorModel.m
+//  CongMingTou
+//
+//  Created by summer on 16/7/1.
+//  Copyright © 2016年 QiYuan. All rights reserved.
+//
+
+#import "CMT_CreditorModel.h"
+
+@implementation CMT_CreditorModel
+
+@end

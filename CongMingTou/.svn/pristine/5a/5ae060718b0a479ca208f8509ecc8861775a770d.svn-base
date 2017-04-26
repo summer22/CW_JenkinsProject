@@ -1,0 +1,15 @@
+//
+//  CMT_UserRechargeModel.h
+//  CongMingTou
+//
+//  Created by wzh on 16/5/30.
+//  Copyright © 2016年 QiYuan. All rights reserved.
+//
+
+#import "CMT_BaseModel.h"
+#import "CMT_UserRechargeInfoModel.h"
+@interface CMT_UserRechargeModel : CMT_BaseModel
+
+@property (nonatomic, strong) CMT_UserRechargeInfoModel *userRechargeInforModel;
++ (CMT_UserRechargeModel *)userRechargeModelWithDic:(NSDictionary *)dic;
+@end

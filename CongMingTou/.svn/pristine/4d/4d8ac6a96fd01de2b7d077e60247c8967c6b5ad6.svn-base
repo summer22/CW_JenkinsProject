@@ -1,0 +1,18 @@
+//
+//  CMT_CongZIAndTiXIanViewController.h
+//  CongMingTou
+//
+//  Created by wzh on 16/5/11.
+//  Copyright © 2016年 wzh. All rights reserved.
+//
+
+#import <UIKit/UIKit.h>
+
+@interface CMT_ChongZhIAndTiXIanViewController : CMT_BaseVIewController
+/**
+ *  进入充值提现 类型 包括充值和提现
+ */
+@property (nonatomic ,assign) EnterType enterType;
+//@property  (nonatomic, assign) CMTEnterInvestmentPreparationType enterInvestmentPreparationType;
+
+@end

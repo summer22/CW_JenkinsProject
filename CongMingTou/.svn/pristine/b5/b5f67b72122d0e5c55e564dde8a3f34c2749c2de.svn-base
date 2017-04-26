@@ -1,0 +1,81 @@
+//
+//  CMT_MyInforModel.h
+//  CongMingTou
+//
+//  Created by wzh on 16/5/19.
+//  Copyright © 2016年 QiYuan. All rights reserved.
+//
+
+#import "CMT_BaseModel.h"
+
+@interface CMT_MyInforModel : CMT_BaseModel
+
+/**
+ *  	用户ID
+ */
+@property (nonatomic, copy) NSString *userId;
+/**
+ *  	昨日收益
+ */
+@property (nonatomic, copy) NSString *yesterday;
+/**
+ *  	累计收益
+ */
+@property (nonatomic, copy) NSString *addUp;
+/**
+ *  	余额
+ */
+@property (nonatomic, copy) NSString *balance;
+/**
+ *  	总资产
+ */
+@property (nonatomic, copy) NSString *totalAssets;
+/**
+ *  消息数量
+ */
+@property (nonatomic, copy) NSString *newsCount;
+/**
+ *  待收收益
+ */
+@property (nonatomic, copy) NSString *waitincome;
+/**
+ *  已收收益
+ */
+@property (nonatomic, copy) NSString *alreadyincome;
+/**
+ *  总收益
+ */
+@property (nonatomic, copy) NSString *totalincome;
+
+
+
+/**
+ *  总资产H5页面URL  H5页面传userd    例子:url/268291
+ */
+@property (nonatomic, copy) NSString *totalAssetsUrl;
+/**
+ *  	是否有我的福利     待定
+ */
+@property (nonatomic, copy) NSString *ifMyWelfare;
+/**
+ *  	是否有我的投资     待定
+ */
+@property (nonatomic, copy) NSString *ifMyInvestment;
+
+/**
+ *  	是否有我的交易记录 待定
+ */
+@property (nonatomic, copy) NSString *ifMyRecord;
+/**
+ *  是否有我的消息     待定
+ */
+@property (nonatomic, copy) NSString *ifMyNews;
+
+
+
+
+
+
+
++ (CMT_MyInforModel *)myInforModelWithDic:(NSDictionary *)dic;
+@end

@@ -1,0 +1,752 @@
+//
+//  CMT_CongZIAndTiXIanViewController.m
+//  CongMingTou
+//
+//  Created by wzh on 16/5/11.
+//  Copyright © 2016年 wzh. All rights reserved.
+//
+
+#import "CMT_ChongZhIAndTiXIanViewController.h"
+#import "CMT_MyViewController.h"
+#import "CMT_PayMaskView.h"
+#import "CMT_BottomBankLogoView.h"
+#import "CMT_PhoneAndVerificationCodeView.h"
+#import "IQKeyboardManager.h"
+#import "CMT_ChongZhiAndTiXianSuccessfulViewController.h"
+#import "CMT_ForgetPasswordViewController.h"
+#import "CMT_MyViewController.h"
+#define PayMethodLabTitle @"连接支付"
+
+
+//新生支付
+#import <HNAPayMobileSDK_iOS/HNAPayMobileSDK_iOS.h>
+@interface CMT_ChongZhIAndTiXIanViewController ()<UITextFieldDelegate,UITextFieldExtensionDelegate,UIScrollViewDelegate,CMT_PhoneAndVerificationCodeViewDelegate,CMT_PayMaskViewDelegate>{
+    int _currentIndex;
+    NSString *_currentPwd;
+    //银行卡信息
+    CMT_IDCardInforDataModel *_idCardInforDataModel;
+    //充值申请信息
+    CMT_UserRechargeInfoModel *_topUpinforModel;
+    
+    //新生支付管理类
+    HNAPayMobileSDKManager *_payMobileSDKManager;
+}
+@property (weak, nonatomic) IBOutlet UIButton *item1;
+@property (weak, nonatomic) IBOutlet UILabel *item1Des1;
+@property (weak, nonatomic) IBOutlet UILabel *item1Des2;
+
+
+@property (weak, nonatomic) IBOutlet UIButton *item2;
+@property (weak, nonatomic) IBOutlet UILabel *item2Des1;
+@property (weak, nonatomic) IBOutlet UILabel *item2Des2;
+
+
+@property (strong, nonatomic) IBOutlet UIView *topView;
+@property (strong, nonatomic) IBOutlet UIScrollView *backScrollView;
+@property (strong, nonatomic) IBOutlet UIView *inputMoneyView;
+@property (strong, nonatomic) IBOutlet UIView *btnView;
+@property (strong, nonatomic) CMT_BottomBankLogoView *bottomBankLogoView;
+//@property (strong, nonatomic) IBOutlet UIView *phoneNumAndVerifcationCodeView;
+@property (strong, nonatomic) CMT_PhoneAndVerificationCodeView *phoneAndVerificationCodeView;
+//输入框描述 充值为充值金额 提现为提现金额
+@property (weak, nonatomic) IBOutlet UILabel *fieldDesLab;
+//输入框  充值： 请输入充值金额，50元起充  提现：请输入提现金额，100元起
+@property (weak, nonatomic) IBOutlet CMT_TextField *inputTextField;
+//描述 充值：充值限额 提现： 可用余额
+@property (weak, nonatomic) IBOutlet UILabel *desLab;
+//描述的具体 充值 ：单笔：五万，单日：20万 提现：520.88元
+@property (weak, nonatomic) IBOutlet UILabel *desJinElab;
+//充值或提现的按钮
+@property (weak, nonatomic) IBOutlet UIButton *chongZhiAndTiXianBtn;
+//输入密码弹框
+//支付方式
+@property (strong, nonatomic) IBOutlet UILabel *payMethodLab;
+
+
+@end
+
+@implementation CMT_ChongZhIAndTiXIanViewController
+
+- (void)viewWillAppear:(BOOL)animated{
+    [super viewWillAppear:animated];
+    IQKeyboardManager *manager =  [IQKeyboardManager sharedManager];
+    [manager setEnableAutoToolbar:NO];
+}
+
+- (void)viewDidDisappear:(BOOL)animated{
+    [super viewDidDisappear:animated];
+}
+- (CMT_BottomBankLogoView *)bottomBankLogoView{
+    if(!_bottomBankLogoView){
+        _bottomBankLogoView =  [[CMT_BottomBankLogoView alloc]init];
+    }
+    return _bottomBankLogoView;
+}
+
+- (CMT_PhoneAndVerificationCodeView *)phoneAndVerificationCodeView{
+    if(!_phoneAndVerificationCodeView){
+        _phoneAndVerificationCodeView = [[CMT_PhoneAndVerificationCodeView alloc]init];
+        _phoneAndVerificationCodeView.delegate = self;
+        _phoneAndVerificationCodeView.phonetextField.extensonDelegate = self;
+        _phoneAndVerificationCodeView.verificationCodeTextField.extensonDelegate = self;
+    }
+    return _phoneAndVerificationCodeView;
+}
+
+- (void)back{
+    [_phoneAndVerificationCodeView resignFirstResponderWithTextFieldAndTextFieldView];
+    if(_enterType == EnterTypeChongZhiType && _currentIndex == 1){
+        [self setFrameWithChongZhi];
+    }else{
+        BOOL isMyVCEnter = NO;
+        for (UIViewController *subVc in self.navigationController.viewControllers) {
+            if([subVc isKindOfClass:[CMT_MyViewController class]]){
+                isMyVCEnter = YES;
+                [self.navigationController popToViewController:subVc animated:YES];
+
+            }
+        }
+        if(!isMyVCEnter){
+            [self.navigationController popViewControllerAnimated:YES];
+        }
+    }
+}
+- (void)viewDidLoad {
+    [super viewDidLoad];
+    // Do any additional setup after loading the view from its nib.
+    //    [self setupNav];
+    [self setUIDefaut];
+    [self loadDataIDCardInforWithUserId:[CMT_AccountTool accountModel].userId];
+    
+    _payMobileSDKManager = [[HNAPayMobileSDKManager alloc]init];
+    
+    
+}
+
+#pragma mark --  设置UI的默认样式
+- (void)setUIDefaut{
+    
+
+    
+    _currentIndex = 0;
+    _item1.userInteractionEnabled = NO;
+    [_item1 styleWithCornerRadius:_item1.width / 2];
+    
+    _item2.userInteractionEnabled = NO;
+    [_item2 styleWithCornerRadius:_item2.width / 2];
+    _item1.clipsToBounds = YES;
+    _item2.clipsToBounds = YES;
+    
+    [_chongZhiAndTiXianBtn styteWithCornerRadius:_chongZhiAndTiXianBtn.height / 2 shadowColor:_chongZhiAndTiXianBtn.backgroundColor shadowOffset:CMT_ShadowOffset shadowOpacity:CMT_ShadowOpacity shadowRadius:CMT_ShadowRadius];
+    
+    _backScrollView.scrollEnabled = NO;
+    _backScrollView.pagingEnabled = YES;
+
+    if(_enterType == EnterTypeChongZhiType){
+        self.title = @"充值";
+        [_item2 setImage:[UIImage imageNamed:@"My_ZhangHuIcon"] forState:UIControlStateNormal];
+        [_item1 setImage:[UIImage imageNamed:@"default_image"] forState:UIControlStateNormal];
+        _inputTextField.placeholder = [NSString stringWithFormat:@"请输入充值金额，%lu元起充",(unsigned long)CMT_TopUpMaxLowLimit];
+        _item2Des2.text = @"可用余额";
+        _fieldDesLab.text = @"充值金额";
+        _desLab.text = @"充值限额：";
+        [_chongZhiAndTiXianBtn setTitle:@"下一步" forState:UIControlStateNormal];
+        _backScrollView.contentSize = CGSizeMake(CMT_ScreenWidth *2, 1);
+        [_backScrollView addSubview:self.phoneAndVerificationCodeView];
+
+    }else if (_enterType == EnterTypeTiXianType){
+        self.title = @"提现";
+        [_item1 setImage:[UIImage imageNamed:@"My_ZhangHuIcon"] forState:UIControlStateNormal];
+        [_item2 setImage:[UIImage imageNamed:@"default_image"] forState:UIControlStateNormal];
+
+        _inputTextField.placeholder = [NSString stringWithFormat:@"请输入提现金额，%lu元起",(unsigned long)CMT_WithdrawalMaxLowLimit];
+        _item1Des2.text = @"可用余额";
+        _fieldDesLab.text = @"提现金额";
+        _desLab.text = @"可用余额";
+        [_chongZhiAndTiXianBtn setTitle:@"提现" forState:UIControlStateNormal];
+        _backScrollView.contentSize = CGSizeMake(1, 1);
+        
+    }
+    
+    [_backScrollView addSubview:_inputMoneyView];
+    [self.view addSubview:_btnView];
+    [self.view addSubview:self.bottomBankLogoView];
+    _btnView.frame = CGRectMake(0, CGRectGetMaxY(_topView.frame) + CGRectGetMaxY(_inputMoneyView.frame) , CMT_ScreenWidth, _btnView.height);
+    self.bottomBankLogoView.frame = CGRectMake(0, CGRectGetMaxY(self.btnView.frame) + 35, CMT_ScreenWidth, _bottomBankLogoView.height);
+
+    _inputTextField.extensonDelegate = self;
+    _phoneAndVerificationCodeView.phonetextField.text = [NSString stringWithFormat:@"%@",PayMethodLabTitle];
+    _phoneAndVerificationCodeView.verificationCodeTextField.clearButtonMode = UITextFieldViewModeNever;
+
+}
+
+#pragma mark -- 网络数据赋值
+- (void)setUILoadModel:(CMT_IDCardInforDataModel *)model{
+    
+    //    NSString *yongHuYueEStr = MyObjectForKey(YongHuYuEKey);
+    NSString *yuanStr = @"元";
+    NSString *yongHuYueETotalStr = [NSString stringWithFormat:@"%@%@",model.balance,yuanStr];
+    
+    if(_enterType == EnterTypeChongZhiType){//充值
+        [_item1 sd_setImageWithURL:[NSURL URLWithString:model.bankIconAdress] forState:UIControlStateNormal placeholderImage:[UIImage imageNamed:@"default_image"]];
+        
+        
+        _item1Des1.font = UIFont32;
+        _item1Des1.text = [NSString stringWithFormat:@"%@",model.bankStr];
+        _item1Des2.text = [NSString stringWithFormat:@"储蓄卡%@",model.endNumber];
+        
+        _item2Des1.font = UIFontName32;
+        _item2Des1.attributedText = [NSMutableAttributedString attributeWithTotalStr:yongHuYueETotalStr subStr:yuanStr subStrFont:UIFont20];
+        _desJinElab.text = [NSString stringWithFormat:@"单笔：%@万，单日：%@万",model.danE,model.dayE];
+        
+    }else if (_enterType == EnterTypeTiXianType){//提现
+        [_item2 sd_setImageWithURL:[NSURL URLWithString:model.bankIconAdress] forState:UIControlStateNormal placeholderImage:[UIImage imageNamed:@"default_image"]];
+        
+        
+        _item1Des1.font = UIFontName32;
+        _item1Des1.attributedText = [NSMutableAttributedString attributeWithTotalStr:yongHuYueETotalStr subStr:yuanStr subStrFont:UIFont20];
+        _item2Des1.text = [NSString stringWithFormat:@"%@",model.bankStr];
+        
+        _item2Des1.font = UIFont32;
+        _item2Des2.text = [NSString stringWithFormat:@"储蓄卡%@",model.endNumber];
+        _desJinElab.text = yongHuYueETotalStr;
+        
+    }
+    _phoneAndVerificationCodeView.phonetextField.userInteractionEnabled = NO;
+    _phoneAndVerificationCodeView.phonetextField.text = [NSString stringWithFormat:@"%@",model.phone];
+    if(model.payname){
+        _payMethodLab.text = [NSString stringWithFormat:@"%@",model.payname];
+    }else{
+        _payMethodLab.text = [NSString stringWithFormat:@"%@",PayMethodLabTitle];
+    }
+    _phoneAndVerificationCodeView.getVerificationCodeBtn.hidden = YES;
+    
+    if(_enterType == EnterTypeChongZhiType){
+        if([[NSString stringWithFormat:@"%@",model.paytype]isEqualToString:@"2"]){//闪豆
+            [_chongZhiAndTiXianBtn setTitle:@"下一步" forState:UIControlStateNormal];
+        }else{
+            [_chongZhiAndTiXianBtn setTitle:@"充值" forState:UIControlStateNormal];
+        }
+    }
+   
+}
+#pragma mark -- UITextFieldDelegate
+- (void)textFieldDidBeginEditing:(UITextField *)textField{
+
+}
+- (void)textFieldDidEndEditing:(UITextField *)textField{
+
+}
+- (BOOL)textFieldShouldReturn:(UITextField *)textField{
+    [textField resignFirstResponder];
+    return YES;
+}
+#pragma mark --UIScrollViewDelegate
+- (void)scrollViewDidScroll:(UIScrollView *)scrollView{
+    CMT_Log(@"scrollViewDidScroll");
+    if(scrollView == _backScrollView){
+        _currentIndex = scrollView.contentOffset.x/CMT_ScreenWidth;
+    }
+}
+- (void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView{
+    CMT_Log(@"scrollViewDidEndDecelerating");
+}
+
+
+#pragma mark -- UITextFieldExtensionDelegate
+- (void)textFieldEditingChange:(CMT_TextField *)textField{
+    if(textField == _inputTextField){
+        _payMethodLab.text = [NSString stringWithFormat:@"%@",textField.text];
+        if(textField.text.length == 0){
+            if(_idCardInforDataModel){
+                _payMethodLab.text = _idCardInforDataModel.payname;
+            }else{
+                _payMethodLab.text = [NSString stringWithFormat:@"%@",PayMethodLabTitle];
+            }
+        }
+    }
+    [self chectIsCouldNext];
+}
+- (BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string{
+    NSLog(@"textField.text == %@ ,range.length === %ld,range.location == %ld,string ===%@",textField.text,(unsigned long)range.length,range.location,string);
+    NSString * totalStr = [textField.text stringByReplacingCharactersInRange:range withString:string];
+    NSLog(@"%@",totalStr);
+    if(textField ==_inputTextField){
+        return [CMT_Tools moneyInputFaultTolerantToDealWithTextField:textField TotalStr:totalStr range:range andString:string];
+    }else{
+        return YES;
+    }
+}
+#pragma mark -- CMT_PhoneAndVerificationCodeViewDelegate
+//获得验证码
+- (void)didGetVerificationCodeBtn:(UIButton *)button{
+    [self loadDataGetVerificationcodeWithPhonNum:_phoneAndVerificationCodeView.phonetextField.text type:@"5"];
+}
+
+#pragma mark -- CMT_PayMaskViewDelegate
+//使用指纹点击事件
+- (void)payMaskViewFingerPrintBtnClick{
+    [CMT_FingerprintManagerTool  fingerprintValidationWithTitle:@"请输入指纹进行支付" Block:^(BOOL success, NSError *error, NSError *deviceError) {
+        [[NSOperationQueue mainQueue] addOperationWithBlock:^{
+            //用户选择输入密码，切换主线程处理
+            if(success == YES && !error && !deviceError){//验证成功
+                CMT_Log(@"可以开启");
+                if(_enterType == EnterTypeChongZhiType){
+//                    [self lodaDataChongZhiPayWithAccountId:<#(NSString *)#> orderId:<#(NSString *)#> amount:<#(NSString *)#> backResponseUrl:<#(NSString *)#> tradeName:<#(NSString *)#> customerId:<#(NSString *)#> name:<#(NSString *)#> cardNo:<#(NSString *)#> certNo:<#(NSString *)#>]
+                }else if (_enterType == EnterTypeTiXianType){
+                    [self loadDataTiXianWithAmount:_inputTextField.text bankId:_idCardInforDataModel.bankId payPassword:@"finger"];
+                }
+                [self showHint:CMT_FingerprintValidationSuccessful];
+            }else if (success == NO && error){//指纹验证失败，请重新验证
+                if(error.code == LAErrorSystemCancel || error.code == LAErrorUserCancel ||error.code == LAErrorUserFallback){
+                    [self showHint:CMT_FingerprintValidationCancel];
+                }else{
+                    [self showHint:CMT_Error_FingerprintValidation];
+                }
+            }else{
+                if(deviceError.code == LAErrorTouchIDNotEnrolled){////设备Touch ID不可用，用户未录入
+                    [self showHint:CMT_Error_DeviceErrorNOOpenOrNoLogin];
+                }else if (deviceError.code == LAErrorTouchIDNotAvailable){ //设备Touch ID不可用，例如未打开
+                    [self showHint:CMT_Error_DeviceErrorNOOpenOrNoLogin];
+                }else if (deviceError.code == LAErrorPasscodeNotSet){//系统未设置密码
+                    [self showHint:CMT_Error_DeviceErrorNOSetFingerprint];
+                }else if (deviceError.code == LAErrorAuthenticationFailed){//授权失败
+                    [self showHint:CMT_Error_DeviceErrorAuthorizationError];
+                }else{
+                    [self showHint:CMT_Error_DeviceErrorFingerprintValidation];//设备不支持
+                }
+
+            }
+        }];
+        
+    }];
+}
+//忘记密码点击事件
+- (void)payMaskViewForgetPassBtnClick{
+    CMT_ForgetPasswordViewController *forgetPasswordVC = [[CMT_ForgetPasswordViewController alloc]init];
+    forgetPasswordVC.enterForgetVCType = CMTEnterForgetVCTypeChongZhiOrTiXianVC;
+    [self.navigationController pushViewController:forgetPasswordVC animated:YES];
+}
+//返回点击事件
+- (void)payMaskViewBackClick{
+    
+}
+//密码输入框监听事件
+- (void)payMaskViewPassTextField:(NSString *)passNum{
+    if(passNum.length == CMT_PayPwdLenght){
+        [CMT_PayMaskView removeSelf];
+        [self loadDataTiXianWithAmount:_inputTextField.text bankId:_idCardInforDataModel.bankId payPassword:passNum];
+    }
+}
+#pragma mark -- 设置frame
+#define AnimateWithDuration 0.2
+- (void)setFrameWithChongZhi{
+    CGFloat contentOffsetX = 0;
+    if(_currentIndex == 0){
+        contentOffsetX = CMT_ScreenWidth;
+        [_phoneAndVerificationCodeView destroyTimer];
+    }else if(_currentIndex == 1){
+        contentOffsetX = 0;
+    }
+    [UIView animateWithDuration:AnimateWithDuration animations:^{
+        _backScrollView.contentOffset = CGPointMake(contentOffsetX, 0);
+    }];
+    
+    // 2.计算按钮需要平移的距离
+    CGFloat transformY = 0;
+    if(_currentIndex == 0){
+        transformY = 0;
+        // 3.执行动画
+        [_chongZhiAndTiXianBtn setTitle:@"下一步" forState:UIControlStateNormal];
+    }else if(_currentIndex == 1){
+        [_chongZhiAndTiXianBtn setTitle:@"充值" forState:UIControlStateNormal];
+        transformY = (CGRectGetMaxY(_phoneAndVerificationCodeView.frame) + 30) -  (CGRectGetMaxY(_inputMoneyView.frame));
+    }
+    [self chectIsCouldNext];
+    [UIView animateWithDuration:AnimateWithDuration animations:^{
+        _btnView.transform = CGAffineTransformMakeTranslation(0, transformY);
+        _bottomBankLogoView.transform = CGAffineTransformMakeTranslation(0, transformY);
+    }];
+}
+
+#pragma mark --touchesBegan
+- (void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event{
+    
+    [self myResignFirstResponder];
+    
+}
+
+- (void)myResignFirstResponder{
+    [_inputTextField resignFirstResponder];
+    [_phoneAndVerificationCodeView resignFirstResponderWithTextFieldAndTextFieldView];
+}
+#pragma mark --判断输入的是否正确
+- (BOOL)checkInputIsNullOrCorrect{
+    if(!_idCardInforDataModel){
+        [CMT_Tools showInfoAlert:CMT_Error_NotNetWork];
+        return NO;
+    }
+    if(_currentIndex == 0){
+        if(_inputTextField.text.length > 0 && [_inputTextField.text hasSuffix:@"."]){
+            [CMT_Tools showInfoAlert:CMT_Error_Money];
+            return NO;
+        }
+        if(_enterType == EnterTypeChongZhiType){
+            
+            if(/*[_inputTextField.text intValue] > [_idCardInforDataModel.balance intValue] || [_inputTextField.text intValue] > [[NSString stringWithFormat:@"%@0000",_idCardInforDataModel.danE] intValue]|| */ [_inputTextField.text intValue] < CMT_TopUpMaxLowLimit){
+                [CMT_Tools showInfoAlert:CMT_Error_Money];
+                return NO;
+            }
+        }else{
+            if([_inputTextField.text intValue] < CMT_WithdrawalMaxLowLimit){
+                [CMT_Tools showInfoAlert:CMT_Error_Money];
+                return NO;
+            }
+            if([_inputTextField.text doubleValue] > [_idCardInforDataModel.balance doubleValue]){
+                [CMT_Tools showInfoAlert:CMT_Error_MoneyInsufficient];
+                return NO;
+            }
+        }
+        
+        
+    }else if(_currentIndex == 1){
+        if(_phoneAndVerificationCodeView.verificationCodeTextField.text.length > CMT_VerificationCodeLenght){
+            [CMT_Tools showInfoAlert:CMT_Error_VerificationCode];
+            return NO;
+        }
+        if(_phoneAndVerificationCodeView.phonetextField.text.length >= CMT_PhoneNumLenght){
+            [CMT_Tools showInfoAlert:CMT_Error_PhoneNum];
+            return NO;
+        }
+        
+//        return [CMT_Tools isMobileNumber:_phoneAndVerificationCodeView.phonetextField.text];
+    }
+    return YES;
+}
+#pragma mark -- 按钮是否可点击管理
+- (void)chectIsCouldNext{
+
+    if(_currentIndex == 0){
+        if(_inputTextField.text.length > 0 ){
+            _chongZhiAndTiXianBtn.enabled = YES;
+            _chongZhiAndTiXianBtn.alpha = 1;
+        }else{
+            _chongZhiAndTiXianBtn.enabled = NO;
+            _chongZhiAndTiXianBtn.alpha = 0.5;
+        }
+    }else if(_currentIndex == 1){
+        if(_phoneAndVerificationCodeView.phonetextField.text.length > 0 && _phoneAndVerificationCodeView.verificationCodeTextField.text.length > 0){
+            _chongZhiAndTiXianBtn.enabled = YES;
+            _chongZhiAndTiXianBtn.alpha = 1;
+        }else{
+            _chongZhiAndTiXianBtn.enabled = NO;
+            _chongZhiAndTiXianBtn.alpha = 0.5;
+        }
+    }
+}
+
+
+#pragma mark -- 下一步  充值 提现 按钮的点击事件
+- (IBAction)chongZhiAndTiXianBtnClicekd:(id)sender {
+
+    [self myResignFirstResponder];
+    
+    if([self checkInputIsNullOrCorrect]){
+        if(_enterType == EnterTypeChongZhiType){//充值
+            if([[NSString stringWithFormat:@"%@",_idCardInforDataModel.paytype]isEqualToString:@"2"]){//闪豆支付
+                if(_currentIndex == 0){//充值申请－－ 绑定银行卡的绑定手机号发送验证码
+                    [self loadDataChongZhiRechargeRequestWithAmount:_inputTextField.text];
+                }else{//确认充值
+                    [self lodaDataChongZhiCatchIsOkWithModel:_topUpinforModel];
+                }
+            }else{//新生支付
+                [self myResignFirstResponder];
+                [self loadDataXinShengPayWithModel:nil];
+            }
+            
+            CMT_Log(@"点击了充值");
+        }else if (_enterType == EnterTypeTiXianType){//提现
+            CMT_Log(@"点击了提现");
+            [CMT_PayMaskView showWithDelegateOwer:self];
+            
+        }
+    }
+}
+#pragma mark --获取账户余额
+- (void)loadDataIDCardInforWithUserId:(NSString *)userId{
+    [self showHudInView:self.view hint:CMT_LoadDataWaiting];
+    [CMT_ProcessTheDataTool getIDCardInforWithUserId:userId andBlock:^(CMT_IDCardInforModel *model, NSError *error) {
+        [self hideHud];
+        if(!error){
+            if([[NSString stringWithFormat:@"%@",model.code ] isEqualToString:@"1"]){
+                _idCardInforDataModel = model.dataModel;
+                [self setUILoadModel:model.dataModel];
+            }else if ([[NSString stringWithFormat:@"%@",model.code] isEqualToString:CMT_SinglePointCode]){
+                [CMT_SinglePointLoginTool addSinglePointLoginWithSelfVC:self];
+            }else{
+                [self showHint:model.message];
+            }
+        }else{
+            [self showHint:CMT_Error_NotNetWork];
+        }
+    }];
+}
+
+#pragma mark -- 充值请求
+#pragma mark -- 充值申请
+- (void)loadDataChongZhiRechargeRequestWithAmount:(NSString *)amount{
+    [self showHudInView:self.view hint:CMT_LoadDataApplyForTopUp];
+    [CMT_ProcessTheDataTool getRechargeRequestWithUserId:[CMT_AccountTool accountModel].userId amount:amount andBlock:^(CMT_UserRechargeModel *model, NSError *error) {
+        [self hideHud];
+        if(!error){
+            if([[NSString stringWithFormat:@"%@",model.status] isEqualToString:@"1"]){
+                CMT_Log(@"充值申请成功");
+                _topUpinforModel = model.userRechargeInforModel;
+                [self setFrameWithChongZhi];
+                [self showHint:CMT_LoadDataGetCodeSuccessful];
+            }else if ([[NSString stringWithFormat:@"%@",model.status] isEqualToString:CMT_SinglePointCode]){
+                [CMT_SinglePointLoginTool addSinglePointLoginWithSelfVC:self];
+            }else{
+                [self showHint:model.msg];
+            }
+        }else{
+            CMT_Log(@"充值申请失败");
+            [self showHint:CMT_Error_NotNetWork];
+        }
+    }];
+}
+
+- (void)lodaDataChongZhiCatchIsOkWithModel:(CMT_UserRechargeInfoModel *)userRechargeInfomodel{
+    [self showHudInView:self.view hint:CMT_LoadDataApplyForTopUp];
+    [CMT_ProcessTheDataTool topUpApplicationVerificationCodeWithUserId:[CMT_AccountTool accountModel].userId amount:userRechargeInfomodel.amount orderNoThird:userRechargeInfomodel.orderNoThird payToken:userRechargeInfomodel.payToken orderNo:userRechargeInfomodel.orderNo captch:_phoneAndVerificationCodeView.verificationCodeTextField.text andBlock:^(CMT_BaseModel *model, NSError *error) {
+        [self hideHud];
+        if(!error){
+            if([[NSString stringWithFormat:@"%@",model.status] isEqualToString:@"1"]){
+                CMT_Log(@"充值成功");
+                
+                NSString *fromTypeStr;
+                for (UIViewController *vc in self.navigationController.viewControllers) {
+                    fromTypeStr = @"投资页入口";
+                    if (vc == [CMT_MyViewController class]) {
+                        fromTypeStr = @"直接入口";
+                    }
+                }
+                
+                SensorsAnalyticsSDK *sdk = [SensorsAnalyticsSDK sharedInstance];
+                if (sdk != nil) {
+                    [sdk track:@"recharge" withProperties:@{@"rechargeAmount": [NSNumber numberWithDouble:[userRechargeInfomodel.amount doubleValue]],
+                                                            @"CreditCard": [NSString convertNull:_idCardInforDataModel.bankStr],
+                                                            @"entrance": [NSString convertNull:fromTypeStr],
+                                                            @"distinctId": [NSString convertNull:[CMT_AnalyticsTool userID]]}];
+                }
+                [sdk flush];
+
+                [self showHint:CMT_LoadDataPaySuccessful];
+                
+                CMT_ChongZhiAndTiXianSuccessfulViewController *chongZhiAndTiXianSuccessVC = [[CMT_ChongZhiAndTiXianSuccessfulViewController alloc]init];
+                chongZhiAndTiXianSuccessVC.enterType = _enterType;
+                chongZhiAndTiXianSuccessVC.chongZhiOrTiXianMoneyStr = userRechargeInfomodel.amount;
+                chongZhiAndTiXianSuccessVC.zhangHuYuEStr = _idCardInforDataModel.balance;
+                [self.navigationController pushViewController:chongZhiAndTiXianSuccessVC animated:YES];
+            }else if ([[NSString stringWithFormat:@"%@",model.status] isEqualToString:CMT_SinglePointCode]){
+                [CMT_SinglePointLoginTool addSinglePointLoginWithSelfVC:self];
+            }else{
+                [self showHint:model.msg];
+            }
+        }else{
+            CMT_Log(@"充值失败");
+            [self showHint:CMT_Error_NotNetWork];
+        }
+
+    }];
+    
+}
+#pragma mark --  新生支付SDK接口
+- (void)loadDataXinShengPayWithModel:(CMT_UserRechargeInfoModel *)model{
+    
+    NSMutableDictionary *payDic = [NSMutableDictionary dictionary];
+    
+ 
+    // 商品名称 － 可空
+    [payDic setValue:@"商品名称" forKey:@"goodsName"];
+    //商品详情 － 可空
+    [payDic setValue:@"商品详情" forKey:@"goodsDetail"];
+    //商户备用信息字段 － 可空
+    [payDic setValue:@"" forKey:@"merRemark"];
+    //电话 － 参与交易的买方的手机号码 － 可空
+    [payDic setValue:@"13699998888" forKey:@"phone"];
+    //银行卡号 － 可空
+    [payDic setValue:@"6220..." forKey:@"cardNo"];
+    //收款人账号 － 商户在新生支付平台注册的虚拟 账户账号。 如果为空,新生支付平台将取商户 的默认账户账号 －可空
+    [payDic setValue:@"" forKey:@"virCardNoIn"];
+    
+    
+    //交易代码 － 此交易只能为 MP01
+    [payDic setValue:@"MP01" forKey:@"tranCode"];
+    //版本号 － 目前必须为 2.0
+    [payDic setValue:@"2.0" forKey:@"version"];
+    //编码方式 － 1:UTF-8
+    [payDic setValue:@"1" forKey:@"charset"];
+    //商户号 － 新生支付平台提供给商户的唯一 ID
+    [payDic setValue:@"11000000124" forKey:@"merId"];
+    //交易金额 － 格式:整数 单位:分
+    [payDic setValue:@"1" forKey:@"tranAmt"];
+    //商户手续费金额 － 格式:整数 单位:分
+    [payDic setValue:@"1" forKey:@"merFeeAmt"];
+    //币种 － 1:人民币
+    [payDic setValue:@"1" forKey:@"currencyType"];
+    //同步返回地址 － 格式:URL  商户同步返回地址。表明商户希望 交易结果返回的前台页面显示地 址。
+    [payDic setValue:@"http://www.xxx.com/response.do" forKey:@"returnUrl"];
+    //异步返回地址 － 格式:URL  商户异步通知地址。表明商户希望 交易结果通知的后台响应接收地 址。
+    [payDic setValue:@"http://www.xxx.com/response.do" forKey:@"notifyUrl"];
+    //用户浏览器IP － 格式:数字和‘.’ 发起交易的客户 IP 地址
+    [payDic setValue:@"127.0.0.1" forKey:@"tranIP"];
+    //用户在商户系统注册的ID
+    [payDic setValue:@"0000001" forKey:@"merUserId"];
+    //买家姓名（用户姓名） － 格式:汉字、英文字母 参与交易的买方的姓名 注意:此字段值在收银台处输入的  姓名必须一致
+    [payDic setValue:@"新生支付" forKey:@"buyerName"];
+    //身份证号码 － 身份证号码
+    [payDic setValue:@"430901123456789211"forKey:@"idNumber"];
+    //商户订单号 － 格式:数字,英文字母,下划线, 竖划线,中划线 用于传送商户订单号,每笔新的交 易需生成一笔新的订单号
+    [payDic setValue:@"1313464646493116897" forKey:@"merOrderNum"];
+    //签名类型 － 1:RSA 2:MD5
+    [payDic setValue:@"2" forKey:@"signType"];
+    
+    
+    NSDateFormatter* formatter = [[NSDateFormatter alloc]init];
+    [formatter setDateFormat:@"YYYYMMDDHHMMSS"]; // ----------设置你想要的格式,hh与HH的区别:分别表示12小时制,24小时制
+    NSString *dateStr = [formatter stringFromDate:[NSDate date]];
+
+    //交易时间 － 格式:YYYYMMDDHHMMSS  本域为订单发起的交易时间
+    [payDic setValue:dateStr forKey:@"tranDateTime"];
+     //签名密文串 － 将交易信息用 signType 域设置的 方式加密后生成的字符串
+//    NSString *signValueString = [Encrypt md5FromString: [self dictionaryToJson:payDic]];
+//    NSLog(@"%@",signValueString);
+    
+//    [payDic setValue:signValueString forKey:@"signValue"];
+    
+    
+    [_payMobileSDKManager startHNAPayWithParameters:payDic finish:^{
+        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"支付流程关闭" message:nil delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil, nil];
+        [alert show];
+
+    }];
+}
+- (NSString*)dictionaryToJson:(NSDictionary *)dic{
+    
+  return   [NSString stringWithFormat:@"tranCode=[%@]version=[%@]charset=[%@]merId=[%@]virCardNoIn=[%@]merOrderNum=[%@]tranAmt=[%@]merFeeAm t=[%@]tranDateTime=[%@]merUserId=[%@]phone=[%@]idNumber=[%@]hnapayOrderId=[%@]tranFinishTime=[%@]respCode=[%@]signType=[%@]&pkey=%@",dic[@"tranCode"],dic[@"version"],dic[@"charset"],dic[@"merId"],dic[@"virCardNoIn"],dic[@"merOrderNum"],dic[@"tranAmt"],dic[@"merFeeAm"],dic[@"tranDateTime"],dic[@"merUserId"],dic[@"phone"],dic[@"idNumber"],dic[@"hnapayOrderId"],dic[@"tranFinishTime"],dic[@"respCode"],dic[@"signType"],@"key"];
+
+//    NSError *parseError = nil;
+//    
+//    NSData *jsonData = [NSJSONSerialization dataWithJSONObject:dic options:NSJSONWritingPrettyPrinted error:&parseError];
+//    
+//    return [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
+    
+}
+#pragma mark -- 获取验证码
+- (void)loadDataGetVerificationcodeWithPhonNum:(NSString *)phoneNum type:(NSString *)type{
+    //方法二
+    [self showHudInView:self.view hint:CMT_LoadDataWaiting];
+    [CMT_ProcessTheDataTool getVerificationcodeWithPhonNum:phoneNum type:type andBlock:^(CMT_GetVerificationcodeModel *getVerificationcodeModel, NSError *error) {
+        [self hideHud];
+        if(!error){
+            if([[NSString stringWithFormat:@"%@",getVerificationcodeModel.status] isEqualToString:@"1"]){
+                CMT_Log(@"获取验证码成功");
+                [self showHint:CMT_LoadDataGetCodeSuccessful];
+                
+            }else if ([[NSString stringWithFormat:@"%@",getVerificationcodeModel.status] isEqualToString:CMT_SinglePointCode]){
+                [CMT_SinglePointLoginTool addSinglePointLoginWithSelfVC:self];
+            }else{
+                [self showHint:getVerificationcodeModel.msg];
+                [_phoneAndVerificationCodeView destroyTimer];
+
+            }
+        }else{
+            CMT_Log(@"获取验证码失败");
+            [self showHint:CMT_Error_NotNetWork];
+            [_phoneAndVerificationCodeView destroyTimer];
+
+            
+        }
+    }];
+}
+#pragma mark -- 验证输入的密码是否正确
+//- (void)loadDataConfirmPayPasswordWithPhoneNum:(NSString *)phoneNum andOldPassword:(NSString *)oldPassword{
+//    [self showHudInView:self.view hint:CMT_LoadDataWaitingPwdOK];
+//    
+//    [CMT_ProcessTheDataTool confirmPayPasswordWithPhoneNum:phoneNum andOldPassword:oldPassword  andBlock:^(CMT_BaseModel *baseModel, NSError *error) {
+//        [self hideHud];
+//        if(!error){
+//            if([[NSString stringWithFormat:@"%@",baseModel.status ] isEqualToString:@"1"]){
+//            }else{
+//                [self showHint:baseModel.msg];
+//            }
+//        }else{
+//            [self showHint:CMT_Error_NotNetWork];
+//        }
+//        
+//    }];
+//    
+//}
+
+#pragma mark -- 提现接口请求
+- (void)loadDataTiXianWithAmount:(NSString *)amount bankId:(NSString *)bankId payPassword:(NSString *)payPassword{
+    [self showHudInView:self.view hint:CMT_LoadDataWithdrawalIng];
+    [CMT_ProcessTheDataTool getWithdrawalRequestWithUserId:[CMT_AccountTool accountModel].userId amount:amount bankId:bankId payPassword:payPassword type:@"1"  andBlock:^(CMT_CodeBaseModel *model, NSError *error) {
+        [self hideHud];
+        if(!error){
+            if([[NSString stringWithFormat:@"%@",model.code] isEqualToString:@"1"]){
+                
+                NSString *fromTypeStr;
+                for (UIViewController *vc in self.navigationController.viewControllers) {
+                    fromTypeStr = @"投资页入口";
+                    if (vc == [CMT_MyViewController class]) {
+                        fromTypeStr = @"直接入口";
+                    }
+                }
+                
+                SensorsAnalyticsSDK *sdk = [SensorsAnalyticsSDK sharedInstance];
+                if (sdk != nil) {
+                    [sdk track:@"pickUp" withProperties:@{@"pickUpAmount":[NSNumber numberWithDouble:[amount doubleValue]],
+                                                          @"CreditCard": [NSString convertNull:_idCardInforDataModel.bankStr],
+                                                          @"distinctId": [NSString convertNull:[CMT_AnalyticsTool userID]]}];
+                }
+                [sdk flush];
+
+                [self showHint:CMT_LoadDataWithdrawalSuccessful];
+                CMT_ChongZhiAndTiXianSuccessfulViewController *chongZhiAndTiXianSuccessVC = [[CMT_ChongZhiAndTiXianSuccessfulViewController alloc]init];
+                chongZhiAndTiXianSuccessVC.enterType = _enterType;
+                chongZhiAndTiXianSuccessVC.chongZhiOrTiXianMoneyStr = amount;
+                [self.navigationController pushViewController:chongZhiAndTiXianSuccessVC animated:YES];
+                
+            }else if ([[NSString stringWithFormat:@"%@",model.code] isEqualToString:CMT_SinglePointCode]){
+                [CMT_SinglePointLoginTool addSinglePointLoginWithSelfVC:self];
+            }else{
+                [self showHint:model.message];
+            }
+        }else{
+            CMT_Log(@"提现失败");
+            [self showHint:CMT_Error_NotNetWork];
+        }
+    }];
+
+}
+
+- (void)viewDidLayoutSubviews{
+    [super viewDidLayoutSubviews];
+    
+    _inputMoneyView.frame = CGRectMake(0, 0, CMT_ScreenWidth, _inputMoneyView.height);
+    _phoneAndVerificationCodeView.frame = CGRectMake(CMT_ScreenWidth, 0, CMT_ScreenWidth, 110);
+
+
+
+}
+
+- (void)didReceiveMemoryWarning {
+    [super didReceiveMemoryWarning];
+    // Dispose of any resources that can be recreated.
+}
+
+
+
+@end

@@ -1,0 +1,15 @@
+//
+//  CMT_SecondInvestPreViewController.h
+//  CongMingTou
+//
+//  Created by wzh on 16/5/11.
+//  Copyright © 2016年 wzh. All rights reserved.
+//
+
+#import <UIKit/UIKit.h>
+
+@interface CMT_SecondInvestPreViewController : CMT_BaseVIewController
+@property  (nonatomic, assign) CMTEnterInvestmentPreparationType enterInvestmentPreparationType;
+@property (copy, nonatomic) NSString *nameStr;
+@property (copy, nonatomic) NSString *idNumberStr;
+@end

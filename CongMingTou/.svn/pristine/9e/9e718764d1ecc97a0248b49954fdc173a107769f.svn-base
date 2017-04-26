@@ -1,0 +1,711 @@
+//
+//  CMT_ProcessTheDataTool.m
+//  OongMingTou
+//
+//  Created by wzh on 16/5/9.
+//  Copyright © 2016年 QiYuan All rights reserved.
+//
+
+#import "CMT_ProcessTheDataTool.h"
+
+@implementation CMT_ProcessTheDataTool
+
++ (void)advertisingOpenStateWithBlock:(void(^)(CMT_BaseModel *baseModel, NSError *error))block{
+    [CMT_AFNetWorking getWithBaseURL:[CMT_HttpTool advertisingOpenState] success:^(id json) {
+        CMT_Log(@"广告位开始状态json－%@",json);
+        if (block) {
+            CMT_BaseModel *model = [[CMT_BaseModel alloc]initWithDic:json];
+            block(model,nil);
+        }
+    } failure:^(NSError *error) {
+        CMT_Log(@"广告位开始状态error－%@",error);
+        if (block) {
+            block(nil, error);
+        }
+    }];
+
+}
+
++ (void)getVerificationcodeWithPhonNum:(NSString *)phoneNum type:(NSString *)type andBlock:(void (^)(CMT_GetVerificationcodeModel *getVerificationcodeModel, NSError *error))block{
+    
+    CMT_Log(@"获取验证吗url-%@",[CMT_HttpTool getVerificationcodeWithPhonNum:phoneNum andType:type]);
+
+    [CMT_AFNetWorking getWithBaseURL:[CMT_HttpTool getVerificationcodeWithPhonNum:phoneNum andType:type] success:^(id json) {
+        CMT_Log(@"获取验证码－%@",json);
+        if (block) {
+            CMT_GetVerificationcodeModel *model = [CMT_GetVerificationcodeModel getVerificationcodeModelWithDict:json];
+            block(model,nil);
+        }
+    } failure:^(NSError *error) {
+        CMT_Log(@"获取验证码error－%@",error);
+        if (block) {
+            block(nil, error);
+        }
+    }];
+}
+
++ (void)registeredWithPhoneNum:(NSString *)phoneNum verificatonCode:(NSString *)verificatonCode andInvitationCode:(NSString *)invitationCode mobileType:(NSString *)mobileType channelNumber:(NSString *)channelNumber block:(void(^)(CMT_AccountModel *registerdModel, NSError *error))block{
+    
+    [CMT_AFNetWorking getWithBaseURL:[CMT_HttpTool registeredWithPhoneNum:phoneNum verificatonCode:verificatonCode andInvitationCode:invitationCode mobileType:mobileType  channelNumber:channelNumber downLodType:@"appStore"] success:^(id json) {
+        CMT_Log(@"注册－%@",json);
+        if (block) {
+            CMT_AccountModel *model = [CMT_AccountModel accountModelWithDict:json];
+            block(model,nil);
+        }
+    } failure:^(NSError *error) {
+        CMT_Log(@"注册error－%@",error);
+        if (block) {
+            block(nil, error);
+        }
+    }];
+}
+
++ (void)loginWithPhoneNum:(NSString *)phoneNum verificatonCode:(NSString *)verificatonCode block:(void(^)(CMT_AccountModel *loginModel, NSError *error))block{
+    [CMT_AFNetWorking getWithBaseURL:[CMT_HttpTool loginWithPhoneNum:phoneNum verificatonCode:verificatonCode] success:^(id json) {
+        CMT_Log(@"登陆－%@",json);
+        if (block) {
+            CMT_AccountModel *model = [CMT_AccountModel accountModelWithDict:json];
+            block(model,nil);
+        }
+    } failure:^(NSError *error) {
+        CMT_Log(@"登陆error－%@",error);
+        if (block) {
+            block(nil, error);
+        }
+    }];
+
+}
++ (void)myFuLiWithUserId:(NSString *)userId type:(NSString *)type investAmount:(NSString *)investAmount bid:(NSString *)bid bidpre:(NSString *)bidpre block:(void(^)(CMT_MyWelfareModel *model, NSError *error))block{
+    [CMT_AFNetWorking getWithBaseURL:[CMT_HttpTool myFuLiListWithUserId:userId andType:type investAmount:investAmount bid:bid bidpre:bidpre] success:^(id json) {
+        CMT_Log(@"我的福利－%@",json);
+        if (block) {
+            CMT_MyWelfareModel *model = [CMT_MyWelfareModel myWelfareModelWithDic:json];
+            block(model,nil);
+        }
+    } failure:^(NSError *error) {
+        CMT_Log(@"我的福利error－%@",error);
+        if (block) {
+            block(nil, error);
+        }
+    }];
+}
++ (void)getJiaoYiJiLuListWithUserId:(NSString *)userId page:(int)page size:(int)size type:(int)type andBlock:(void(^)(CMT_ChongZhiTiXianModel *chongZhiTiXianmdoel, NSError *error))block{
+    [CMT_AFNetWorking getWithBaseURL:[CMT_HttpTool getJiaoYiJiLuListWithUserId:userId page:page size:size type:type] success:^(id json) {
+        CMT_Log(@"我的交易记录json－%@type=%d",json,type);
+        CMT_ChongZhiTiXianModel *model = [CMT_ChongZhiTiXianModel chongZhiTiXianModelWithDic:json];
+        if(block){
+            block(model,nil);
+        }
+    } failure:^(NSError *error) {
+        CMT_Log(@"我的交易记录error－%@",error);
+        if (block) {
+            block(nil, error);
+        }
+    }];
+}
+
++ (void)realNameAuthenticateWithUserId:(NSString *)userId userIdentity:(NSString *)userIdentity userName:(NSString *)userName bankCardNum:(NSString *)bankCardNum userMobile:(NSString *)userMobile mobileSmsCode:(NSString *)mobileSmsCode rePassword:(NSString *)rePassword andBlock:(void(^)(CMT_CodeBaseModel *realNameAuthenticateModel, NSError *error))block{
+    CMT_Log(@"实名认证url-%@",[CMT_HttpTool realNameAuthenticateWithUserId:userId userIdentity:userIdentity userName:userName bankCardNum:bankCardNum userMobile:userMobile mobileSmsCode:mobileSmsCode rePassword:rePassword]);
+    
+    [CMT_AFNetWorking getWithBaseURL:[CMT_HttpTool realNameAuthenticateWithUserId:userId userIdentity:userIdentity userName:userName bankCardNum:bankCardNum userMobile:userMobile mobileSmsCode:mobileSmsCode rePassword:rePassword] success:^(id json) {
+        CMT_Log(@"实名认证json－%@",json);
+        if (block) {
+            CMT_CodeBaseModel *model = [[CMT_CodeBaseModel alloc]initWithDic:(NSDictionary *)json];
+
+            block(model,nil);
+        }
+    } failure:^(NSError *error) {
+        CMT_Log(@"实名认证error－%@",error);
+        if (block) {
+            block(nil, error);
+        }
+    }];
+    
+}
+
++ (void)resetPayPwdWithPhoneNum:(NSString *)phoneNum resetPayPwd:(NSString *)resetPayPwd  andBlock:(void(^)(CMT_BaseModel *baseModel, NSError *error))block{
+    [CMT_AFNetWorking getWithBaseURL:[CMT_HttpTool resetPayPwdWithPhoneNum:phoneNum resetPayPwd:resetPayPwd] success:^(id json) {
+        CMT_Log(@"设置和重置支付密码json－%@",json);
+        if (block) {
+            CMT_BaseModel *model = [[CMT_BaseModel alloc]initWithDic:json];
+            block(model,nil);
+        }
+    } failure:^(NSError *error) {
+        CMT_Log(@"设置和重置支付密码error－%@",error);
+        if (block) {
+            block(nil, error);
+        }
+    }];
+}
++ (void)confirmPayPasswordWithPhoneNum:(NSString *)phoneNum andOldPassword:(NSString *)oldPassword andBlock:(void(^)(CMT_BaseModel *baseModel, NSError *error))block{
+    [CMT_AFNetWorking getWithBaseURL:[CMT_HttpTool confirmPayPasswordWithPhoneNum:phoneNum andOldPassword:oldPassword] success:^(id json) {
+        CMT_Log(@" 验证支付密码是否正确json－%@",json);
+        if (block) {
+            CMT_BaseModel *model = [[CMT_BaseModel alloc]initWithDic:json];
+            block(model,nil);
+        }
+    } failure:^(NSError *error) {
+        CMT_Log(@"验证支付密码是否正确error－%@",error);
+        if (block) {
+            block(nil, error);
+        }
+    }];
+
+}
++ (void)modifyPayPwdWithPhoneNum:(NSString *)phoneNum andNewsPayPwd:(NSString *)newPayPwd andBlock:(void(^)(CMT_BaseModel *baseModel, NSError *error))block{
+    [CMT_AFNetWorking getWithBaseURL:[CMT_HttpTool modifyPayPwdWithPhoneNum:phoneNum andNewsPayPwd:newPayPwd] success:^(id json) {
+        CMT_Log(@"修改支付密码json－%@",json);
+        if (block) {
+            CMT_BaseModel *model = [[CMT_BaseModel alloc]initWithDic:json];
+            block(model,nil);
+        }
+    } failure:^(NSError *error) {
+        CMT_Log(@"修改支付密码error－%@",error);
+        if (block) {
+            block(nil, error);
+        }
+    }];
+}
++ (void)getMyUserInforWithUserId:(NSString *)userId andBlock:(void(^)(CMT_MyInforModel *inforModel, NSError *error))block{
+    [CMT_AFNetWorking getWithBaseURL:[CMT_HttpTool getUserInforWithUserId:userId] success:^(id json) {
+        CMT_Log(@"我的信息json－%@",json);
+        if(block){
+            CMT_MyInforModel *model = [CMT_MyInforModel myInforModelWithDic:json];
+            return block(model,nil);
+        }
+
+    } failure:^(NSError *error) {
+        CMT_Log(@"我的信息error－%@",error);
+        if(block){
+            return block(nil,error);
+        }
+    }];
+}
+
+//理财首页列表
++ (void)getFinancialListDataPageCount:(NSString *)startStr pageDataCount:(NSString *)endStr typeDefault:(NSString *)typeStr andBlock:(void(^)(id jsonObject, NSError *error))block{
+    
+     [CMT_AFNetWorking getWithBaseURL:[CMT_HttpTool getFinaciallDataList:startStr pageCount:endStr defaultIdStr:typeStr] success:^(id json) {
+         if(block){
+             return block(json,nil);
+         }
+     } failure:^(NSError *error) {
+         if(block){
+             return block(nil,error);
+         }
+
+    }];
+}
+//产品详情
++ (void)getProductDetailDataBidId:(NSString *)bidIdStr userIdStr:(NSString *)userId andBlock:(void(^)(id jsonObject, NSError *error))block{
+    
+    [CMT_AFNetWorking getWithBaseURL:[CMT_HttpTool getProductDetileDataList:bidIdStr userID:userId] success:^(id json) {
+        if(block){
+            return block(json,nil);
+        }
+    } failure:^(NSError *error) {
+        if(block){
+            return block(nil,error);
+        }
+        
+    }];
+}
+
+//投资记录
++ (void)getInestRecordListDataBidId:(NSString *)bidIdStr page:(NSString *)pageStr andBlock:(void(^)(id jsonObject, NSError *error))block{
+    
+    [CMT_AFNetWorking getWithBaseURL:[CMT_HttpTool getProductInvestRecordDataList:bidIdStr start:pageStr] success:^(id json) {
+        if(block){
+            return block(json,nil);
+        }
+    } failure:^(NSError *error) {
+        if(block){
+            return block(nil,error);
+        }
+        
+    }];
+}
+
+//加息券列表
++ (void)getTicketListDataUserId:(NSString *)userId typeStr:(NSString *)type investAmount:(NSString *)investAmount bidId:(NSString *)bidId bidpre:(NSString *)bidpre andBlock:(void(^)(id jsonObject, NSError *error))block{
+    
+    [CMT_AFNetWorking getWithBaseURL:[CMT_HttpTool myFuLiListWithUserId:userId andType:type investAmount:investAmount bid:bidId bidpre:bidpre] success:^(id json) {
+        if(block){
+            return block(json,nil);
+        }
+    } failure:^(NSError *error) {
+        if(block){
+            return block(nil,error);
+        }
+        
+    }];
+}
+
+
++ (void)getNewsListWithUserId:(NSString *)userId start:(int)start end:(int)end andBlock:(void(^)(CMT_GetNewsModel *model, NSError *error))block{
+    [CMT_AFNetWorking getWithBaseURL:[CMT_HttpTool getNewsListWithUserId:userId start:start end:end] success:^(id json) {
+        CMT_Log(@"我的消息list－%@",json);
+        if (block) {
+            CMT_GetNewsModel *model = [CMT_GetNewsModel getNewsModelWithDic:json];
+            block(model,nil);
+        }
+      
+    } failure:^(NSError *error) {
+        CMT_Log(@"我的消息error－%@",error);
+        if (block) {
+            block(nil, error);
+        }
+    }];
+    
+}
++ (void)getNewsDetailWithId:(NSString *)newsId andBlock:(void(^)(CMT_GetNewsListModel *model, NSError *error))block{
+    
+    [CMT_AFNetWorking getWithBaseURL:[CMT_HttpTool getNewsDetailWithId:newsId] success:^(id json) {
+        CMT_Log(@"我的消息详情list－%@",json);
+        if (block) {
+            CMT_GetNewsListModel *model = [CMT_GetNewsListModel getNewsListModelWithDic:json];
+            block(model,nil);
+        }
+        
+    } failure:^(NSError *error) {
+        CMT_Log(@"我的消息详情error－%@",error);
+        if (block) {
+            block(nil, error);
+        }
+    }];
+}
++ (void)allReadWithUserId:(NSString *)userId andBlock:(void(^)(CMT_BaseModel *model, NSError *error))block{
+    [CMT_AFNetWorking getWithBaseURL:[CMT_HttpTool allReadWithUserId:userId] success:^(id json) {
+        CMT_Log(@"全部消息标为已读json－%@",json);
+        if (block) {
+            CMT_BaseModel *model = [[CMT_BaseModel alloc]initWithDic:json];
+            block(model,nil);
+        }
+    } failure:^(NSError *error) {
+        CMT_Log(@"全部消息标为已读error－%@",error);
+        if (block) {
+            block(nil, error);
+        }
+    }];
+    
+}
++ (void)getIDCardInforWithUserId:(NSString *)userId andBlock:(void(^)(CMT_IDCardInforModel *model, NSError *error))block{
+    [CMT_AFNetWorking getWithBaseURL:[CMT_HttpTool getIDCardInforWithUserId:userId ] success:^(id json) {
+        CMT_Log(@"我的银行卡信息－%@",json);
+        if (block) {
+            CMT_IDCardInforModel *model = [CMT_IDCardInforModel IDCardInforModelWithDic:json];
+            block(model,nil);
+        }
+        
+    } failure:^(NSError *error) {
+        CMT_Log(@"我的银行卡error－%@",error);
+        if (block) {
+            block(nil, error);
+        }
+    }];
+
+}
++ (void)myInvestmentWithUserId:(NSString *)userId page:(int)page size:(int)size andType:(int)type andBlock:(void(^)(CMT_MyInverstmentModel *model, NSError *error))block{
+    [CMT_AFNetWorking getWithBaseURL:[CMT_HttpTool myInvestmentWithUserId:userId page:page size:size andType:type] success:^(id json) {
+        CMT_Log(@" 我的投资json－%@",json);
+        if (block) {
+            CMT_MyInverstmentModel *model = [CMT_MyInverstmentModel myInverstmentModelWithDic:json];
+            block(model,nil);
+        }
+    } failure:^(NSError *error) {
+        CMT_Log(@"我的投资error－%@",error);
+        if (block) {
+            block(nil, error);
+        }
+    }];
+
+}
+
++ (void)investmentWithInvestId:(NSString *)investId type:(NSString *)type andBlock:(void(^)(CMT_BitAndInvestModel *model, NSError *error))block{
+    [CMT_AFNetWorking getWithBaseURL:[CMT_HttpTool investmentWithInvestId:investId andType:type] success:^(id json) {
+        CMT_Log(@"标和投资的信息json－%@",json);
+        if (block) {
+            CMT_BitAndInvestModel *model = [CMT_BitAndInvestModel bitAndInvestModelWithDic:json];
+            block(model,nil);
+        }
+    } failure:^(NSError *error) {
+        CMT_Log(@"标和投资的信息error－%@",error);
+        if (block) {
+            block(nil, error);
+        }
+    }];
+
+}
+
++ (void)cancelYuYueInvestmentWithUserId:(NSString *)userId investId:(NSString *)investId andBlock:(void(^)(CMT_BaseModel *baseModel, NSError *error))block{
+    [CMT_AFNetWorking getWithBaseURL:[CMT_HttpTool cancelYuYueInvestmentWithUserId:userId investId:investId] success:^(id json) {
+        CMT_Log(@"取消预约json－%@",json);
+        if (block) {
+            CMT_BaseModel *model = [[CMT_BaseModel alloc]initWithDic:json];
+            block(model,nil);
+        }
+    } failure:^(NSError *error) {
+        CMT_Log(@"取消预约error－%@",error);
+        if (block) {
+            block(nil, error);
+        }
+    }];
+
+}
+
++ (void)myShouYiMingXiWithUserId:(NSString *)userId pageIndex:(int)pageIndex pageSize:(int)pageSize  andBlock:(void(^)(CMT_ShouYiMingXIModel *model, NSError *error))block{
+    [CMT_AFNetWorking getWithBaseURL:[CMT_HttpTool myShouYiMingXiWithUserId:userId pageIndex:pageIndex pageSize:pageSize ] success:^(id json) {
+        CMT_Log(@"收益明细json－%@",json);
+        if (block) {
+            CMT_ShouYiMingXIModel *model = [CMT_ShouYiMingXIModel shouYiMingXiModelWithDic:json];
+            block(model,nil);
+        }
+    } failure:^(NSError *error) {
+        CMT_Log(@"收益明细error－%@",error);
+        if (block) {
+            block(nil, error);
+        }
+    }];
+}
+
+//预约投资列表
++ (void)getPreInvestListDataPageCount:(NSString *)pageSizeStr andBlock:(void(^)(id jsonObject, NSError *error))block{
+    
+    [CMT_AFNetWorking getWithBaseURL:[CMT_HttpTool getPreInvestDataList:pageSizeStr] success:^(id json) {
+        if(block){
+            return block(json,nil);
+        }
+    } failure:^(NSError *error) {
+        if(block){
+            return block(nil,error);
+        }
+        
+    }];
+}
++ (void)getRechargeUserInforWithUserId:(NSString *)userId andBlock:(void(^)(CMT_UserRechargeInfoModel *model, NSError *error))block{
+    [CMT_AFNetWorking getWithBaseURL:[CMT_HttpTool getRechargeUserInforWithUserId:userId] success:^(id json) {
+        CMT_Log(@"银生支付获取用户信息json－%@",json);
+        if (block) {
+            CMT_UserRechargeInfoModel *model = [CMT_UserRechargeInfoModel userRechargeInfoModelWithDic:json];
+            block(model,nil);
+        }
+    } failure:^(NSError *error) {
+        CMT_Log(@"银生支付获取用户信息error－%@",error);
+        if (block) {
+            block(nil, error);
+        }
+    }];
+}
+
+//确认支付
++ (void)getInvestConfirmData:(NSString *)bidStr amount:(NSString *)amountStr userIdStr:(NSString *)userId andBlock:(void(^)(id jsonObject, NSError *error))block{
+    
+    [CMT_AFNetWorking getWithBaseURL:[CMT_HttpTool getinvestConfirm:bidStr pageCount:amountStr userIdStr:userId] success:^(id json) {
+        if(block){
+            return block(json,nil);
+        }
+    } failure:^(NSError *error) {
+        if(block){
+            return block(nil,error);
+        }
+        
+    }];
+}
+
++ (void)getRechargeRequestWithUserId:(NSString *)userId amount:(NSString *)amount andBlock:(void(^)(CMT_UserRechargeModel *model, NSError *error))block{
+    [CMT_AFNetWorking getWithBaseURL:[CMT_HttpTool getRechargeRequestWithUserId:userId amount:amount] success:^(id json) {
+        CMT_Log(@"充值申请json－%@",json);
+        if (block) {
+            CMT_UserRechargeModel *model = [CMT_UserRechargeModel userRechargeModelWithDic:json];
+            block(model,nil);
+        }
+    } failure:^(NSError *error) {
+        CMT_Log(@"充值申请error－%@",error);
+        if (block) {
+            block(nil, error);
+        }
+    }];
+}
++ (void)topUpApplicationVerificationCodeWithUserId:(NSString *)userId amount:(NSString *)amount orderNoThird:(NSString *)orderNoThird payToken:(NSString *)payToken orderNo:(NSString *)orderNo captch:(NSString *)captch andBlock:(void(^)(CMT_BaseModel *model, NSError *error))block{
+    [CMT_AFNetWorking getWithBaseURL:[CMT_HttpTool topUpApplicationVerificationCodeWithUserId:userId amount:amount orderNoThird:orderNoThird payToken:payToken orderNo:orderNo captch:captch] success:^(id json) {
+        CMT_Log(@"提现申请验证码确认json－%@",json);
+        if (block) {
+            CMT_BaseModel *model = [[CMT_BaseModel alloc]initWithDic:json];
+            block(model,nil);
+        }
+    } failure:^(NSError *error) {
+        CMT_Log(@"提现申请验证码确认error－%@",error);
+        if (block) {
+            block(nil, error);
+        }
+    }];
+
+}
+
++ (void)getWithdrawalRequestWithUserId:(NSString *)userId amount:(NSString *)amount bankId:(NSString *)bankId payPassword:(NSString *)payPassword type:(NSString *)type andBlock:(void(^)(CMT_CodeBaseModel *model, NSError *error))block{
+    [CMT_AFNetWorking getWithBaseURL:[CMT_HttpTool getWithdrawalRequestWithUserId:userId amount:amount bankId:bankId payPassword:payPassword type:type] success:^(id json) {
+        CMT_Log(@"提现申请json－%@",json);
+        if (block) {
+            CMT_CodeBaseModel *model = [[CMT_CodeBaseModel alloc]initWithDic:json];
+            block(model,nil);
+        }
+    } failure:^(NSError *error) {
+        CMT_Log(@"提现申请error－%@",error);
+        if (block) {
+            block(nil, error);
+        }
+    }];
+}
++ (void)resetGesturePasswordWithPhoneNum:(NSString *)phoneNum andCaptch:(NSString *)captch andBlock:(void(^)(CMT_BaseModel *model, NSError *error))block{
+    [CMT_AFNetWorking getWithBaseURL:[CMT_HttpTool resetGesturePasswordWithPhoneNum:phoneNum andCaptch:captch] success:^(id json) {
+        CMT_Log(@"重置手势密码验证json－%@",json);
+        if (block) {
+            CMT_BaseModel *model = [[CMT_BaseModel alloc]initWithDic:json];
+            block(model,nil);
+        }
+    } failure:^(NSError *error) {
+        CMT_Log(@"重置手势密码验证error－%@",error);
+        if (block) {
+            block(nil, error);
+        }
+    }];
+
+}
+
+//立即投资
++ (void)atOnceToInvest:(NSString *)userId bidIdStr:(NSString *)bidStr investAmount:(NSString *)investAmountStr  cashId:(NSString *)cashIdStr rateStr:(NSString *)jrateId token:(NSString *)investToken andBlock:(void(^)(id jsonObject, NSError *error))block
+{
+    [CMT_AFNetWorking getWithBaseURL:[CMT_HttpTool atOnceToInvest:userId bidIdStr:bidStr investAmount:investAmountStr cashId:cashIdStr rateStr:jrateId token:investToken] success:^(id json) {
+        if(block){
+            return block(json,nil);
+        }
+    } failure:^(NSError *error) {
+        if(block){
+            return block(nil,error);
+        }
+    }];
+
+}
+
+//预约投资
++ (void)preinvestInvest:(NSString *)userId preInvestAmount:(NSString *)preInvestAmountStr period:(NSString *)periodStr investId:(NSString *)investIdStr rateStr:(NSString *)rateId andBlock:(void(^)(id jsonObject, NSError *error))block
+{
+    [CMT_AFNetWorking getWithBaseURL:[CMT_HttpTool preinvestInvest:userId preInvestAmount:preInvestAmountStr period:periodStr investId:investIdStr rateStr:rateId] success:^(id json) {
+        if(block){
+            return block(json,nil);
+        }
+    } failure:^(NSError *error) {
+        if(block){
+            return block(nil,error);
+        }
+    }];
+    
+}
+
++ (void)preinvestInvest:(NSString *)investIdStr andBlock:(void(^)(id jsonObject, NSError *error))block
+{
+    [CMT_AFNetWorking getWithBaseURL:[CMT_HttpTool preinvestInvest:investIdStr] success:^(id json) {
+        if(block){
+            return block(json,nil);
+        }
+    } failure:^(NSError *error) {
+        if(block){
+            return block(nil,error);
+        }
+    }];
+}
+
++ (void)preinvestInvest:(NSString *)userId period:(NSString *)periodStr investId:(NSString *)investIdStr apr:(NSString *)aprStr andBlock:(void(^)(id jsonObject, NSError *error))block
+{
+    [CMT_AFNetWorking getWithBaseURL:[CMT_HttpTool preinvestInvest:userId period:periodStr investId:investIdStr apr:aprStr] success:^(id json) {
+        if(block){
+            return block(json,nil);
+        }
+    } failure:^(NSError *error) {
+        if(block){
+            return block(nil,error);
+        }
+    }];
+}
++ (void)getShareContentWithUserId:(NSString *)userId andBlock:(void(^)(CMT_GetShareContentModel *baseModel, NSError *error))block{
+    [CMT_AFNetWorking getWithBaseURL:[CMT_HttpTool getShareContentWithUserId:userId] success:^(id json) {
+        CMT_Log(@"获取分享内容json－%@",json);
+        if (block) {
+            CMT_GetShareContentModel *model = [CMT_GetShareContentModel getShareContentModelWithDic:json];
+            block(model,nil);
+        }
+    } failure:^(NSError *error) {
+        CMT_Log(@"获取分享内容error－%@",error);
+        if (block) {
+            block(nil, error);
+        }
+    }];
+}
+
+//+ (void)getShareFirendContentWithUserId:(NSString *)userId andBlock:(void(^)(CMT_GetShareFirendInforModel *baseModel, NSError *error))block{
+//    [CMT_AFNetWorking getWithBaseURL:[CMT_HttpTool getShareFirendContentWithUserId:userId] success:^(id json) {
+//        CMT_Log(@"获取分享给网友的信息json－%@",json);
+//        if (block) {
+//            CMT_GetShareFirendInforModel *model = [CMT_GetShareFirendInforModel getShareFirendInforModelWithDic:json];
+//            block(model,nil);
+//        }
+//    } failure:^(NSError *error) {
+//        CMT_Log(@"获取分享给网友的信息error－%@",error);
+//        if (block) {
+//            block(nil, error);
+//        }
+//    }];
+//}
+
++ (void)getShareFirendContentWithUserId:(NSString *)userId type:(NSString *)type andBlock:(void(^)(CMT_GetShareFirendInforAfterModel *baseModel, NSError *error))block{
+    [CMT_AFNetWorking getWithBaseURL:[CMT_HttpTool getShareFriendBeforeGetShareContentWithUserId:userId type:type] success:^(id json) {
+        CMT_Log(@"获取分享给网友的信息json－%@",json);
+        if (block) {
+            CMT_GetShareFirendInforAfterModel *model = [CMT_GetShareFirendInforAfterModel getShareFirendInforModelWithDic:json];
+            block(model,nil);
+        }
+    } failure:^(NSError *error) {
+        CMT_Log(@"获取分享给网友的信息error－%@",error);
+        if (block) {
+            block(nil, error);
+        }
+    }];
+}
++ (void)shareSuccessAddRatesWithPhoneNum:(NSString *)phoneNum bitId:(NSString *)bitId investId:(NSString *)investId amount:(NSString *)amount andBlock:(void(^)(CMT_BaseModel *model, NSError *error))block{
+    [CMT_AFNetWorking getWithBaseURL:[CMT_HttpTool shareSuccessAddRatesWithPhoneNum:phoneNum bitId:bitId investId:investId amount:amount] success:^(id json) {
+        CMT_Log(@"分享加息json－%@",json);
+        if (block) {
+            CMT_BaseModel *model = [[CMT_BaseModel alloc]initWithDic:json];
+            block(model,nil);
+        }
+    } failure:^(NSError *error) {
+        CMT_Log(@"分享加息error－%@",error);
+        if (block) {
+            block(nil, error);
+        }
+    }];
+}
++ (void)verificationCodeIsOkWithPhoneNum:(NSString *)phoneNum verificationCode:(NSString *)verificationCode andBlock:(void(^)(CMT_BaseModel *model, NSError *error))block{
+    [CMT_AFNetWorking getWithBaseURL:[CMT_HttpTool verificationCodeIsOkWithPhoneNum:phoneNum verificationCode:verificationCode] success:^(id json) {
+        CMT_Log(@"验证验证码是否正确json－%@",json);
+        if (block) {
+            CMT_BaseModel *model = [[CMT_BaseModel alloc]initWithDic:json];
+            block(model,nil);
+        }
+    } failure:^(NSError *error) {
+        CMT_Log(@"验证验证码是否正确error－%@",error);
+        if (block) {
+            block(nil, error);
+        }
+    }];
+
+}
+
+//应用雷达
++ (void)liveModelIdfiAndBlock:(void(^)(id jsonObject, NSError *error))block{
+    
+    [CMT_AFNetWorking getWithBaseURL:[CMT_HttpTool liveModelIdfi] success:^(id json) {
+        if(block){
+            return block(json,nil);
+        }
+    } failure:^(NSError *error) {
+        if(block){
+            return block(nil,error);
+        }
+        
+    }];
+}
+
+//版本更新
++ (void)getUpdateVersion:(void(^)(id jsonObject, NSError *error))block
+{
+    [CMT_AFNetWorking getWithBaseURL:[CMT_HttpTool updateVersion] success:^(id json) {
+        if(block){
+            return block(json,nil);
+        }
+    } failure:^(NSError *error) {
+        if(block){
+            return block(nil,error);
+        }
+    }];
+}
+
++ (void)getContractInforWithInvestId:(NSString *)investId period:(NSString *)period block:(void(^)(id jsonObject, NSError *error))block{
+    [CMT_AFNetWorking getWithBaseURL:[CMT_HttpTool getContractInforWithInvestId:investId period:period] success:^(id json) {
+        if(block){
+            return block(json,nil);
+        }
+    } failure:^(NSError *error) {
+        if(block){
+            return block(nil,error);
+        }
+    }];
+}
+
+//债权列表
++ (void)getCreditors:(NSString *)markNumb block:(void(^)(id jsonObject, NSError *error))block{
+    [CMT_AFNetWorking getWithBaseURL:[CMT_HttpTool getCreditors:markNumb] success:^(id json) {
+        if(block){
+            return block(json,nil);
+        }
+    } failure:^(NSError *error) {
+        if(block){
+            return block(nil,error);
+        }
+    }];
+}
++ (void)getFinalCreditors:(NSString *)creditorNumb block:(void(^)(id jsonObject, NSError *error))block{
+    [CMT_AFNetWorking getWithBaseURL:[CMT_HttpTool getFinalCreditors:creditorNumb] success:^(id json) {
+        if(block){
+            return block(json,nil);
+        }
+    } failure:^(NSError *error) {
+        if(block){
+            return block(nil,error);
+        }
+    }];
+}
+
++ (void)getBanklistBlock:(void(^)(CMT_InvestmentPreBankModel *model, NSError *error))block{
+    [CMT_AFNetWorking getWithBaseURL:[CMT_HttpTool getBanklist] success:^(id json) {
+        CMT_Log(@"银行卡列表信息json－%@",json);
+        if(block){
+            CMT_InvestmentPreBankModel *model = [CMT_InvestmentPreBankModel investmentPreBankModelWithDic:json];
+            block(model,nil);
+        }
+    } failure:^(NSError *error) {
+        CMT_Log(@"银行卡列表error－%@",error);
+        if(block){
+            return block(nil,error);
+        }
+    }];
+}
++ (void)getActivityShareContentWithActivityId:(NSString *)activityId userId:(NSString *)userId andBlock:(void(^)(CMT_ActivityShareContentModel *model, NSError *error))block{
+    [CMT_AFNetWorking getWithBaseURL:[CMT_HttpTool getActivityShareContentWithActivityId:activityId userId:userId] success:^(id json) {
+        CMT_Log(@"获取活动分享内容json－%@",json);
+        if(block){
+            CMT_ActivityShareContentModel *model = [CMT_ActivityShareContentModel activityShareContentModelWithDic:json];
+            block(model,nil);
+        }
+    } failure:^(NSError *error) {
+        CMT_Log(@"获取活动分享内容error－%@",error);
+        if(block){
+            return block(nil,error);
+        }
+    }];
+}
+/**
+ *  首页banner接口
+*/
++ (void)getFinacialBannerBlock:(void(^)(id jsonObject, NSError *error))block{
+    [CMT_AFNetWorking getWithBaseURL:[CMT_HttpTool getFinacialBanner] success:^(id json) {
+        if(block){
+            return block(json,nil);
+        }
+    } failure:^(NSError *error) {
+        if(block){
+            return block(nil,error);
+        }
+    }];
+}
+@end

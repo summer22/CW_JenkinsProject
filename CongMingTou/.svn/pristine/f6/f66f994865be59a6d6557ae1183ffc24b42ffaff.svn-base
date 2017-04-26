@@ -1,0 +1,62 @@
+//
+//  CMT_CreditorsRightsListTableViewCell.m
+//  CongMingTou
+//
+//  Created by wzh on 16/6/22.
+//  Copyright © 2016年 QiYuan. All rights reserved.
+//
+
+#import "CMT_CreditorsRightsListTableViewCell.h"
+
+@implementation CMT_CreditorsRightsListTableViewCell
+
+- (void)awakeFromNib {
+    [super awakeFromNib];
+    // Initialization code
+    self.backgroundColor = [UIColor clearColor];
+}
++ (CMT_CreditorsRightsListTableViewCell *)cellWithTablebView:(UITableView *)tableView{
+    static NSString *indent = @"CMT_CreditorsRightsListTableViewCell";
+    [tableView registerNib:[UINib nibWithNibName:@"CMT_CreditorsRightsListTableViewCell" bundle:nil] forCellReuseIdentifier:indent];
+    CMT_CreditorsRightsListTableViewCell  *cell = [tableView dequeueReusableCellWithIdentifier:indent];
+    cell.selectionStyle = UITableViewCellSelectionStyleNone;
+    return cell;
+    
+}
+- (void)setSelected:(BOOL)selected animated:(BOOL)animated {
+    [super setSelected:selected animated:animated];
+
+    // Configure the view for the selected state
+}
+
+- (void)layoutSubviews{
+    [super layoutSubviews];
+    _oneLineH.constant = 0.5;
+    _threeLineH.constant = 0.5;
+}
+
+- (void)setModel:(CMT_CreditorModel *)model
+{
+    self.nameLab.text = [self replaceNameWithStar:model.loanName];
+    self.borrowingMoneyLab.text = [model.amount stringByAppendingString:@"元"];
+    self.borrowingTimeLimitLab.text = [model.perid stringByAppendingString:@"天"];
+}
+
+- (NSString *)replaceNameWithStar:(NSString *)name
+{
+    if (name.length > 0) {
+        NSString *OneStr =[name substringToIndex:1];
+        NSString *newStr = [[NSString alloc] init];
+        NSString *xinStr = @"*";
+        for (int i = 1; i < name.length; i++)
+        {
+            newStr =  [newStr stringByAppendingString:xinStr];
+        }
+        newStr = [OneStr stringByAppendingString:newStr];
+        return newStr;
+    }else{
+        return @"";
+    }
+}
+
+@end

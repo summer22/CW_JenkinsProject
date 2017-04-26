@@ -1,0 +1,277 @@
+//
+//  CMT_SecondInvestPreViewController.m
+//  CongMingTou
+//
+//  Created by wzh on 16/5/11.
+//  Copyright © 2016年 wzh. All rights reserved.
+//
+
+#import "CMT_SecondInvestPreViewController.h"
+#import "CMT_ThreeInvestPreViewController.h"
+#import "CMT_PhoneAndVerificationCodeView.h"
+#import "CMT_ServiceAgreementView.h"
+#import "CMT_StepServiceAgreementViewController.h"
+#import "CMT_SupportBankViewController.h"
+#import "CMT_BankListViewController.h"
+@interface CMT_SecondInvestPreViewController ()<UITextFieldExtensionDelegate,CMT_PhoneAndVerificationCodeViewDelegate,CMT_ServiceAgreementViewDelegate,UITextFieldDelegate>{
+}
+
+@property (weak, nonatomic) IBOutlet UIScrollView *backScrollView;
+
+@property (strong, nonatomic) IBOutlet UIView *backView;
+
+//请填写与王硕身份一致的储蓄卡
+@property (strong, nonatomic) IBOutlet UILabel *des_alert_Lab;
+//持卡人名字
+@property (weak, nonatomic) IBOutlet UILabel *naemLab;
+//银行卡号
+@property (weak, nonatomic) IBOutlet CMT_TextField *bankCardNumberTextField;
+@property (strong, nonatomic) IBOutlet CMT_PhoneAndVerificationCodeView *phonetextFieldAndCodeView;
+//获取验证码
+//下一步
+@property (weak, nonatomic) IBOutlet UIButton *nextBtn;
+@property (strong, nonatomic) IBOutlet CMT_ServiceAgreementView *serviceArgeemnetAndIsreadView;
+@property (strong, nonatomic) IBOutlet UIButton *bankListBtn;
+@property (strong, nonatomic) IBOutlet UILabel *bankNameLab;
+
+@property (strong, nonatomic) IBOutlet NSLayoutConstraint *nextBtnH;
+@property (strong, nonatomic) IBOutlet NSLayoutConstraint *topViewMIdLineViewH;
+@property (strong, nonatomic) IBOutlet NSLayoutConstraint *bottomLIneViewH;
+
+
+@end
+
+@implementation CMT_SecondInvestPreViewController
+- (void)viewDidDisappear:(BOOL)animated{
+    [super viewDidDisappear:animated];
+}
+- (void)viewDidLoad {
+    [super viewDidLoad];
+    // Do any additional setup after loading the view from its nib.
+    [self setDefautUI];
+    [_backScrollView addSubview:_backView];
+    [self setupNav];
+//    [self loadDataGetBankList];
+    
+
+}
+
+- (void)setDefautUI{
+    
+    _serviceArgeemnetAndIsreadView.delegate = self;
+    [_serviceArgeemnetAndIsreadView.agreementBtn setTitle:[NSString stringWithFormat:@"《%@》",CMT_Title_BeforeTheInvestmentSecond] forState:UIControlStateNormal];
+
+    _phonetextFieldAndCodeView.delegate = self;
+    _nextBtnH.constant = 45 *CMT_6PERCENTY;
+    [_nextBtn styteWithCornerRadius:_nextBtnH.constant / 2 shadowColor:_nextBtn.backgroundColor shadowOffset:CMT_ShadowOffset shadowOpacity:CMT_ShadowOpacity shadowRadius:CMT_ShadowRadius];
+    
+    _bankCardNumberTextField.extensonDelegate = self;
+    _bankCardNumberTextField.delegate = self;
+    _phonetextFieldAndCodeView.phonetextField.extensonDelegate = self;
+    _phonetextFieldAndCodeView.verificationCodeTextField.extensonDelegate = self;
+    _naemLab.text = [NSString stringWithFormat:@"%@",_nameStr];
+    
+    
+    NSString *totalStr = [NSString stringWithFormat:@"请填写与%@身份一致的储蓄卡",_nameStr];
+    _des_alert_Lab.attributedText = [CMT_Tools attributeWithTotalStr:totalStr subStr:_nameStr andSubStrColor:ThemeBackgroundColor];
+    _topViewMIdLineViewH.constant = 0.5;
+    _bottomLIneViewH.constant = 0.5;
+    
+    _bankNameLab.text = @"请选择开户行";
+    _bankNameLab.textColor = CommonGrayTextColor;
+    [_bankCardNumberTextField setValue:CommonGrayTextColor forKeyPath:@"_placeholderLabel.textColor"];
+    [_phonetextFieldAndCodeView.phonetextField setValue:CommonGrayTextColor forKeyPath:@"_placeholderLabel.textColor"];
+    [_phonetextFieldAndCodeView.verificationCodeTextField setValue:CommonGrayTextColor forKeyPath:@"_placeholderLabel.textColor"];
+
+}
+
+/**
+ *  设置导航栏内容
+ */
+- (void)setupNav{
+    self.title = @"投资前准备";
+    self.navigationItem.rightBarButtonItem = [UIBarButtonItem itemWithTitle:@"支持银行" target:self action:@selector(supportBankBtnClicked:)];
+}
+- (void)supportBankBtnClicked:(UIButton *)button{
+//    CMT_SupportBankViewController *supporBanktVC = [[CMT_SupportBankViewController alloc]init];
+//    [self.navigationController pushViewController:supporBanktVC animated:YES];
+    CMT_BankListViewController *bankListViewController =[[CMT_BankListViewController alloc]init];
+    bankListViewController.enterBankListType = CMTEnterBankListTypeLook;
+    [self.navigationController pushViewController:bankListViewController animated:YES];
+}
+#pragma mark -- 设置frame
+- (void)viewDidLayoutSubviews{
+    
+    CMT_Log(@"viewDidLayoutSubviews");
+//    _backScrollView.showsVerticalScrollIndicator = NO;
+    _backScrollView.frame  =CGRectMake(0, 0, CMT_ScreenWidth, CMT_ScreenHeight - CMT_NAV_Height);
+    _backView.frame = CGRectMake(0, 0, CMT_ScreenWidth, 600);
+    _backScrollView.contentSize = CGSizeMake(CMT_ScreenWidth,CGRectGetMaxY(_backView.frame));
+}
+#pragma mark -- 获取验证码按钮点击
+- (void)didGetVerificationCodeBtn:(UIButton *)button{
+    CMT_Log(@"点击啊了或许验证码按钮");
+    [self loadDataGetVerificationcodeWithPhonNum:_phonetextFieldAndCodeView.phonetextField.text type:@"4"];
+}
+
+
+#pragma mark -- 是否阅读了合同点击事件
+
+//服务协议
+- (void)didServiceAgreementBtn:(UIButton *)button{
+    CMT_Log(@"点击啊了服务协议按钮");
+    CMT_StepServiceAgreementViewController *stepServiceAgreementVC = [[CMT_StepServiceAgreementViewController alloc]init];
+    [self.navigationController pushViewController:stepServiceAgreementVC animated:YES];
+}
+//是否阅读了合同
+- (void)didIsReadBtnClicked:(UIButton *)button {
+    CMT_Log(@"点击啊了是否阅读了合同按钮");
+
+    [self chectIsCouldNext];
+    
+}
+- (IBAction)bankListBtnClicked:(id)sender {
+    CMT_BankListViewController *bankListViewController =[[CMT_BankListViewController alloc]init];
+    bankListViewController.enterBankListType = CMTEnterBankListTypeChoose;
+    __block UILabel *bankNameLab = self.bankNameLab;
+    bankListViewController.bankInforBlock = ^void(CMT_InvestmentPreBankListModel * model){
+        CMT_Log(@"%@ 单笔限额%@,单日限额%@",model.bankName,model.onePen,model.oneDay);
+        bankNameLab.textColor = CommonImpTextColor;
+        bankNameLab.text = [NSString stringWithFormat:@"%@",model.bankName];
+        
+    };
+    [self.navigationController pushViewController:bankListViewController animated:YES];
+    
+}
+#pragma mark -- 下一步点击啊事件
+- (IBAction)nextBtnClicked:(UIButton *)sender {
+    CMT_Log(@"点击了下一步按钮");
+    sender.backgroundColor = CommonBtnBackColor;
+    if([self  checkInputIsNullOrCorrect]){
+        CMT_ThreeInvestPreViewController *threeInvestPreVC = [[CMT_ThreeInvestPreViewController alloc]init];
+        threeInvestPreVC.enterInvestmentPreparationType = _enterInvestmentPreparationType;
+        threeInvestPreVC.bankCardNumberStr = _bankCardNumberTextField.text;
+        threeInvestPreVC.phoneStr = _phonetextFieldAndCodeView.phonetextField.text;
+        threeInvestPreVC.verificationCodeStr = _phonetextFieldAndCodeView.verificationCodeTextField.text;
+        threeInvestPreVC.idNumberStr = _idNumberStr;
+        threeInvestPreVC.nameStr = _nameStr;
+        [self.navigationController pushViewController:threeInvestPreVC animated:YES];
+ 
+    }
+}
+- (IBAction)nextBtnDragOutSide:(UIButton *)sender {
+    sender.backgroundColor = CommonBtnBackColor;
+}
+- (IBAction)nextBtnTouchDown:(UIButton *)sender {
+    sender.backgroundColor = CommonBtnHighLightedBackColor;
+}
+
+- (void)textFieldEditingChange:(CMT_TextField *)textField{
+    CMT_Log(@"textFieldEditingChange === %@",textField.text);
+    [self chectIsCouldNext];
+}
+- (void)textFieldDidEndEditing:(UITextField *)textField{
+//    if(textField == _bankCardNumberTextField){
+//        [self chectBankNumIsOk];
+//    }
+}
+
+
+- (void)loadDataGetVerificationcodeWithPhonNum:(NSString *)phoneNum type:(NSString *)type{
+    //方法二
+    [self showHudInView:self.view hint:CMT_LoadDataWaiting];
+    [CMT_ProcessTheDataTool getVerificationcodeWithPhonNum:phoneNum type:type andBlock:^(CMT_GetVerificationcodeModel *getVerificationcodeModel, NSError *error) {
+        [self hideHud];
+        if(!error){
+
+            if([[NSString stringWithFormat:@"%@",getVerificationcodeModel.status] isEqualToString:@"1"]){
+                [self showHint:CMT_LoadDataGetCodeSuccessful];
+                CMT_Log(@"获取验证码成功");
+            }else if ([[NSString stringWithFormat:@"%@",getVerificationcodeModel.status] isEqualToString:CMT_SinglePointCode]){
+                [CMT_SinglePointLoginTool addSinglePointLoginWithSelfVC:self];
+            }else{
+                [self showHint:getVerificationcodeModel.msg];
+                [_phonetextFieldAndCodeView destroyTimer];
+            }
+        }else{
+            CMT_Log(@"获取验证码失败");
+            [_phonetextFieldAndCodeView destroyTimer];
+            [self showHint:CMT_Error_NotNetWork];
+        }
+    }];
+}
+
+#pragma mark -- 判断为空
+- (BOOL)checkInputIsNullOrCorrect{
+    if(_bankCardNumberTextField.text.length > CMT_BankNumMaxLenght || _bankCardNumberTextField.text.length < CMT_BankNumMinLenght){
+        [CMT_Tools showInfoAlert:CMT_Error_BankCrad];
+        return NO;
+    }
+    if(_phonetextFieldAndCodeView.phonetextField.text.length >= CMT_PhoneNumLenght || ![CMT_Tools isMobileNumber:_phonetextFieldAndCodeView.phonetextField.text]){
+        [CMT_Tools showInfoAlert:CMT_Error_PhoneNum];
+        return NO;
+    }
+  
+    if(_phonetextFieldAndCodeView.verificationCodeTextField.text.length > CMT_VerificationCodeLenght){
+        [CMT_Tools showInfoAlert:CMT_Error_VerificationCode];
+        return NO;
+    }
+ 
+    return YES;
+}
+
+- (void)chectIsCouldNext{
+    
+    //数据统计
+    SensorsAnalyticsSDK *sdk = [SensorsAnalyticsSDK sharedInstance];
+    if (sdk != nil) {
+        [sdk track:@"pre_invest_BankCard" withProperties:@{@"distinctId": [NSString convertNull:[CMT_AnalyticsTool userID]],
+                                                           @"bankCardNumber": [NSString convertNull:_bankCardNumberTextField.text],
+                                                           @"phoneNumber":[NSString convertNull:_phonetextFieldAndCodeView.phonetextField.text],
+                                                           @"isFillCaptcha":_phonetextFieldAndCodeView.verificationCodeTextField.text.length > 0 ? @"是" : @"否"}];
+    }
+    [sdk flush];
+
+    if(_bankCardNumberTextField.text.length > 0 && _phonetextFieldAndCodeView.phonetextField.text.length > 0 && _phonetextFieldAndCodeView.verificationCodeTextField.text.length > 0 && _serviceArgeemnetAndIsreadView.isReadbtn.selected){
+        _nextBtn.enabled = YES;
+        _nextBtn.alpha = 1;
+    }else{
+        _nextBtn.enabled = NO;
+        _nextBtn.alpha = 0.5;
+    }
+}
+
+//- (void)chectBankNumIsOk{
+//    if(_bankCardNumberTextField.text.length > 0){
+//        _bankCardNumberAlertLab.textColor = ThemeBackgroundColor;
+//        _bankCardNumberAlertLab.text = [NSString stringWithFormat:@"%@ 单笔限额%@万元,单日限额%@万元",@"兴业银行",@"5",@"5"];
+//    }
+//    
+//    if(_bankCardNumberTextField.text.length > CMT_BankNumMaxLenght){
+//        _bankCardNumberAlertLab.textColor = CommonBtnBackColor;
+//        _bankCardNumberAlertLab.text = [NSString stringWithFormat:@"%@",CMT_BankNumError];
+//
+//
+//    }
+//}
+
+
+
+
+
+- (void)didReceiveMemoryWarning {
+    [super didReceiveMemoryWarning];
+    // Dispose of any resources that can be recreated.
+}
+
+/*
+#pragma mark - Navigation
+
+// In a storyboard-based application, you will often want to do a little preparation before navigation
+- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
+    // Get the new view controller using [segue destinationViewController].
+    // Pass the selected object to the new view controller.
+}
+*/
+
+@end

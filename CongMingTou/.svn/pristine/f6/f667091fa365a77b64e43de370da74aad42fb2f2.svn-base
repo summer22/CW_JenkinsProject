@@ -1,0 +1,250 @@
+
+//
+//  CMT_EnumMaro.h
+//  CongMingTou
+//
+//  Created by wzh on 16/5/13.
+//  Copyright © 2016年 wzh. All rights reserved.
+//
+
+#ifndef CMT_EnumMaro_h
+#define CMT_EnumMaro_h
+
+/**
+ *  弹框枚举
+ */
+typedef NS_ENUM(NSInteger, CMTBouncedViewType) {
+    /**
+     *  充值类型
+     */
+    CMTBouncedViewTypeChongZhi = 0,
+    /**
+     *  提现类型
+     */
+    CMTBouncedViewTypeTiXian
+};
+
+/**
+ *  充值或提现步骤
+ */
+typedef NS_ENUM(NSInteger, CMTChongZhiOrTiXianStepType) {
+    /**
+     *  充值或提现步骤一
+     */
+    CMTChongZhiOrTiXianStepTypeOne = 0,
+    /**
+     *  充值或提现步骤二
+     */
+    CMTChongZhiOrTiXianStepTypeTwo
+};
+
+/**
+ *  输入框类型
+ */
+typedef NS_ENUM(NSInteger, CMTInputViewType) {
+    /**
+     *  显示密码
+     */
+    CMTInputViewTypeShowPassWord = 0,
+    /**
+     *  隐藏密码
+     */
+    CMTInputViewTypeHiddenPassWord
+};
+
+
+/**
+ *  不能用（Enable）状态下按钮的样式
+ */
+typedef NS_ENUM(NSInteger, CMTEnableStyleType) {
+    /**
+     *
+     */
+    CMTEnableStyleTypeDefault = 0,
+    /**
+     *
+     */
+    CMTEnableStyleTypeEnable1
+};
+
+/**
+ * 修改支付密码 类型
+ */
+typedef NS_ENUM(NSInteger, CMTModifyPaymentPasswordType) {
+    /**
+     *  修改支付密码 －－ 验证原密码
+     */
+    CMTModifyPaymentPasswordTypeVerifyPassword = 0,
+    /**
+     * 修改支付密码 －－ 输入新密码
+     */
+    CMTModifyPaymentPasswordTypeEnterNewPassword,
+    /**
+     * 修改支付密码 －－ 再次输入新密码确认
+     */
+    CMTModifyPaymentPasswordTypeEnterAgainConfirmNewPassword
+};
+/**
+ *  设置密码的类型
+ */
+typedef NS_ENUM(NSInteger, CMTSetPwdType) {
+    /**
+     *  重置密码
+     */
+    CMTSetPwdTypeRetsetPayPwd,
+    /**
+     *  忘记密码
+     */
+    CMTSetPwdTypeForgetPwd
+};
+
+/**
+ * 进入忘记密码vc的类型
+ */
+typedef NS_ENUM(NSInteger, CMTEnterForgetVCType) {
+    /**
+     *  修改支付密码 －－忘记密码
+     */
+    CMTEnterForgetVCTypeDefuatVC = 0,
+    /**
+     * 修改支付密码 －－ 充值提现  （充值提现）－－忘记密码
+     */
+    CMTEnterForgetVCTypeChongZhiOrTiXianVC,
+    /**
+     * 修改支付密码 －－  订单页 （立即投资）－－忘记密码
+     */
+    CMTEnterForgetVCTypeOrderVC,
+    /**
+     *  修改支付密码 －－  产品详情（立即预约） －－忘记密码
+     */
+    CMTEnterForgetVCTypeProductDetailVC
+};
+
+
+/**
+ * 进入投资前准备界面类型
+ */
+typedef NS_ENUM(NSInteger, CMTEnterInvestmentPreparationType) {
+    /**
+     *  从充值进入投资前准备
+     */
+    CMTEnterInvestmentPreparationTypeChongZhi = 0,
+    /**
+     * 从提现进入投资前准备
+     */
+    CMTEnterInvestmentPreparationTypeTiXian,
+    /**
+     * 从银行卡进入投资前准备
+     */
+    CMTEnterInvestmentPreparationTypeBankCard,
+    /**
+     *  从实名认证进入投资前准备
+     */
+    CMTEnterInvestmentPreparationTypeCertification,
+    /**
+     *  点击立即投资进入投资前准备
+     */
+    CMTEnterInvestmentPreparationTypeImmediateInvestment,
+    /**
+     *  点击预约投资进入投资前准备
+     */
+    CMTEnterYueyueInvestTypeImmediateInvestment,
+    /**
+     *  点击修改支付密码时
+     */
+    CMTEnterInvestmentPreparationTypeModifyPayPwd
+};
+/**
+ *  进入登陆的类型
+ */
+typedef NS_ENUM(NSInteger, CMTEnterLoginType) {
+    /**
+     *  未登陆点击 我的tabbar
+     */
+    CMTEnterLoginTypeTabbarMy = 0,
+    /**
+     *  安全退出后进入登陆界面
+     */
+    CMTEnterLoginTypeOutLogin,
+    /**
+     *  来自产品详情
+     */
+    CMTEnterLoginProductDetails,
+    /**
+     *  发现分享前
+     */
+    CMTEnterLoginTypeFoundShare,
+    /**
+     *  被登出 － 另一设备登陆
+     */
+    CMTEnterLoginTypeBeLoginOut,
+    /**
+     *    默认
+     */
+    CMTEnterLoginTypeDefaut
+};
+/**
+ *  标的状态种类
+ */
+typedef NS_ENUM(NSInteger, CMTTenderStateType){
+    CMTTenderStateTypeDefault = 0,
+    CMTTenderStateTypeHasSoldOut
+};
+
+/**
+ *  标的种类
+ */
+typedef NS_ENUM(NSInteger, CMTTenderType) {
+    /**
+     *
+     */
+    CMTTenderTypeNewStandard = 0,
+    /**
+     *
+     */
+    CMTTenderType30Day,
+    /**
+     *
+     */
+    CMTTenderType90Day,
+    /**
+     *
+     */
+    CMTTenderType180Day,
+    /**
+     *  
+     */
+    CMTTenderType360Day
+};
+
+typedef NS_ENUM(NSInteger, EnterType) {
+    EnterTypeChongZhiType = 0,
+    EnterTypeTiXianType
+};
+
+//判断从哪里跳入该页面
+typedef NS_ENUM(NSInteger, COMEFROMCLASS) {
+    //单纯查看详情 －－ 来自投资记录页面
+    FROMINVESTRECORD = 0,
+    //来自预约投资列表
+    FROMYUYUEINVEST = 1,
+    //来自理财列表页
+    FROMFINANCIAL = 2,
+    //来自加息券列表
+    FROMCOUPON = 3,
+    //来自我的福利列表
+    FROMYFULI = 4
+    
+};
+
+//使用本金券列表还是使用加息券列表枚举判断
+typedef NS_ENUM(NSInteger, LISTFROM_TYPE) {
+    //以下是枚举成员
+    //本金券
+    TICKETCLASS = 0,
+    //加息券
+    RATECLASS
+};
+
+
+#endif /* CMT_EnumMaro_h */

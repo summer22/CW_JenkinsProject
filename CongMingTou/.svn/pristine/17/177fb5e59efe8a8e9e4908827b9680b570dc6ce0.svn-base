@@ -1,0 +1,55 @@
+//
+//  CMT_RetiredInvestmentTableViewCell.m
+//  CongMingTou
+//
+//  Created by wzh on 16/5/18.
+//  Copyright © 2016年 QiYuan. All rights reserved.
+//
+
+#import "CMT_RetiredInvestmentTableViewCell.h"
+
+@implementation CMT_RetiredInvestmentTableViewCell
+
+- (void)awakeFromNib {
+    // Initialization code
+    [_chaKanHeTongBtn styteWithCornerRadius:_chaKanHeTongBtn.height/2 shadowColor:ThemeBackgroundColor shadowOffset:CGSizeMake(0, 2) shadowOpacity:0.6 shadowRadius:5];
+
+}
++ (CMT_RetiredInvestmentTableViewCell *)cellWithTablebView:(UITableView *)tableView{
+    static NSString *indent = @"CMT_RetiredInvestmentTableViewCell";
+    [tableView registerNib:[UINib nibWithNibName:@"CMT_RetiredInvestmentTableViewCell" bundle:nil] forCellReuseIdentifier:indent];
+    CMT_RetiredInvestmentTableViewCell  *cell = [tableView dequeueReusableCellWithIdentifier:indent];
+    cell.selectionStyle = UITableViewCellSelectionStyleNone;
+    return cell;
+    
+}
+
+- (void)setRetiredInvestmentModel:(CMT_RetiredInvestmentModel *)retiredInvestmentModel{
+    _retiredInvestmentModel =retiredInvestmentModel;
+    NSString *yuanStr =@"元";
+    NSString *touZiMoneyStr = @"602,912";
+    NSString *touZiMoneyTotalStr =  [NSString stringWithFormat:@"%@%@",touZiMoneyStr,yuanStr];
+    _touZiJinEMoneyLab.attributedText = [NSMutableAttributedString attributeWithTotalStr:touZiMoneyTotalStr subStr:yuanStr subStrFont:UIFont30];
+    
+    NSString *touZiDesStr = @"投资金额";
+    _touZiJinEMoneyDesLab.text = touZiDesStr;
+    
+
+    NSString *huoDeShouYuStr = @"2530,33";
+    NSString *huoDeShouYuStrTotalStr = [NSString stringWithFormat:@"%@%@",huoDeShouYuStr,yuanStr];
+    _huoDeShouYiMoneyLab.attributedText = [NSMutableAttributedString attributeWithTotalStr:huoDeShouYuStrTotalStr subStr:yuanStr subStrFont:UIFont30];
+    
+    
+    
+    NSString *huoDeShouYiDesStr = @"获得收益";
+    _huoDeShouYiDesLab.text = [NSString stringWithFormat:@"%@",huoDeShouYiDesStr];
+    [_chaKanHeTongBtn setTitle:@"查看合同" forState:UIControlStateNormal];
+
+}
+- (void)setSelected:(BOOL)selected animated:(BOOL)animated {
+    [super setSelected:selected animated:animated];
+
+    // Configure the view for the selected state
+}
+
+@end

@@ -1,0 +1,14 @@
+//
+//  CMT_ForgetPasswordViewController.h
+//  CongMingTou
+//
+//  Created by wzh on 16/5/17.
+//  Copyright © 2016年 QiYuan. All rights reserved.
+//
+
+#import "CMT_BaseVIewController.h"
+
+@interface CMT_ForgetPasswordViewController : CMT_BaseVIewController
+
+@property (nonatomic, assign) CMTEnterForgetVCType enterForgetVCType;
+@end

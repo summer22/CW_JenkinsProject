@@ -1,0 +1,13 @@
+//
+//  CMT_LoginServiceAgreementViewController.h
+//  CongMingTou
+//
+//  Created by wzh on 16/6/13.
+//  Copyright © 2016年 QiYuan. All rights reserved.
+//
+
+#import "CMT_WebBaseViewController.h"
+
+@interface CMT_LoginServiceAgreementViewController : CMT_WebBaseViewController
+
+@end

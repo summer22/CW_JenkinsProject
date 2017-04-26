@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="11542" systemVersion="16A323" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES">
+    <device id="retina4_7" orientation="portrait">
+        <adaptation id="fullscreen"/>
+    </device>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="11524"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="CMT_BottomBtnView">
+            <connections>
+                <outlet property="MyView" destination="iN0-l3-epB" id="UI1-TC-OqD"/>
+                <outlet property="btn" destination="tMA-lz-qIB" id="A1H-pY-kJ2"/>
+                <outlet property="line" destination="3nr-iA-bVG" id="kiV-tR-l9U"/>
+                <outlet property="lineH" destination="rXf-NR-Mzq" id="Lj8-7n-UDe"/>
+            </connections>
+        </placeholder>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <view contentMode="scaleToFill" id="iN0-l3-epB">
+            <rect key="frame" x="0.0" y="0.0" width="375" height="68"/>
+            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+            <subviews>
+                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="tMA-lz-qIB">
+                    <rect key="frame" x="6" y="4" width="363" height="62"/>
+                    <constraints>
+                        <constraint firstAttribute="height" constant="62" id="df3-g5-tJQ"/>
+                    </constraints>
+                    <fontDescription key="fontDescription" type="system" pointSize="15"/>
+                    <inset key="titleEdgeInsets" minX="0.0" minY="-4" maxX="0.0" maxY="0.0"/>
+                    <state key="normal" title="立即抢购" backgroundImage="CMT_DetailQIangG">
+                        <color key="titleColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                    </state>
+                    <connections>
+                        <action selector="btnAction:" destination="-1" eventType="touchUpInside" id="84T-ff-RL8"/>
+                    </connections>
+                </button>
+                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="3nr-iA-bVG" userLabel="line">
+                    <rect key="frame" x="0.0" y="0.0" width="375" height="1"/>
+                    <color key="backgroundColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
+                    <constraints>
+                        <constraint firstAttribute="height" constant="1" id="rXf-NR-Mzq"/>
+                    </constraints>
+                </view>
+            </subviews>
+            <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+            <constraints>
+                <constraint firstItem="3nr-iA-bVG" firstAttribute="top" secondItem="iN0-l3-epB" secondAttribute="top" id="Ipe-ku-yAP"/>
+                <constraint firstAttribute="trailing" secondItem="tMA-lz-qIB" secondAttribute="trailing" constant="6" id="MNo-1F-5qY"/>
+                <constraint firstAttribute="trailing" secondItem="3nr-iA-bVG" secondAttribute="trailing" id="Vgo-WD-je4"/>
+                <constraint firstItem="3nr-iA-bVG" firstAttribute="leading" secondItem="iN0-l3-epB" secondAttribute="leading" id="b10-62-nXO"/>
+                <constraint firstAttribute="bottom" secondItem="tMA-lz-qIB" secondAttribute="bottom" constant="2" id="gYZ-o2-On3"/>
+                <constraint firstItem="tMA-lz-qIB" firstAttribute="leading" secondItem="iN0-l3-epB" secondAttribute="leading" constant="6" id="nRb-tP-yU8"/>
+            </constraints>
+            <nil key="simulatedStatusBarMetrics"/>
+            <nil key="simulatedTopBarMetrics"/>
+            <nil key="simulatedBottomBarMetrics"/>
+            <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
+            <point key="canvasLocation" x="26.5" y="-160.5"/>
+        </view>
+    </objects>
+    <resources>
+        <image name="CMT_DetailQIangG" width="369" height="62"/>
+    </resources>
+</document>

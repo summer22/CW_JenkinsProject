@@ -1,0 +1,74 @@
+//
+//  CMT_InvestPreViewController.m
+//  CongMingTou
+//
+//  Created by summer on 16/5/11.
+//  Copyright © 2016年 wzh. All rights reserved.
+//
+
+#import "CMT_InvestPreViewController.h"
+#import "CMT_InvestBgView.h"
+#import "CMT_SecondInvestPreViewController.h"
+
+@interface CMT_InvestPreViewController ()<CMT_InvestBgViewDelegate>
+
+/** 全局父试图scrollview */
+@property (nonatomic,strong)CMT_InvestBgView *myBgScrollView;
+@end
+
+@implementation CMT_InvestPreViewController
+
+- (UIScrollView *)myBgScrollView
+{
+    if (!_myBgScrollView) {
+        
+        _myBgScrollView = [[CMT_InvestBgView alloc] initWithFrame:CMT_CGRECTMAKE(0, 0, CMT_ScreenWidth, CMT_ScreenHeight)];
+        _myBgScrollView.contentSize = CGSizeMake(0, CMT_ScreenHeight + 10);
+        _myBgScrollView.showsVerticalScrollIndicator = NO;
+        _myBgScrollView.myDelegate = self;
+    }
+    return _myBgScrollView;
+}
+
+- (void)viewDidLoad {
+    
+    [super viewDidLoad];
+
+    self.title = @"投资前准备";
+    [self.view addSubview:self.myBgScrollView];
+}
+
+#pragma mark --- CMT_InvestBgViewDelegate
+//下一步的点击事件
+- (void)nextBtnClick
+{
+    CMT_Log(@"下一步");
+ 
+}
+
+//传递姓名和身份证号
+- (void)sendNameStr:(NSString *)nameStr IDCardNumStr:(NSString *)numStr
+{
+    //数据统计
+    SensorsAnalyticsSDK *sdk = [SensorsAnalyticsSDK sharedInstance];
+    if (sdk != nil) {
+        [sdk track:@"pre_invest_proving" withProperties:@{@"distinctId": [NSString convertNull:[CMT_AnalyticsTool userID]],
+                                                          @"Name": [NSString convertNull:nameStr],
+                                                          @"IDCard":[NSString convertNull:numStr]}];
+    }
+    [sdk flush];
+
+    CMT_SecondInvestPreViewController *secondInvestPreView = [[CMT_SecondInvestPreViewController alloc]init];
+    secondInvestPreView.enterInvestmentPreparationType = _enterInvestmentPreparationType;
+    secondInvestPreView.nameStr = nameStr;
+    secondInvestPreView.idNumberStr = numStr;
+    [self.navigationController pushViewController:secondInvestPreView animated:YES];
+    
+}
+
+- (void)didReceiveMemoryWarning {
+    [super didReceiveMemoryWarning];
+    // Dispose of any resources that can be recreated.
+}
+
+@end

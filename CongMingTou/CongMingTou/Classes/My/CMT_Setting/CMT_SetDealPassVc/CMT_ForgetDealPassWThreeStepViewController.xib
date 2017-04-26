@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="11542" systemVersion="16A323" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES">
+    <device id="retina4_7" orientation="portrait">
+        <adaptation id="fullscreen"/>
+    </device>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="11524"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="CMT_ForgetDealPassWThreeStepViewController">
+            <connections>
+                <outlet property="bottomLabel" destination="xZz-5D-VEd" id="Eld-dD-lCJ"/>
+                <outlet property="view" destination="i5M-Pr-FkT" id="sfx-zR-JGt"/>
+            </connections>
+        </placeholder>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <view clearsContextBeforeDrawing="NO" contentMode="scaleToFill" id="i5M-Pr-FkT">
+            <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+            <subviews>
+                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="CMT_RealNameThreeStep" translatesAutoresizingMaskIntoConstraints="NO" id="4iK-hD-8AP">
+                    <rect key="frame" x="107.5" y="15" width="160" height="32"/>
+                    <constraints>
+                        <constraint firstAttribute="height" constant="32" id="k6g-Mz-w5v"/>
+                        <constraint firstAttribute="width" constant="160" id="zbq-Uv-ZsG"/>
+                    </constraints>
+                </imageView>
+                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="确认密码" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="NNi-PX-9gc">
+                    <rect key="frame" x="138.5" y="77" width="98" height="21"/>
+                    <constraints>
+                        <constraint firstAttribute="height" constant="21" id="hXU-LE-k5v"/>
+                        <constraint firstAttribute="width" constant="98" id="xsK-Kr-D0u"/>
+                    </constraints>
+                    <fontDescription key="fontDescription" type="system" pointSize="18"/>
+                    <color key="textColor" red="0.20000000000000001" green="0.20000000000000001" blue="0.20000000000000001" alpha="1" colorSpace="calibratedRGB"/>
+                    <nil key="highlightedColor"/>
+                </label>
+                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="再次输入6位数字交易密码" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="xZz-5D-VEd">
+                    <rect key="frame" x="106" y="110" width="163" height="21"/>
+                    <constraints>
+                        <constraint firstAttribute="width" constant="163" id="cIo-1g-SQA"/>
+                        <constraint firstAttribute="height" constant="21" id="y4o-zv-3AE"/>
+                    </constraints>
+                    <fontDescription key="fontDescription" type="system" pointSize="12"/>
+                    <color key="textColor" red="0.40000000000000002" green="0.40000000000000002" blue="0.40000000000000002" alpha="1" colorSpace="calibratedRGB"/>
+                    <nil key="highlightedColor"/>
+                </label>
+            </subviews>
+            <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+            <constraints>
+                <constraint firstItem="NNi-PX-9gc" firstAttribute="top" secondItem="4iK-hD-8AP" secondAttribute="bottom" constant="30" id="BKX-h8-hCh"/>
+                <constraint firstItem="4iK-hD-8AP" firstAttribute="centerX" secondItem="i5M-Pr-FkT" secondAttribute="centerX" id="DJj-4K-n6d"/>
+                <constraint firstItem="NNi-PX-9gc" firstAttribute="centerX" secondItem="i5M-Pr-FkT" secondAttribute="centerX" id="bBy-Cb-hSW"/>
+                <constraint firstItem="xZz-5D-VEd" firstAttribute="top" secondItem="NNi-PX-9gc" secondAttribute="bottom" constant="12" id="fDk-uI-dr5"/>
+                <constraint firstItem="xZz-5D-VEd" firstAttribute="centerX" secondItem="i5M-Pr-FkT" secondAttribute="centerX" id="g21-nk-6ru"/>
+                <constraint firstItem="4iK-hD-8AP" firstAttribute="top" secondItem="i5M-Pr-FkT" secondAttribute="top" constant="15" id="stP-1H-4vW"/>
+            </constraints>
+        </view>
+    </objects>
+    <resources>
+        <image name="CMT_RealNameThreeStep" width="160" height="32"/>
+    </resources>
+</document>

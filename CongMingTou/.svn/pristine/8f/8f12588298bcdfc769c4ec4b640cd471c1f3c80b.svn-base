@@ -1,0 +1,221 @@
+//
+//  CMT_YuYueTouZiViewController.m
+//  CongMingTou
+//
+//  Created by 雷博 on 16/5/17.
+//  Copyright © 2016年 QiYuan. All rights reserved.
+//
+
+#import "CMT_YuYueTouZiViewController.h"
+#import "CMT_MyReservationInvesTableViewCell.h"
+#import "CMT_makeSureViewController.h"
+#import "CMT_PreInvestModel.h"
+
+@interface CMT_YuYueTouZiViewController ()<UITableViewDelegate,UITableViewDataSource>
+
+@property (nonatomic,strong) UITableView *tableView;
+/** 分页*/
+@property (nonatomic,assign)NSInteger pageCount;
+/** 数据源 */
+@property (nonatomic,strong)NSMutableArray *dataSourceArr;
+
+@end
+
+@implementation CMT_YuYueTouZiViewController
+
+- (NSMutableArray *)dataSourceArr
+{
+    if (!_dataSourceArr) {
+        _dataSourceArr = [[NSMutableArray alloc] init];
+    }
+    return _dataSourceArr;
+}
+
+- (void)viewDidLoad {
+    [super viewDidLoad];
+    
+    self.title = @"预约投资";
+    [self createTableView];
+    [self noNetView:NO];
+
+}
+
+#pragma mark -- 点击重新加载事件
+- (void)netReloadData
+{
+    [self loadPreInvestListData];
+}
+#pragma MARK -- 上拉加载更多
+- (void)addMoreData
+{
+    [self showHudInView:self.view hint:@"加载中..."];
+    
+    __weak  typeof(self) weakSelf = self;
+    
+    NSString *pageStr = [NSString stringWithFormat:@"%ld",(long)self.pageCount];
+    
+    [CMT_ProcessTheDataTool getPreInvestListDataPageCount:pageStr andBlock:^(id jsonObject, NSError *error) {
+        
+        [weakSelf hideHud];
+        [weakSelf.tableView.mj_footer endRefreshing];
+        
+        if(!error){
+            if([[NSString stringWithFormat:@"%@",jsonObject[@"status"]]  isEqualToString:@"1"]){
+                NSArray *dataArr = (NSArray *)jsonObject[@"bids"];
+                CMT_Log(@"dataArr==%@",dataArr);
+                
+                //如果上拉数据没有了就提示数据已加载完毕
+                if (dataArr.count == 0) {
+                    [weakSelf.tableView.mj_footer endRefreshingWithNoMoreData];
+                    return ;
+                }
+                
+                self.pageCount += dataArr.count;
+                
+                //消除没有更多数据的状态
+                [weakSelf.tableView.mj_footer resetNoMoreData];
+                
+                for (NSDictionary *dict in dataArr) {
+                    
+                    CMT_PreInvestModel *model = [CMT_PreInvestModel mj_objectWithKeyValues:dict];
+                    [weakSelf.dataSourceArr addObject:model];
+                }
+                [weakSelf.tableView reloadData];
+            }else if ( [[NSString stringWithFormat:@"%@",jsonObject[@"status"]] isEqualToString:CMT_SinglePointCode]){
+                [CMT_SinglePointLoginTool addSinglePointLoginWithSelfVC:self];
+            }else{
+                [self showHint:jsonObject[@"msg"]];
+            }
+            
+            
+        }else{
+            CMT_Log(@"失败");
+            [self showHint:@"当前网络不给力，请检查网络设置"];
+        }
+    }];
+    
+}
+
+#pragma MARK -- 获取首页数据
+- (void)loadPreInvestListData
+{
+    __weak  typeof(self) weakSelf = self;
+    [self showHudInView:self.view hint:@"加载中..."];
+
+    self.pageCount = 10;
+    
+    [CMT_ProcessTheDataTool getPreInvestListDataPageCount:@"0" andBlock:^(id jsonObject, NSError *error) {
+        
+        [weakSelf.tableView.mj_header endRefreshing];
+        [weakSelf hideHud];
+        
+        if(!error){
+            if([[NSString stringWithFormat:@"%@",jsonObject[@"status"]] isEqualToString:@"1"]){
+
+                [weakSelf.tableView.mj_footer resetNoMoreData];
+                
+                if (weakSelf.dataSourceArr) [weakSelf.dataSourceArr removeAllObjects];
+                
+                NSArray *dataArr = (NSArray *)jsonObject[@"bids"];
+
+                for (NSDictionary *dict in dataArr) {
+                    
+                    CMT_PreInvestModel *model = [CMT_PreInvestModel mj_objectWithKeyValues:dict];
+                    
+                    [weakSelf.dataSourceArr addObject:model];
+                }
+
+                [weakSelf noNetView:dataArr.count > 0 ? YES : NO];
+                weakSelf.tableView.mj_footer.hidden = weakSelf.dataSourceArr.count > 0 ? NO : YES;
+                
+                [weakSelf.tableView reloadData];
+            
+            }else if ([[NSString stringWithFormat:@"%@",jsonObject[@"status"]] isEqualToString:CMT_SinglePointCode]){
+                [CMT_SinglePointLoginTool addSinglePointLoginWithSelfVC:self];
+            }else{
+                [self showHint:jsonObject[@"msg"]];
+            }
+        }else{
+            
+            [weakSelf showHint:@"当前网络不给力，请检查网络设置"];
+        }
+    }];
+}
+
+#pragma mark -- 初始化tablebView
+- (void)createTableView
+{
+    _tableView = [[UITableView alloc] initWithFrame:CGRectMake(0, 0, CMT_ScreenWidth, CMT_ScreenHeight - 64) style:UITableViewStyleGrouped];
+    _tableView.delegate = self;
+    _tableView.dataSource = self;
+    _tableView.sectionFooterHeight = 10;
+    _tableView.sectionHeaderHeight = 0;
+    CGRect frame=CGRectMake(0, 0, 0,CGFLOAT_MIN);
+    self.tableView.tableHeaderView=[[UIView alloc]initWithFrame:frame];
+
+    self.tableView.mj_header = [MJRefreshNormalHeader headerWithRefreshingTarget:self refreshingAction:@selector(loadPreInvestListData)];
+    self.tableView.mj_footer = [MJRefreshAutoNormalFooter footerWithRefreshingTarget:self refreshingAction:@selector(addMoreData)];
+    
+    [self loadPreInvestListData];
+    self.tableView.mj_footer.hidden = YES;
+
+    self.view = _tableView;
+}
+
+
+#pragma mark - tableViewDelegate
+- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
+{
+    return self.dataSourceArr.count;
+}
+
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section{
+    
+    return 1;
+}
+
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath{
+    
+    static NSString *identifiler = @"financialTableCellID";
+
+    CMT_MyReservationInvesTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:identifiler];
+    cell.backgroundColor = CommonWhiteColor;
+    tableView.separatorStyle = UITableViewCellSelectionStyleNone;
+    if (!cell) {
+        cell = [[CMT_MyReservationInvesTableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:identifiler];
+    }
+    cell.model = self.dataSourceArr[indexPath.section];
+    return cell;
+}
+- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath{
+    
+    return 120;
+}
+
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
+    
+    UITableViewCell * cell = [tableView cellForRowAtIndexPath:indexPath];
+    cell.selectionStyle = UITableViewCellSelectionStyleNone;
+    
+    CMT_makeSureViewController *vc = [[CMT_makeSureViewController alloc] init];
+    vc.fromType = 1;//跳转来源
+    vc.investId = self.investIdStr;
+    vc.preInvestModelmodel = self.dataSourceArr[indexPath.section];
+    [self.navigationController pushViewController:vc animated:YES];
+}
+- (void)didReceiveMemoryWarning {
+    [super didReceiveMemoryWarning];
+    // Dispose of any resources that can be recreated.
+}
+
+/*
+#pragma mark - Navigation
+
+// In a storyboard-based application, you will often want to do a little preparation before navigation
+- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
+    // Get the new view controller using [segue destinationViewController].
+    // Pass the selected object to the new view controller.
+}
+*/
+
+@end

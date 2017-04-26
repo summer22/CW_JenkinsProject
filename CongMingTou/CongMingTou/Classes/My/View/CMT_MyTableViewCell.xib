@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="11542" systemVersion="16A323" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES">
+    <device id="retina4_7" orientation="portrait">
+        <adaptation id="fullscreen"/>
+    </device>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="11524"/>
+        <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <tableViewCell contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" id="KGk-i7-Jjw" customClass="CMT_MyTableViewCell">
+            <rect key="frame" x="0.0" y="0.0" width="320" height="48"/>
+            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+            <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="KGk-i7-Jjw" id="H2p-sc-9uM">
+                <rect key="frame" x="0.0" y="0.0" width="320" height="47"/>
+                <autoresizingMask key="autoresizingMask"/>
+                <subviews>
+                    <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="CMT_My_Income" translatesAutoresizingMaskIntoConstraints="NO" id="U3f-00-svx">
+                        <rect key="frame" x="14" y="15" width="17" height="18"/>
+                        <constraints>
+                            <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="17" id="Foa-D0-qdL"/>
+                            <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="18" id="sFs-Ed-fCM"/>
+                        </constraints>
+                    </imageView>
+                    <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="Investment_normal" translatesAutoresizingMaskIntoConstraints="NO" id="wPF-Pa-Tj1">
+                        <rect key="frame" x="298" y="17" width="8" height="14"/>
+                        <constraints>
+                            <constraint firstAttribute="width" constant="8" id="RjV-vS-dMP"/>
+                            <constraint firstAttribute="height" constant="14" id="zq0-DU-ZSl"/>
+                        </constraints>
+                    </imageView>
+                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="累计收益" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Ppw-o6-572">
+                        <rect key="frame" x="46" y="13" width="69" height="21"/>
+                        <constraints>
+                            <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="69" id="4yv-zp-hDT"/>
+                            <constraint firstAttribute="height" constant="21" id="rPC-du-L7R"/>
+                        </constraints>
+                        <fontDescription key="fontDescription" type="system" pointSize="16"/>
+                        <color key="textColor" red="0.20000000000000001" green="0.20000000000000001" blue="0.20000000000000001" alpha="1" colorSpace="calibratedRGB"/>
+                        <nil key="highlightedColor"/>
+                    </label>
+                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="10000.00" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Hcw-KT-Qpm">
+                        <rect key="frame" x="226.5" y="5" width="61.5" height="20"/>
+                        <constraints>
+                            <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="56" id="VFs-JG-wIN"/>
+                            <constraint firstAttribute="height" constant="20" id="c1K-p3-iJb"/>
+                        </constraints>
+                        <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                        <nil key="textColor"/>
+                        <nil key="highlightedColor"/>
+                    </label>
+                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="10000" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="oL5-jE-K62">
+                        <rect key="frame" x="223" y="12" width="65" height="22"/>
+                        <constraints>
+                            <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="65" id="1Af-ta-mBN"/>
+                            <constraint firstAttribute="height" constant="22" id="6Rd-mN-zXT"/>
+                        </constraints>
+                        <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                        <color key="textColor" red="0.20000000000000001" green="0.20000000000000001" blue="0.20000000000000001" alpha="1" colorSpace="calibratedRGB"/>
+                        <nil key="highlightedColor"/>
+                    </label>
+                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="nav-k0-yrn" userLabel="line">
+                        <rect key="frame" x="12" y="47" width="308" height="1"/>
+                        <color key="backgroundColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
+                        <constraints>
+                            <constraint firstAttribute="height" constant="1" id="Qp5-tR-GqH"/>
+                        </constraints>
+                    </view>
+                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="预期收益156.23" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="i0i-4T-v0i">
+                        <rect key="frame" x="201" y="23" width="87" height="20"/>
+                        <constraints>
+                            <constraint firstAttribute="height" constant="20" id="7PH-vp-hzW"/>
+                            <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="87" id="9mK-JP-fFH"/>
+                        </constraints>
+                        <fontDescription key="fontDescription" type="system" pointSize="11"/>
+                        <color key="textColor" red="1" green="0.32156862749999998" blue="0.38431372549999998" alpha="1" colorSpace="calibratedRGB"/>
+                        <nil key="highlightedColor"/>
+                    </label>
+                </subviews>
+                <constraints>
+                    <constraint firstItem="i0i-4T-v0i" firstAttribute="top" secondItem="H2p-sc-9uM" secondAttribute="top" constant="23" id="8qY-Uq-gSu"/>
+                    <constraint firstAttribute="bottom" secondItem="nav-k0-yrn" secondAttribute="bottom" id="8qk-hN-1J9"/>
+                    <constraint firstItem="U3f-00-svx" firstAttribute="centerY" secondItem="H2p-sc-9uM" secondAttribute="centerY" id="AkK-Jq-4CD"/>
+                    <constraint firstItem="Hcw-KT-Qpm" firstAttribute="top" secondItem="H2p-sc-9uM" secondAttribute="top" constant="5" id="Dbg-BI-yda"/>
+                    <constraint firstItem="wPF-Pa-Tj1" firstAttribute="leading" secondItem="Hcw-KT-Qpm" secondAttribute="trailing" constant="10" id="KUV-ku-NZ5"/>
+                    <constraint firstItem="nav-k0-yrn" firstAttribute="leading" secondItem="H2p-sc-9uM" secondAttribute="leading" constant="12" id="OgK-1e-hzc"/>
+                    <constraint firstItem="wPF-Pa-Tj1" firstAttribute="leading" secondItem="i0i-4T-v0i" secondAttribute="trailing" constant="10" id="RLN-h1-riw"/>
+                    <constraint firstItem="oL5-jE-K62" firstAttribute="centerY" secondItem="H2p-sc-9uM" secondAttribute="centerY" id="RZS-3i-EPk"/>
+                    <constraint firstItem="wPF-Pa-Tj1" firstAttribute="centerY" secondItem="H2p-sc-9uM" secondAttribute="centerY" id="SrR-Y8-zKI"/>
+                    <constraint firstItem="Ppw-o6-572" firstAttribute="centerY" secondItem="H2p-sc-9uM" secondAttribute="centerY" id="a46-Qs-vWQ"/>
+                    <constraint firstItem="U3f-00-svx" firstAttribute="leading" secondItem="H2p-sc-9uM" secondAttribute="leadingMargin" constant="6" id="bGT-A8-O9r"/>
+                    <constraint firstAttribute="trailingMargin" secondItem="wPF-Pa-Tj1" secondAttribute="trailing" constant="6" id="bus-Q5-Lei"/>
+                    <constraint firstAttribute="trailing" secondItem="nav-k0-yrn" secondAttribute="trailing" id="bz7-zO-dbV"/>
+                    <constraint firstItem="wPF-Pa-Tj1" firstAttribute="leading" secondItem="oL5-jE-K62" secondAttribute="trailing" constant="10" id="ca4-CQ-M0j"/>
+                    <constraint firstItem="Ppw-o6-572" firstAttribute="leading" secondItem="U3f-00-svx" secondAttribute="trailing" constant="15" id="osM-S8-djb"/>
+                </constraints>
+            </tableViewCellContentView>
+            <connections>
+                <outlet property="expectLabel" destination="i0i-4T-v0i" id="keO-nC-SbW"/>
+                <outlet property="iconImg" destination="U3f-00-svx" id="1jT-xY-IOm"/>
+                <outlet property="line" destination="nav-k0-yrn" id="zj0-1K-ef9"/>
+                <outlet property="lineH" destination="Qp5-tR-GqH" id="haM-xn-UxK"/>
+                <outlet property="midLabel" destination="oL5-jE-K62" id="ESr-Qw-ZDD"/>
+                <outlet property="moneyCount" destination="Hcw-KT-Qpm" id="T7D-X3-KX2"/>
+                <outlet property="titleLabel" destination="Ppw-o6-572" id="joy-Lj-Mah"/>
+            </connections>
+            <point key="canvasLocation" x="26" y="56"/>
+        </tableViewCell>
+    </objects>
+    <resources>
+        <image name="CMT_My_Income" width="17" height="18"/>
+        <image name="Investment_normal" width="8" height="14"/>
+    </resources>
+</document>

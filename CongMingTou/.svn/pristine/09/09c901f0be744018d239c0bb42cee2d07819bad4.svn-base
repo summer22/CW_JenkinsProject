@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="10116" systemVersion="15B42" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES">
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="10085"/>
+        <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <tableViewCell contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" id="KGk-i7-Jjw" customClass="CMT_AccountAndSecurityTableViewCell">
+            <rect key="frame" x="0.0" y="0.0" width="320" height="45"/>
+            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+            <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="KGk-i7-Jjw" id="H2p-sc-9uM">
+                <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
+                <autoresizingMask key="autoresizingMask"/>
+                <subviews>
+                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="消息推送通知" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="FZE-ot-elV">
+                        <rect key="frame" x="15" y="11" width="150" height="21"/>
+                        <constraints>
+                            <constraint firstAttribute="width" constant="150" id="8hq-9w-lK9"/>
+                            <constraint firstAttribute="height" constant="21" id="sua-aj-eJ5"/>
+                        </constraints>
+                        <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                        <color key="textColor" red="0.20392156859999999" green="0.28627450980000002" blue="0.36862745099999999" alpha="1" colorSpace="calibratedRGB"/>
+                        <nil key="highlightedColor"/>
+                    </label>
+                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="MzN-zG-IUf">
+                        <rect key="frame" x="294" y="11" width="11" height="22"/>
+                        <constraints>
+                            <constraint firstAttribute="width" constant="11" id="XFo-Fl-arI"/>
+                            <constraint firstAttribute="height" constant="22" id="sau-wj-31u"/>
+                        </constraints>
+                        <state key="normal" title="Button" image="Investment_normal"/>
+                    </button>
+                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="去设置" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="HbG-fJ-ZRk">
+                        <rect key="frame" x="214" y="12" width="65" height="20"/>
+                        <constraints>
+                            <constraint firstAttribute="height" constant="20" id="4p3-hk-aJg"/>
+                            <constraint firstAttribute="width" constant="65" id="Cer-vs-A3I"/>
+                        </constraints>
+                        <fontDescription key="fontDescription" type="system" pointSize="12"/>
+                        <color key="textColor" red="1" green="0.37647058820000001" blue="0.24313725489999999" alpha="1" colorSpace="calibratedRGB"/>
+                        <nil key="highlightedColor"/>
+                    </label>
+                </subviews>
+                <constraints>
+                    <constraint firstItem="MzN-zG-IUf" firstAttribute="leading" secondItem="HbG-fJ-ZRk" secondAttribute="trailing" constant="15" id="8LC-yn-GIp"/>
+                    <constraint firstItem="FZE-ot-elV" firstAttribute="leading" secondItem="H2p-sc-9uM" secondAttribute="leadingMargin" constant="7" id="Nu3-kP-Cdl"/>
+                    <constraint firstAttribute="trailingMargin" secondItem="MzN-zG-IUf" secondAttribute="trailing" constant="7" id="SWK-Ft-IPi"/>
+                    <constraint firstItem="HbG-fJ-ZRk" firstAttribute="centerY" secondItem="H2p-sc-9uM" secondAttribute="centerY" id="YNR-gW-Vex"/>
+                    <constraint firstItem="FZE-ot-elV" firstAttribute="centerY" secondItem="H2p-sc-9uM" secondAttribute="centerY" id="c80-H7-SNZ"/>
+                    <constraint firstItem="MzN-zG-IUf" firstAttribute="centerY" secondItem="H2p-sc-9uM" secondAttribute="centerY" id="sCk-I2-yXC"/>
+                </constraints>
+            </tableViewCellContentView>
+            <connections>
+                <outlet property="desLab" destination="HbG-fJ-ZRk" id="SR5-w0-8Pp"/>
+                <outlet property="nextBtn" destination="MzN-zG-IUf" id="Pee-kz-4Pj"/>
+                <outlet property="titleLab" destination="FZE-ot-elV" id="yfh-1p-ORx"/>
+            </connections>
+            <point key="canvasLocation" x="446" y="318.5"/>
+        </tableViewCell>
+    </objects>
+    <resources>
+        <image name="Investment_normal" width="8" height="14"/>
+    </resources>
+</document>

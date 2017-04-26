@@ -1,0 +1,29 @@
+//
+//  CMT_ChongZhiTiXianModel.m
+//  CongMingTou
+//
+//  Created by wzh on 16/5/25.
+//  Copyright © 2016年 QiYuan. All rights reserved.
+//
+
+#import "CMT_ChongZhiTiXianModel.h"
+
+@implementation CMT_ChongZhiTiXianModel
+
++ (CMT_ChongZhiTiXianModel *)chongZhiTiXianModelWithDic:(NSDictionary *)dic{
+    return  [[self alloc]initWithDic:dic];
+}
+
+
+- (void)setValue:(id)value forUndefinedKey:(NSString *)key{
+    if([key isEqualToString:@"recordList"]){
+        NSMutableArray *dataArray = [NSMutableArray array];
+        for (NSDictionary *subDic in (NSArray *)value) {
+            CMT_ChongZhiTiXianListModel *model = [CMT_ChongZhiTiXianListModel chongZhiTiXianListModelWithDic:subDic];
+            [dataArray addObject:model];
+        }
+        self.listDataArray = [NSArray arrayWithArray:dataArray];
+ 
+    }
+}
+@end

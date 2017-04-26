@@ -1,0 +1,21 @@
+//
+//  CMT_UserRechargeModel.m
+//  CongMingTou
+//
+//  Created by wzh on 16/5/30.
+//  Copyright © 2016年 QiYuan. All rights reserved.
+//
+
+#import "CMT_UserRechargeModel.h"
+
+@implementation CMT_UserRechargeModel
++ (CMT_UserRechargeModel *)userRechargeModelWithDic:(NSDictionary *)dic{
+    return [[self alloc]initWithDic:dic];
+}
+
+- (void)setValue:(id)value forUndefinedKey:(NSString *)key{
+    if([key isEqualToString:@"payInfo"]){
+        self.userRechargeInforModel = [CMT_UserRechargeInfoModel userRechargeInfoModelWithDic:value];
+    }
+}
+@end

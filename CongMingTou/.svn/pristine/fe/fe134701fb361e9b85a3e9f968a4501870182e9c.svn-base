@@ -1,0 +1,13 @@
+//
+//  CMT_MyViewController.h
+//  CongMingTou
+//
+//  Created by wzh on 16/5/10.
+//  Copyright © 2016年 wzh. All rights reserved.
+//
+
+#import <UIKit/UIKit.h>
+
+@interface CMT_MyViewController : CMT_BaseVIewController
+
+@end

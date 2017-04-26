@@ -1,0 +1,49 @@
+//
+//  CMT_AnalyticsTool.h
+//  CongMingTou
+//
+//  Created by summer on 16/6/17.
+//  Copyright © 2016年 QiYuan. All rights reserved.
+//
+
+#import <Foundation/Foundation.h>
+
+@interface CMT_AnalyticsTool : NSObject
+//用户id
++ (NSString *)userID;
+
+//所在省份
++ (NSString *)province;
+
+//所在城市
++ (NSString *)city;
+
+//是否是第一次启动
++ (NSString *)isFirstStart;
+
+//应用市场
++ (NSString *)applicationMarket;
+
+//自然流量来源域名
++ (NSString *)referChannel;
+
+//自然流量来源url
++ (NSString *)referUrl;
+
+//付费广告来源
++ (NSString *)payChannel;
+
+//付费广告媒介
++ (NSString *)media;
+
+//付费广告关键词
++ (NSString *)keyWord;
+
+//付费广告内容
++ (NSString *)content;
+
+//启动方式
++ (NSString *)startType;
+
+
+@end

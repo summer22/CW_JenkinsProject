@@ -1,0 +1,27 @@
+//
+//  CMT_MyInverstmentModel.m
+//  CongMingTou
+//
+//  Created by wzh on 16/5/20.
+//  Copyright © 2016年 QiYuan. All rights reserved.
+//
+
+#import "CMT_MyInverstmentModel.h"
+
+@implementation CMT_MyInverstmentModel
++ (CMT_MyInverstmentModel *)myInverstmentModelWithDic:(NSDictionary *)dic{
+    return [[self alloc]initWithDic:dic];
+}
+
+- (void)setValue:(id)value forUndefinedKey:(NSString *)key{
+    if([key isEqualToString:@"datas"]){
+        NSMutableArray *dataArray = [NSMutableArray array];
+        for (NSDictionary *subDic in (NSArray *)value) {
+            CMT_MyInverstmentListModel *model = [CMT_MyInverstmentListModel myInverstmentListModelWithDic:subDic];
+            [dataArray addObject:model];
+        }
+        self.listDataArray = [NSArray arrayWithArray:dataArray];
+    }
+
+}
+@end

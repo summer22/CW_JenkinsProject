@@ -1,0 +1,17 @@
+//
+//  CMT_CreditorsRightsListViewController.h
+//  CongMingTou
+//
+//  Created by wzh on 16/6/22.
+//  Copyright © 2016年 QiYuan. All rights reserved.
+//
+
+#import "CMT_WebBaseViewController.h"
+
+@interface CMT_CreditorsRightsListViewController : CMT_WebBaseViewController
+/** 债权期限 */
+@property (nonatomic,copy)NSString *perid;
+/** 标的id */
+@property (nonatomic,copy)NSString *bidNo;
+
+@end

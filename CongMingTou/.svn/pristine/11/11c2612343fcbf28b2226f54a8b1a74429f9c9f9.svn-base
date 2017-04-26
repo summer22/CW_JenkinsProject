@@ -1,0 +1,12 @@
+//
+//  CMT_RealNameAuthenticationViewController.h
+//  CongMingTou
+//
+//  Created by wzh on 16/5/17.
+//  Copyright © 2016年 QiYuan. All rights reserved.
+//
+
+#import "CMT_BaseVIewController.h"
+@class CMT_IDCardInforDataModel;
+@interface CMT_RealNameAuthenticationViewController : CMT_BaseVIewController
+@end

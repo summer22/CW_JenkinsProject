@@ -1,0 +1,13 @@
+//
+//  CMT_InvestRecordModel.m
+//  CongMingTou
+//
+//  Created by summer on 16/5/26.
+//  Copyright © 2016年 QiYuan. All rights reserved.
+//
+
+#import "CMT_InvestRecordModel.h"
+
+@implementation CMT_InvestRecordModel
+
+@end

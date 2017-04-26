@@ -1,0 +1,13 @@
+//
+//  CMT_CoponTicketModel.m
+//  CongMingTou
+//
+//  Created by summer on 16/5/26.
+//  Copyright © 2016年 QiYuan. All rights reserved.
+//
+
+#import "CMT_CoponTicketModel.h"
+
+@implementation CMT_CoponTicketModel
+
+@end

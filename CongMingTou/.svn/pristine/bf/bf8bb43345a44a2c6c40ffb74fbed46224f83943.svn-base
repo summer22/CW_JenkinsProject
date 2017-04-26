@@ -1,0 +1,16 @@
+//
+//  CMT_MyInforModel.m
+//  CongMingTou
+//
+//  Created by wzh on 16/5/19.
+//  Copyright © 2016年 QiYuan. All rights reserved.
+//
+
+#import "CMT_MyInforModel.h"
+
+@implementation CMT_MyInforModel
++ (CMT_MyInforModel *)myInforModelWithDic:(NSDictionary *)dic{
+    return [[self alloc]initWithDic:dic];
+}
+
+@end

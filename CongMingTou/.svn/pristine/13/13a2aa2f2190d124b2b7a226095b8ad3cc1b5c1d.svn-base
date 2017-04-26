@@ -1,0 +1,19 @@
+//
+//  CMT_recordTableViewCell.h
+//  CongMingTou
+//
+//  Created by summer on 16/5/12.
+//  Copyright © 2016年 wzh. All rights reserved.
+//
+
+#import <UIKit/UIKit.h>
+@class CMT_InvestRecordModel;
+
+@interface CMT_recordTableViewCell : UITableViewCell
+
++ (CMT_recordTableViewCell *)cellWithTablebView:(UITableView *)tableView indexPath:(NSIndexPath *)index;
+
+/** 数据源模型 */
+@property (nonatomic,strong)CMT_InvestRecordModel *model;
+
+@end

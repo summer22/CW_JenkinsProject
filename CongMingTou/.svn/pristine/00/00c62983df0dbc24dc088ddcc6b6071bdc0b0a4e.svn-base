@@ -1,0 +1,18 @@
+//
+//  CMT_LoginViewController.h
+//  CongMingTou
+//
+//  Created by wzh on 16/5/9.
+//  Copyright © 2016年 QiYuan All rights reserved.
+//
+
+#import "CMT_BaseVIewController.h"
+
+@interface CMT_LoginViewController : CMT_BaseVIewController
+
+@property (nonatomic, assign) CMTEnterLoginType enterLoginType;
+/**
+ *  进来的界面VC
+ */
+@property (nonatomic, strong) UIViewController *preVc;
+@end

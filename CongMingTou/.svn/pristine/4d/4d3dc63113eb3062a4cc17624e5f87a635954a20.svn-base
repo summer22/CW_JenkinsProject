@@ -1,0 +1,109 @@
+//
+//  CMT_AnalyticsTool.m
+//  CongMingTou
+//
+//  Created by summer on 16/6/17.
+//  Copyright © 2016年 QiYuan. All rights reserved.
+//
+
+#import "CMT_AnalyticsTool.h"
+
+@implementation CMT_AnalyticsTool
+
+//用户id
++ (NSString *)userID
+{
+    CMT_AccountModel *accoutModel = [CMT_AccountTool accountModel];
+    if (accoutModel.userId) {
+        return accoutModel.userId;
+    }
+    return [[SensorsAnalyticsSDK sharedInstance] distinctId];
+
+}
+
+//所在省份
++ (NSString *)province
+{
+    return nil;
+}
+
+//所在城市
++ (NSString *)city
+{
+    return nil;
+}
+
+//是否是第一次启动
++ (NSString *)isFirstStart
+{
+    // 如何知道第一次使用这个版本？比较上次的使用情况
+    NSString *versionKey = @"CFBundleShortVersionString";
+    // 从沙盒中取出上次存储的软件版本号(取出用户上次的使用记录)
+    NSString *lastVersion = MyObjectForKey(versionKey);
+    
+    // 获得当前打开软件的版本号
+    NSString *currentVersion = [NSBundle mainBundle].infoDictionary[versionKey];
+    
+    if ([currentVersion isEqualToString:lastVersion]) {
+        // 当前版本号 == 上次使用的版本
+        return @"否";
+        
+    } else { // 当前版本号 != 上次使用的版本
+        /**
+         *  第一次启动设置指纹关闭
+         */
+        return @"是";
+    }
+}
+
+//应用市场
++ (NSString *)applicationMarket
+{
+    return @"AppStore";
+}
+
+//自然流量来源域名
++ (NSString *)referChannel
+{
+    return nil;
+}
+
+
+//自然流量来源url
++ (NSString *)referUrl
+{
+    return nil;
+}
+
+//付费广告来源
++ (NSString *)payChannel
+{
+    return nil;
+}
+
+//付费广告媒介
++ (NSString *)media
+{
+    return nil;
+}
+
+//付费广告关键词
++ (NSString *)keyWord
+{
+    return nil;
+}
+
+//付费广告内容
++ (NSString *)content
+{
+    return nil;
+}
+
+
+//启动方式
++ (NSString *)startType
+{
+    return nil;
+}
+
+@end

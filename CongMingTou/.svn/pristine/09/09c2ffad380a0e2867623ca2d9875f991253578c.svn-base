@@ -1,0 +1,36 @@
+//
+//  CMT_financialModel.h
+//  CongMingTou
+//
+//  Created by summer on 16/5/23.
+//  Copyright © 2016年 QiYuan. All rights reserved.
+//
+
+#import <Foundation/Foundation.h>
+
+@interface CMT_financialModel : NSObject
+/** 利率 */
+@property (nonatomic,copy)NSString *apr;
+/** 状态 */
+@property (nonatomic,copy)NSString *status;
+/** 标的id */
+@property (nonatomic,copy)NSString *bidId;
+/** 余金额 */
+@property (nonatomic,copy)NSString *leftAmount;
+/** 名称 */
+@property (nonatomic,copy)NSString *bidTitle;
+/** 投金额 */
+@property (nonatomic,copy)NSString *minInvestAmount;
+/** 付款方式 */
+@property (nonatomic,copy)NSString *repayType;
+/** 限期 */
+@property (nonatomic,copy)NSString *period;
+/** 第几期 */
+@property (nonatomic,copy)NSString *bidNumber;
+/** 标类型 */
+@property (nonatomic,copy)NSString *bidType;
+/** 投资的id */
+@property (nonatomic,copy)NSString *investId;
+/** 缓存数据源 */
+@property (nonatomic,strong)NSMutableArray *memoryCacheDataArr;
+@end

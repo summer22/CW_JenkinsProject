@@ -1,0 +1,61 @@
+//
+//  CMT_ServiceAgreementView.m
+//  CongMingTou
+//
+//  Created by wzh on 16/5/23.
+//  Copyright © 2016年 QiYuan. All rights reserved.
+//
+
+#import "CMT_ServiceAgreementView.h"
+@interface CMT_ServiceAgreementView (){
+
+}
+@property (nonatomic, strong) IBOutlet UIView *view;
+@end
+@implementation CMT_ServiceAgreementView
+
+- (instancetype)initWithFrame:(CGRect)frame{
+    if(self = [super initWithFrame:frame]){
+        //        self =[[[NSBundle mainBundle] loadNibNamed:@"CMT_PhoneAndVerificationCodeView" owner:nil options:nil]lastObject];
+        [self setUI];
+    }
+    return self;
+}
+
+- (instancetype)initWithCoder:(NSCoder *)aDecoder{
+    
+    if (self = [super initWithCoder:aDecoder]) {
+        [self setUI];
+    }
+    return self;
+}
+
+- (void)setUI{
+    [[NSBundle mainBundle] loadNibNamed:@"CMT_ServiceAgreementView" owner:self options:nil];
+    [self addSubview:self.view];
+}
+
+//服务协议
+- (IBAction)serviceAgreementBtnClicked:(id)sender {
+    CMT_Log(@"点击啊了服务协议按钮");
+    if(self.delegate && [self.delegate respondsToSelector:@selector(didServiceAgreementBtn:)]){
+        [self.delegate performSelector:@selector(didServiceAgreementBtn:) withObject:sender];
+    }//外面响应代理
+    
+}
+//是否阅读了合同
+- (IBAction)isReadBtnClicked:(UIButton *)sender {
+    sender.selected = !sender.selected;
+    CMT_Log(@"点击啊了是否阅读了合同按钮");
+    if(self.delegate && [self.delegate respondsToSelector:@selector(didIsReadBtnClicked:)]){
+        [self.delegate performSelector:@selector(didIsReadBtnClicked:) withObject:sender];
+    }//外面响应代理
+}
+
+- (void)layoutSubviews{
+    [super layoutSubviews];
+    [self sendSubviewToBack:self.view];
+    self.view.frame = self.bounds;
+    
+}
+@end

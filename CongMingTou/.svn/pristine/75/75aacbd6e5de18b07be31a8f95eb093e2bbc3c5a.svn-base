@@ -1,0 +1,18 @@
+//
+//  CMT_ProductBackMoneyRuleAlertView.h
+//  CongMingTou
+//
+//  Created by summer on 16/5/17.
+//  Copyright © 2016年 QiYuan. All rights reserved.
+//
+
+#import <UIKit/UIKit.h>
+
+@interface CMT_ProductBackMoneyRuleAlertView : UIView
+
+- (instancetype)initWithFrame:(CGRect)frame;
+
++ (void)show;
+
+
+@end

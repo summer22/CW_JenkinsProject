@@ -1,0 +1,20 @@
+//
+//  HNAPayMobileSDKManager.h
+//  HNAPayMobileSDK
+//
+//  Created by Ly_work on 15/11/18.
+//  Copyright © 2015年 usolv. All rights reserved.
+//
+
+#import <Foundation/Foundation.h>
+
+@interface HNAPayMobileSDKManager : NSObject
+
+/**
+ *  调用该方法来发起支付
+ *
+ *  @param parameters 需要传入的参数
+ */
+- (void)startHNAPayWithParameters:(NSDictionary *)parameters finish:(void(^)(void))finishBlock;
+
+@end

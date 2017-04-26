@@ -1,0 +1,22 @@
+//
+//  CMT_TextField.h
+//  CongMingTou
+//
+//  Created by wzh on 16/5/18.
+//  Copyright © 2016年 QiYuan. All rights reserved.
+//
+
+#import <UIKit/UIKit.h>
+
+@class CMT_TextField;
+@protocol UITextFieldExtensionDelegate <NSObject>
+
+- (void)textFieldEditingChange:(CMT_TextField *)textField;
+
+@end
+
+@interface CMT_TextField : UITextField
+
+@property (nonatomic, weak) __weak id<UITextFieldExtensionDelegate>extensonDelegate;
+
+@end

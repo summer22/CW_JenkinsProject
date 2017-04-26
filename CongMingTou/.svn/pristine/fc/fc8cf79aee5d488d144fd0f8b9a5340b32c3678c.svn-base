@@ -1,0 +1,42 @@
+//
+//  CMT_AccountTool.m
+//  CongMingTou
+//
+//  Created by wzh on 16/5/9.
+//  Copyright © 2016年 QiYuan All rights reserved.
+//
+
+#import "CMT_AccountTool.h"
+#define CMT_AccountFilepath [[ZHSandBoxPath getDocumentDirectory]stringByAppendingPathComponent:@"account.data"]
+
+@implementation CMT_AccountTool
++ (void)save:(CMT_AccountModel *)accountModel
+{
+    // 归档
+    [NSKeyedArchiver archiveRootObject:accountModel toFile:CMT_AccountFilepath];
+}
+
++ (CMT_AccountModel *)accountModel
+{
+    // 读取帐号
+    CMT_AccountModel *account = [NSKeyedUnarchiver unarchiveObjectWithFile:CMT_AccountFilepath];
+    
+    // 判断帐号是否已经过期
+//    NSDate *now = [NSDate date];
+    
+    //    if ([now compare:account.expires_time] != NSOrderedAscending) { // 过期
+    //        account = nil;
+    //    }
+    return account;
+}
+
++ (BOOL)removeEmptyAccountData{
+    NSFileManager *fileMgr = [NSFileManager defaultManager];
+    if ([fileMgr fileExistsAtPath:CMT_AccountFilepath]) {
+        NSError *err;
+       return [fileMgr removeItemAtPath:CMT_AccountFilepath error:&err];
+    }else{
+        return NO;
+    }
+}
+@end

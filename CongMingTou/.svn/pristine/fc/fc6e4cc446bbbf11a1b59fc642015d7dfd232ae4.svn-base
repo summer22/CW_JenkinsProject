@@ -1,0 +1,25 @@
+//
+//  CMT_CapitalSubsidiaryTableViewCell.h
+//  CongMingTou
+//
+//  Created by wzh on 16/5/17.
+//  Copyright © 2016年 QiYuan. All rights reserved.
+//
+
+#import <UIKit/UIKit.h>
+
+@interface CMT_CapitalSubsidiaryTableViewCell : UITableViewCell
+/**
+ *  已收收益
+ */
+@property (strong, nonatomic) IBOutlet UILabel *yiShouShouYiLab;
+/**
+ *  待收收益
+ */
+@property (strong, nonatomic) IBOutlet UILabel *daiShouShouYiLab;
+/**
+ *  总收益
+ */
+@property (strong, nonatomic) IBOutlet UILabel *totalShouYiLab;
++ (CMT_CapitalSubsidiaryTableViewCell *)cellWithTablebView:(UITableView *)tableView;
+@end

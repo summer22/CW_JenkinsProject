@@ -1,0 +1,40 @@
+//
+//  CMT_ViewController.h
+//  CongMingTou
+//
+//  Created by summer on 16/5/25.
+//  Copyright © 2016年 QiYuan. All rights reserved.
+//
+
+#import "CMT_BaseVIewController.h"
+
+typedef enum{
+    /**
+     *  设置 第一次设置
+     */
+    GestureViewControllerTypeSetting = 1,
+    /**
+     *  登陆
+     */
+    GestureViewControllerTypeLogin,
+    /**
+     *  忘记 重新设置
+     */
+    GestureViewControllerTypeForget,
+    /**
+     *  重置即修改
+     */
+    GestureViewControllerTypeReset
+}GestureViewControllerType;
+
+
+
+
+@interface CMT_ViewController : CMT_BaseVIewController
+/**
+ *  控制器来源类型
+ */
+@property (nonatomic, assign) GestureViewControllerType type;
+
+
+@end

@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="11542" systemVersion="16A323" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES">
+    <device id="retina4_7" orientation="portrait">
+        <adaptation id="fullscreen"/>
+    </device>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="11524"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="CMT_DealPwdMidViewController">
+            <connections>
+                <outlet property="line" destination="RTA-Ph-OMH" id="wOv-9X-Nfw"/>
+                <outlet property="lingH" destination="UA0-GD-ala" id="YNY-jm-lPX"/>
+                <outlet property="view" destination="i5M-Pr-FkT" id="sfx-zR-JGt"/>
+            </connections>
+        </placeholder>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <view clearsContextBeforeDrawing="NO" contentMode="scaleToFill" id="i5M-Pr-FkT">
+            <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+            <subviews>
+                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="HXn-3l-kdh" userLabel="threeView">
+                    <rect key="frame" x="0.0" y="8" width="375" height="97"/>
+                    <subviews>
+                        <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="mMF-5h-paP" userLabel="topView">
+                            <rect key="frame" x="0.0" y="0.0" width="375" height="48"/>
+                            <subviews>
+                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="我记得原交易密码" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Qlk-zw-cuo">
+                                    <rect key="frame" x="12" y="14" width="150" height="21"/>
+                                    <constraints>
+                                        <constraint firstAttribute="height" constant="21" id="7Vh-e7-fCp"/>
+                                        <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="150" id="mqP-zH-SXO"/>
+                                    </constraints>
+                                    <fontDescription key="fontDescription" type="system" pointSize="15"/>
+                                    <color key="textColor" red="0.20000000000000001" green="0.20000000000000001" blue="0.20000000000000001" alpha="1" colorSpace="calibratedRGB"/>
+                                    <nil key="highlightedColor"/>
+                                </label>
+                                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="Investment_normal" translatesAutoresizingMaskIntoConstraints="NO" id="W3V-x0-wPo">
+                                    <rect key="frame" x="355" y="17" width="8" height="14"/>
+                                    <constraints>
+                                        <constraint firstAttribute="height" constant="14" id="QFs-44-AvM"/>
+                                        <constraint firstAttribute="width" constant="8" id="VSi-on-ESf"/>
+                                    </constraints>
+                                </imageView>
+                                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="StJ-Od-9mz">
+                                    <rect key="frame" x="0.0" y="0.0" width="355" height="48"/>
+                                    <connections>
+                                        <action selector="upDateBtn:" destination="-1" eventType="touchUpInside" id="xhd-ZT-o7e"/>
+                                    </connections>
+                                </button>
+                            </subviews>
+                            <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                            <constraints>
+                                <constraint firstItem="Qlk-zw-cuo" firstAttribute="leading" secondItem="mMF-5h-paP" secondAttribute="leading" constant="12" id="4kC-PC-KY5"/>
+                                <constraint firstItem="Qlk-zw-cuo" firstAttribute="centerY" secondItem="mMF-5h-paP" secondAttribute="centerY" id="BF8-IA-oVt"/>
+                                <constraint firstAttribute="height" constant="48" id="IpJ-eK-7k9"/>
+                                <constraint firstItem="W3V-x0-wPo" firstAttribute="centerY" secondItem="mMF-5h-paP" secondAttribute="centerY" id="QFD-Nu-e4r"/>
+                                <constraint firstItem="W3V-x0-wPo" firstAttribute="leading" secondItem="StJ-Od-9mz" secondAttribute="trailing" id="QqU-yf-MuX"/>
+                                <constraint firstAttribute="bottom" secondItem="StJ-Od-9mz" secondAttribute="bottom" id="R5r-c3-CWx"/>
+                                <constraint firstItem="StJ-Od-9mz" firstAttribute="leading" secondItem="mMF-5h-paP" secondAttribute="leading" id="ZND-wn-3Qb"/>
+                                <constraint firstItem="StJ-Od-9mz" firstAttribute="top" secondItem="mMF-5h-paP" secondAttribute="top" id="gyZ-1Y-5Qo"/>
+                                <constraint firstAttribute="trailing" secondItem="W3V-x0-wPo" secondAttribute="trailing" constant="12" id="s4q-qs-U4C"/>
+                            </constraints>
+                        </view>
+                        <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="wXY-Is-cyV" userLabel="bottomView">
+                            <rect key="frame" x="0.0" y="48" width="375" height="48"/>
+                            <subviews>
+                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="已忘记原交易密码" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="XOc-Oo-gH6">
+                                    <rect key="frame" x="12" y="14" width="138" height="21"/>
+                                    <constraints>
+                                        <constraint firstAttribute="height" constant="21" id="QNA-jF-nwN"/>
+                                        <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="138" id="o5W-ou-jfY"/>
+                                    </constraints>
+                                    <fontDescription key="fontDescription" type="system" pointSize="15"/>
+                                    <color key="textColor" red="0.20000000000000001" green="0.20000000000000001" blue="0.20000000000000001" alpha="1" colorSpace="calibratedRGB"/>
+                                    <nil key="highlightedColor"/>
+                                </label>
+                                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="Investment_normal" translatesAutoresizingMaskIntoConstraints="NO" id="yMk-XU-NXi">
+                                    <rect key="frame" x="355" y="17" width="8" height="14"/>
+                                    <constraints>
+                                        <constraint firstAttribute="height" constant="14" id="IJk-gW-cAd"/>
+                                        <constraint firstAttribute="width" constant="8" id="Y3L-OL-zBW"/>
+                                    </constraints>
+                                </imageView>
+                                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Ihg-sP-vLh">
+                                    <rect key="frame" x="0.0" y="0.0" width="355" height="48"/>
+                                    <connections>
+                                        <action selector="forgotBtn:" destination="-1" eventType="touchUpInside" id="hlm-14-HUx"/>
+                                    </connections>
+                                </button>
+                            </subviews>
+                            <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                            <constraints>
+                                <constraint firstItem="Ihg-sP-vLh" firstAttribute="leading" secondItem="wXY-Is-cyV" secondAttribute="leading" id="4Xt-f7-XI4"/>
+                                <constraint firstItem="Ihg-sP-vLh" firstAttribute="top" secondItem="wXY-Is-cyV" secondAttribute="top" id="DsC-gJ-A52"/>
+                                <constraint firstItem="XOc-Oo-gH6" firstAttribute="leading" secondItem="wXY-Is-cyV" secondAttribute="leading" constant="12" id="Kur-CA-Vtb"/>
+                                <constraint firstItem="XOc-Oo-gH6" firstAttribute="centerY" secondItem="wXY-Is-cyV" secondAttribute="centerY" id="MIm-zi-dSn"/>
+                                <constraint firstAttribute="bottom" secondItem="Ihg-sP-vLh" secondAttribute="bottom" id="Mfb-OO-odv"/>
+                                <constraint firstItem="yMk-XU-NXi" firstAttribute="leading" secondItem="Ihg-sP-vLh" secondAttribute="trailing" id="YsX-po-Bly"/>
+                                <constraint firstAttribute="height" constant="48" id="adU-2C-Zia"/>
+                                <constraint firstItem="yMk-XU-NXi" firstAttribute="centerY" secondItem="wXY-Is-cyV" secondAttribute="centerY" id="hiq-zk-gkT"/>
+                                <constraint firstAttribute="trailing" secondItem="yMk-XU-NXi" secondAttribute="trailing" constant="12" id="jhb-C0-bkR"/>
+                            </constraints>
+                        </view>
+                        <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="RTA-Ph-OMH" userLabel="OneLine">
+                            <rect key="frame" x="12" y="48" width="363" height="1"/>
+                            <color key="backgroundColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
+                            <constraints>
+                                <constraint firstAttribute="height" constant="1" id="UA0-GD-ala"/>
+                            </constraints>
+                        </view>
+                    </subviews>
+                    <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                    <constraints>
+                        <constraint firstAttribute="trailing" secondItem="RTA-Ph-OMH" secondAttribute="trailing" id="7fr-5p-U1H"/>
+                        <constraint firstItem="mMF-5h-paP" firstAttribute="leading" secondItem="HXn-3l-kdh" secondAttribute="leading" id="DAq-Lb-mal"/>
+                        <constraint firstAttribute="trailing" secondItem="mMF-5h-paP" secondAttribute="trailing" id="Fma-wF-7fr"/>
+                        <constraint firstItem="wXY-Is-cyV" firstAttribute="leading" secondItem="HXn-3l-kdh" secondAttribute="leading" id="Y9v-9J-Tj7"/>
+                        <constraint firstItem="RTA-Ph-OMH" firstAttribute="leading" secondItem="HXn-3l-kdh" secondAttribute="leading" constant="12" id="fEu-Xe-eVm"/>
+                        <constraint firstItem="wXY-Is-cyV" firstAttribute="top" secondItem="mMF-5h-paP" secondAttribute="bottom" id="gYJ-4i-9FM"/>
+                        <constraint firstItem="mMF-5h-paP" firstAttribute="top" secondItem="HXn-3l-kdh" secondAttribute="top" id="kot-gU-kVg"/>
+                        <constraint firstAttribute="height" constant="97" id="ovO-Mv-YWK"/>
+                        <constraint firstItem="RTA-Ph-OMH" firstAttribute="top" secondItem="mMF-5h-paP" secondAttribute="bottom" id="vh7-q2-36i"/>
+                        <constraint firstAttribute="trailing" secondItem="wXY-Is-cyV" secondAttribute="trailing" id="zAU-jT-pVg"/>
+                    </constraints>
+                </view>
+            </subviews>
+            <constraints>
+                <constraint firstAttribute="trailing" secondItem="HXn-3l-kdh" secondAttribute="trailing" id="RG0-eE-UQC"/>
+                <constraint firstItem="HXn-3l-kdh" firstAttribute="top" secondItem="i5M-Pr-FkT" secondAttribute="top" constant="8" id="Vb7-7q-OaG"/>
+                <constraint firstItem="HXn-3l-kdh" firstAttribute="leading" secondItem="i5M-Pr-FkT" secondAttribute="leading" id="fdp-HD-Xoe"/>
+            </constraints>
+            <point key="canvasLocation" x="35.5" y="59.5"/>
+        </view>
+    </objects>
+    <resources>
+        <image name="Investment_normal" width="8" height="14"/>
+    </resources>
+</document>

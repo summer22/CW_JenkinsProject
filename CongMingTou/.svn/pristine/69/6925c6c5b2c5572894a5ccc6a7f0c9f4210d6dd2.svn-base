@@ -1,0 +1,15 @@
+//
+//  CMT_GetShareFirendInforAfterModel.m
+//  CongMingTou
+//
+//  Created by wzh on 16/7/11.
+//  Copyright © 2016年 QiYuan. All rights reserved.
+//
+
+#import "CMT_GetShareFirendInforAfterModel.h"
+
+@implementation CMT_GetShareFirendInforAfterModel
++ (CMT_GetShareFirendInforAfterModel *)getShareFirendInforModelWithDic:(NSDictionary *)dic{
+    return [[self alloc]initWithDic:dic];
+}
+@end

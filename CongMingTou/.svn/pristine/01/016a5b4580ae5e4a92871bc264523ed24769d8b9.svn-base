@@ -1,0 +1,19 @@
+//
+//  HNAPayMobileSDK_iOS.h
+//  HNAPayMobileSDK_iOS
+//
+//  Created by Ly_work on 15/11/18.
+//  Copyright © 2015年 usolv. All rights reserved.
+//
+
+#import <UIKit/UIKit.h>
+
+//! Project version number for HNAPayMobileSDK_iOS.
+FOUNDATION_EXPORT double HNAPayMobileSDK_iOSVersionNumber;
+
+//! Project version string for HNAPayMobileSDK_iOS.
+FOUNDATION_EXPORT const unsigned char HNAPayMobileSDK_iOSVersionString[];
+
+// In this header, you should import all the public headers of your framework using statements like #import <HNAPayMobileSDK_iOS/PublicHeader.h>
+#import<HNAPayMobileSDK_iOS/HNAPayMobileSDKManager.h>
+

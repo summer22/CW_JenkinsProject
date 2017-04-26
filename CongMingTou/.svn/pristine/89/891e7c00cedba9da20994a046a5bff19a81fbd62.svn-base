@@ -1,0 +1,22 @@
+//
+//  CMT_RetiredInvestmentTableViewCell.h
+//  CongMingTou
+//
+//  Created by wzh on 16/5/18.
+//  Copyright © 2016年 QiYuan. All rights reserved.
+//
+
+#import <UIKit/UIKit.h>
+#import "CMT_TenderTypeView.h"
+#import "CMT_RetiredInvestmentModel.h"
+@interface CMT_RetiredInvestmentTableViewCell : UITableViewCell
+@property (strong, nonatomic) IBOutlet CMT_TenderTypeView *tenderTypeView;
+@property (strong, nonatomic) IBOutlet UIButton *chaKanHeTongBtn;
+@property (strong, nonatomic) IBOutlet UILabel *touZiJinEMoneyLab;
+@property (strong, nonatomic) IBOutlet UILabel *touZiJinEMoneyDesLab;
+@property (strong, nonatomic) IBOutlet UILabel *huoDeShouYiMoneyLab;
+@property (strong, nonatomic) IBOutlet UILabel *huoDeShouYiDesLab;
+
+@property (strong, nonatomic) CMT_RetiredInvestmentModel *retiredInvestmentModel;
++ (CMT_RetiredInvestmentTableViewCell *)cellWithTablebView:(UITableView *)tableView;
+@end

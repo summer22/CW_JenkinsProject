@@ -1,0 +1,80 @@
+//
+//  CMT_TenderRecordTableViewCell.m
+//  CongMingTou
+//
+//  Created by wzh on 16/5/17.
+//  Copyright © 2016年 QiYuan. All rights reserved.
+//
+
+#import "CMT_TenderRecordTableViewCell.h"
+
+@implementation CMT_TenderRecordTableViewCell
+
+- (void)awakeFromNib {
+    // Initialization code
+    [_midPointView styleWithCornerRadius:_midPointView.height / 2];
+}
++ (CMT_TenderRecordTableViewCell *)cellWithTablebView:(UITableView *)tableView{
+    static NSString *indent = @"cell";
+    [tableView registerNib:[UINib nibWithNibName:@"CMT_TenderRecordTableViewCell" bundle:nil] forCellReuseIdentifier:indent];
+    CMT_TenderRecordTableViewCell  *cell = [tableView dequeueReusableCellWithIdentifier:indent];
+    cell.selectionStyle = UITableViewCellSelectionStyleNone;
+    cell.backgroundColor = [UIColor clearColor];
+    return cell;
+    
+}
+- (void)setSelected:(BOOL)selected animated:(BOOL)animated {
+    [super setSelected:selected animated:animated];
+
+    // Configure the view for the selected state
+}
+
+
+- (void)setModel:(CMT_InvestInforModel *)model{
+    _model = model;
+    _dateLab.text = [NSString stringWithFormat:@"%@",_model.time];
+    _leftDesLab.text = [NSString stringWithFormat:@"%@",_model.event];
+    /**
+     *  状态 state：
+     *  0：未完成，即灰色的点
+     *  1：已完成（过去式），即在上面的黄色的点
+     *  2：已完成（进行时），即当前停留的黄色的点
+     */
+    
+    if([_model.state isEqualToString:@"0"]){//未完成，即灰色的点
+        
+        _midPointImageView.hidden = YES;
+        _midPointView.hidden = NO;
+        _leftbackImageView.hidden = YES;
+        
+        _topView.backgroundColor = CommonHelpTextColor;
+        _bottomView.backgroundColor = CommonHelpTextColor;
+        
+        _dateLab.textColor = CommonGrayTextColor;
+        _leftDesLab.textColor = CommonGrayTextColor;
+
+    }else if ([_model.state isEqualToString:@"1"]){//1：已完成（过去式），即在上面的黄色的点
+        
+        _midPointImageView.hidden = NO;
+        _midPointView.hidden =YES;
+        _leftbackImageView.hidden = YES;
+        
+        _topView.backgroundColor = CommonYellowTextColor;
+        _bottomView.backgroundColor = CommonYellowTextColor;
+        
+        _dateLab.textColor = CommonGrayTextColor;
+        _leftDesLab.textColor = CommonGrayTextColor;
+        
+    }else if ([_model.state isEqualToString:@"2"]){//已完成（进行时），即当前停留的黄色的点
+        _midPointImageView.hidden = NO;
+        _midPointView.hidden =YES;
+        _leftbackImageView.hidden = NO;
+        
+        _topView.backgroundColor = CommonYellowTextColor;
+        _bottomView.backgroundColor = CommonHelpTextColor;
+        
+        _dateLab.textColor = CommonImpTextColor;
+        _leftDesLab.textColor = CommonImpTextColor;
+    }
+}
+@end

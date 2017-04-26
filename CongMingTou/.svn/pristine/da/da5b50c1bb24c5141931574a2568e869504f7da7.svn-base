@@ -1,0 +1,31 @@
+//
+//  CMT_AccountAndSecurityTableViewCell.m
+//  CongMingTou
+//
+//  Created by wzh on 16/5/16.
+//  Copyright © 2016年 QiYuan. All rights reserved.
+//
+
+#import "CMT_AccountAndSecurityTableViewCell.h"
+
+@implementation CMT_AccountAndSecurityTableViewCell
+
+- (void)awakeFromNib {
+    // Initialization code
+}
++ (CMT_AccountAndSecurityTableViewCell *)cellWithTablebView:(UITableView *)tableView andIndexPath:(NSIndexPath *)indexPath{
+    static NSString *indent = @"cell";
+    [tableView registerNib:[UINib nibWithNibName:@"CMT_AccountAndSecurityTableViewCell" bundle:nil] forCellReuseIdentifier:indent];
+    CMT_AccountAndSecurityTableViewCell  *cell = [tableView dequeueReusableCellWithIdentifier:indent];
+    cell.selectionStyle = UITableViewCellSelectionStyleNone;
+    cell.desLab.hidden = indexPath.section == 0 && indexPath.row == 1 ? NO : YES;
+    return cell;
+    
+}
+- (void)setSelected:(BOOL)selected animated:(BOOL)animated {
+    [super setSelected:selected animated:animated];
+
+    // Configure the view for the selected state
+}
+
+@end

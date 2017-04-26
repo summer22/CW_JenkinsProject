@@ -1,0 +1,33 @@
+//
+//  CMT_ BouncedView.h
+//  CongMingTou
+//
+//  Created by wzh on 16/5/12.
+//  Copyright © 2016年 wzh. All rights reserved.
+//
+
+#import <UIKit/UIKit.h>
+
+
+@class CMT_BouncedView;
+@protocol CMT_BouncedViewDelegate <NSObject>
+// 点击关闭按钮的代理
+- (void)didClickedShutDownBtn;
+//点击输入密码类型按钮
+- (void)didClickedEnterPasswordTypeBtn;
+//点击提交按钮
+- (void)didClickedCommitBtn;
+
+
+@end
+
+@interface CMT_BouncedView : UIView
+
+
+@property (nonatomic, assign) CMTBouncedViewType bouncedViewType;
+@property (nonatomic, assign) CMTChongZhiOrTiXianStepType chongZhiOrTiXianStepType;
+
+
+@property (nonatomic, weak) __weak id<CMT_BouncedViewDelegate>delegate;
+
+@end

@@ -1,0 +1,86 @@
+//
+//  CMT_WebBaseViewController.m
+//  CongMingTou
+//
+//  Created by wzh on 16/6/3.
+//  Copyright © 2016年 QiYuan. All rights reserved.
+//
+
+#import "CMT_WebBaseViewController.h"
+
+@interface CMT_WebBaseViewController ()<UIWebViewDelegate>
+
+@end
+
+@implementation CMT_WebBaseViewController
+
+- (UIWebView *)webView{
+    if(!_webView){
+        _webView = [[UIWebView alloc]initWithFrame:CGRectMake(0, 0, CMT_ScreenWidth, CMT_ScreenHeight - CMT_NAV_Height)];
+        _webView.delegate = self;
+        _webView.backgroundColor = [UIColor clearColor];
+        _webView.hidden = YES;
+        _webView.scrollView.backgroundColor = [UIColor clearColor];
+    }
+    return _webView;
+}
+
+- (UIButton *)noNetWorkbtn{
+    if(!_noNetWorkbtn){
+        _noNetWorkbtn = [UIButton buttonWithType:UIButtonTypeCustom];
+        [_noNetWorkbtn setBackgroundImage:[UIImage imageNamed:@"noNetWork"] forState:UIControlStateNormal];
+        _noNetWorkbtn.size = _noNetWorkbtn.currentBackgroundImage.size;
+        [_noNetWorkbtn addTarget:self action:@selector(noNetWorkbtnClicked:) forControlEvents:UIControlEventTouchUpInside];
+        _noNetWorkbtn.center = CGPointMake(CMT_ScreenWidth / 2, CMT_ScreenHeight / 2 - CMT_NAV_Height);
+        _noNetWorkbtn.hidden = YES;
+    }
+    return _noNetWorkbtn;
+}
+
+
+- (void)webViewDidStartLoad:(UIWebView *)webView{
+    [self showHudInView:self.view hint:CMT_LoadDataWaiting];
+}
+- (void)webViewDidFinishLoad:(UIWebView *)webView{
+    [self hiddenOrShowUIDidFinishOrFailLoadState:1];
+    [self hideHud];
+}
+
+-(void)webView:(UIWebView *)webView didFailLoadWithError:(NSError *)error{
+    [self hiddenOrShowUIDidFinishOrFailLoadState:0];
+    [self hideHud];
+    [self showHint:CMT_Error_NotNetWork];
+    
+}
+/**
+ *  0 失败 1 成功
+ */
+- (void)hiddenOrShowUIDidFinishOrFailLoadState:(int)finishOrFailLoadState{
+    if(finishOrFailLoadState == 0){
+        self.noNetWorkbtn.hidden = NO;
+    }else{
+        self.noNetWorkbtn.hidden = YES;
+    }
+    self.webView.hidden = !self.noNetWorkbtn.hidden;
+
+}
+- (void)didReceiveMemoryWarning {
+    [super didReceiveMemoryWarning];
+    // Dispose of any resources that can be recreated.
+}
+
+- (void)viewDidLoad {
+    [super viewDidLoad];
+    [self.view addSubview:self.noNetWorkbtn];
+    [self.view addSubview:self.webView];
+    [CMT_Tools removeWebCacheAndCookis];
+
+    // Do any additional setup after loading the view from its nib.
+}
+
+
+- (void)noNetWorkbtnClicked:(UIButton *)button{
+    
+}
+
+@end

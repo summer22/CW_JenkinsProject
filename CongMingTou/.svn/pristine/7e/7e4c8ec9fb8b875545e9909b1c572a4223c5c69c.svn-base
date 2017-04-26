@@ -1,0 +1,17 @@
+//
+//  CMT_ShouYiMingXiDataModel.h
+//  CongMingTou
+//
+//  Created by wzh on 16/5/26.
+//  Copyright © 2016年 QiYuan. All rights reserved.
+//
+
+#import <Foundation/Foundation.h>
+#import "CMT_ShouYiMingXIListModel.h"
+@interface CMT_ShouYiMingXiDataModel : NSObject
+
+@property (nonatomic, strong) NSArray *listDataArray;
+
++ (CMT_ShouYiMingXiDataModel *)shouYiMingXiDataModelWithDic:(NSDictionary *)dic;
+
+@end

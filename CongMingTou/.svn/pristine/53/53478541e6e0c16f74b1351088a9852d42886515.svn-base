@@ -1,0 +1,272 @@
+//
+//  CMT_RegisteredViewController.m
+//  CongMingTou
+//
+//  Created by wzh on 16/5/12.
+//  Copyright © 2016年 wzh. All rights reserved.
+//
+
+#import "CMT_RegisteredViewController.h"
+#import "CMT_PhoneAndVerificationCodeView.h"
+#import "CMT_ServiceAgreementView.h"
+#import "CMT_LoginServiceAgreementViewController.h"
+#import <AdSupport/AdSupport.h>
+#import "JPUSHService.h"
+
+#define CountdownTime 59
+
+@interface CMT_RegisteredViewController ()<CMT_PhoneAndVerificationCodeViewDelegate,CMT_ServiceAgreementViewDelegate,UITextFieldExtensionDelegate>
+@property (strong, nonatomic) IBOutlet CMT_PhoneAndVerificationCodeView *phoneTextFieldAndCodeView;
+@property (weak, nonatomic) IBOutlet CMT_TextField *InviteCodeTextField;
+@property (weak, nonatomic) IBOutlet UIButton *registerBtn;
+
+@property (strong, nonatomic) IBOutlet NSLayoutConstraint *registerH;
+@property (strong, nonatomic) IBOutlet CMT_ServiceAgreementView *serviceArgeemnetAndIsreadView;
+@property (strong, nonatomic) IBOutlet UIButton *advertisingBtn;
+/** 注册手机号 */
+@property (nonatomic,copy)NSString *registerTel;
+
+@end
+
+@implementation CMT_RegisteredViewController
+- (void)viewDidDisappear:(BOOL)animated{
+    [super viewDidDisappear:animated];
+}
+- (void)viewDidLoad {
+    [super viewDidLoad];
+    // Do any additional setup after loading the view from its nib.
+    [self setDefautUI];
+}
+
+- (void)setDefautUI{
+    self.navigationItem.title = @" 注册";
+    //设置注册按钮
+    _registerH.constant = 45 *CMT_6PERCENTY;
+    [_registerBtn styteWithCornerRadius:45 *CMT_6PERCENTY / 2 shadowColor:_registerBtn.backgroundColor shadowOffset:CMT_ShadowOffset shadowOpacity:CMT_ShadowOpacity shadowRadius:CMT_ShadowRadius];
+    _phoneTextFieldAndCodeView.delegate = self;
+    _phoneTextFieldAndCodeView.verificationCodeTextField.extensonDelegate = self;
+    _phoneTextFieldAndCodeView.phonetextField.extensonDelegate = self;
+    _serviceArgeemnetAndIsreadView.delegate = self;
+    [_serviceArgeemnetAndIsreadView.agreementBtn setTitle:[ NSString stringWithFormat:@"《%@》",CMT_Title_RegistrationAgreement] forState:UIControlStateNormal];
+    _InviteCodeTextField.extensonDelegate = self;
+    self.navigationItem.leftBarButtonItem = [UIBarButtonItem itemWithImageName:@"NavBarBack" target:self action:@selector(back)];
+    [self loadDataAdvertisingOpenState];
+    
+}
+
+- (void)back
+{
+    [self.navigationController popViewControllerAnimated:YES];
+}
+
+#pragma mark -- 点击事件
+//获取验证码
+-(void)didGetVerificationCodeBtn:(UIButton *)button{
+    CMT_Log(@"点击啊了或许验证码按钮");
+    [self allResignFirstResponder];
+
+    //调用获取验证码
+//    (0:注册，1：找回密码，2：登录3：设置密码，4:其他)
+    [self loadDataGetVerificationcodeWithPhonNum:_phoneTextFieldAndCodeView.phonetextField.text type:@"0"];
+    
+}
+//注册
+- (IBAction)registerBtnClicked:(UIButton *)sender {
+    [self allResignFirstResponder];
+    sender.backgroundColor = CommonBtnBackColor;
+    //数据统计
+    SensorsAnalyticsSDK *sdk = [SensorsAnalyticsSDK sharedInstance];
+    if (sdk != nil) {
+        [sdk track:@"fillSignUp" withProperties:@{@"phoneNumber": [NSString convertNull:_phoneTextFieldAndCodeView.phonetextField.text],
+                                                  @"isFillCaptcha": _phoneTextFieldAndCodeView.verificationCodeTextField.text.length > 0 ? @"是" : @"否",
+                                                  @"isFillInvitationCode": _InviteCodeTextField.text.length > 0 ? @"是" : @"否",
+                                                  @"distinctId": [NSString convertNull:[CMT_AnalyticsTool userID]]}];
+    }
+
+    CMT_Log(@"点击啊了注册按钮");
+    if([self checkInputIsNullOrCorrect]){
+        [self loadDataRegisteredWithPhoneNum:_phoneTextFieldAndCodeView.phonetextField.text verificatonCode:_phoneTextFieldAndCodeView.verificationCodeTextField.text andInvitationCode:_InviteCodeTextField.text];
+    }
+}
+- (IBAction)registerBtnDragOutSide:(UIButton *)sender {
+    sender.backgroundColor = CommonBtnBackColor;
+}
+- (IBAction)registerBtnTouchDown:(UIButton *)sender {
+    sender.backgroundColor = CommonBtnHighLightedBackColor;
+
+}
+#pragma mark -- CMT_ServiceAgreementViewDelegate
+//服务协议
+- (void)didServiceAgreementBtn:(UIButton *)button{
+    CMT_Log(@"点击啊了服务协议按钮");
+    [self allResignFirstResponder];
+
+    CMT_LoginServiceAgreementViewController *loginServerAgreementVc = [[CMT_LoginServiceAgreementViewController alloc]init];
+    [self.navigationController pushViewController:loginServerAgreementVc animated:YES];
+}
+//是否阅读了合同
+- (void)didIsReadBtnClicked:(UIButton *)button {
+    CMT_Log(@"点击啊了是否阅读了合同按钮");
+    [self allResignFirstResponder];
+
+    [self chectIsCouldNext];
+}
+
+- (void)textFieldEditingChange:(CMT_TextField *)textField{
+    [self chectIsCouldNext];
+}
+
+#pragma mark -- 数据请求
+- (void)loadDataGetVerificationcodeWithPhonNum:(NSString *)phoneNum type:(NSString *)type{
+//    方法二
+    [self showHudInView:self.view hint:CMT_LoadDataWaiting];
+    [CMT_ProcessTheDataTool getVerificationcodeWithPhonNum:phoneNum type:type andBlock:^(CMT_GetVerificationcodeModel *getVerificationcodeModel, NSError *error) {
+        [self hideHud];
+        if(!error){
+            if([getVerificationcodeModel.status isEqualToString:@"1"]){
+                CMT_Log(@"获取验证码成功");
+                [self showHint:CMT_LoadDataGetCodeSuccessful];
+
+            }else{
+                [self showHint:getVerificationcodeModel.msg];
+                [_phoneTextFieldAndCodeView destroyTimer];
+
+            }
+        }else{
+            CMT_Log(@"获取验证码失败");
+            [self showHint:CMT_Error_NotNetWork];
+            [_phoneTextFieldAndCodeView destroyTimer];
+
+
+        }
+    }];
+}
+
+- (void)loadDataRegisteredWithPhoneNum:(NSString *)phoneNum verificatonCode:(NSString *)verificatonCode andInvitationCode:(NSString *)invitationCode{
+    //广告id
+    NSString *adid = [[[ASIdentifierManager sharedManager] advertisingIdentifier] UUIDString];
+   
+    [self showHudInView:self.view hint:CMT_LoadDataWaiting];
+    [CMT_ProcessTheDataTool registeredWithPhoneNum:phoneNum verificatonCode:verificatonCode andInvitationCode:invitationCode mobileType:@"0" channelNumber:adid block:^(CMT_AccountModel *registerdModel, NSError *error) {
+        [self hideHud];
+        if(!error){
+            if([registerdModel.status isEqualToString:@"1"]){
+                self.registerTel = phoneNum;
+                [JPUSHService setAlias:phoneNum
+                      callbackSelector:@selector(tagsAliasCallback:tags:alias:)
+                                object:self];
+                [self showHint:CMT_LoadDataRegisteredSuccessful];
+                
+                //数据统计
+                SensorsAnalyticsSDK *sdk = [SensorsAnalyticsSDK sharedInstance];
+                if (sdk != nil) {
+                    [sdk track:@"completeSignUp" withProperties:@{@"distinctId": [NSString convertNull:[CMT_AnalyticsTool userID]]}];
+                }
+
+                
+                [CMT_AccountTool save:registerdModel];
+                
+                if(_enterLoginType == CMTEnterLoginTypeTabbarMy){
+                    CMT_RootVC.selectedIndex = 3;
+                }
+                [self dismissViewControllerAnimated:YES completion:^{
+                    [[NSNotificationCenter defaultCenter]postNotificationName:GesturesAndLoginPasswordPresentVCKey object:nil];
+                }];
+
+            }else{
+                [self showHint:registerdModel.msg];
+            }
+        }else{
+            CMT_Log(@"注册失败");
+            [self showHint:CMT_Error_NotNetWork];
+        }
+        
+    }];
+}
+
+
+- (void)tagsAliasCallback:(int)iResCode tags:(NSSet*)tags alias:(NSString*)alias {
+    if (iResCode != 0) {
+        [JPUSHService setAlias: self.registerTel
+              callbackSelector:nil
+                        object:self];
+    }
+    CMT_Log(@"rescode: %d, \ntags: %@, \nalias: %@\n", iResCode, tags , alias);
+}
+
+
+
+#pragma mark -- 判断为空
+- (BOOL)checkInputIsNullOrCorrect{
+    /*
+    if( _InviteCodeTextField.text.length > 0 && _InviteCodeTextField.text.length != CMT_InviteCodeLenght ){
+        [CMT_Tools showInfoAlert:CMT_Error_InvitationCode];
+        return NO;
+    }
+     */
+    if(_phoneTextFieldAndCodeView.phonetextField.text.length >= CMT_PhoneNumLenght){
+        [CMT_Tools showInfoAlert:CMT_Error_PhoneNum];
+        return NO;
+    }
+    if(_phoneTextFieldAndCodeView.verificationCodeTextField.text.length > CMT_VerificationCodeLenght){
+        [CMT_Tools showInfoAlert:CMT_Error_VerificationCode];
+        return NO;
+    }
+    
+    return YES;
+}
+
+#pragma mark -- 数据请求
+- (void)loadDataAdvertisingOpenState{
+    //方法二
+    _advertisingBtn.hidden = YES;
+//    [self showHudInView:self.view hint:CMT_LoadDataWaiting];
+    [CMT_ProcessTheDataTool advertisingOpenStateWithBlock:^(CMT_BaseModel *baseModel, NSError *error) {
+        [self hideHud];
+        if(!error){
+            if([baseModel.status isEqualToString:@"1"]){
+                _advertisingBtn.hidden = NO;
+            }
+        }else{
+            
+        }
+
+    }];
+}
+
+- (void)chectIsCouldNext{
+    if(/*_phoneTextFieldAndCodeView.verificationCodeTextField.text.length == CMT_VerificationCodeLenght &&  _phoneTextFieldAndCodeView.phonetextField.text.length < CMT_PhoneNumLenght &&*/ _phoneTextFieldAndCodeView.phonetextField.text.length > 0  &&_phoneTextFieldAndCodeView.verificationCodeTextField.text.length > 0 &&_serviceArgeemnetAndIsreadView.isReadbtn.selected){
+        _registerBtn.enabled = YES;
+        _registerBtn.alpha = 1;
+    }else{
+        _registerBtn.enabled = NO;
+        _registerBtn.alpha = 0.5;
+    }
+}
+
+- (IBAction)advertisingBtnClicked:(id)sender{
+    [[UIApplication sharedApplication]openURL:[NSURL URLWithString:CMT_AdvertisingUrl]];
+}
+#pragma mark --取消键盘第一响应项
+- (void)allResignFirstResponder{
+    [_phoneTextFieldAndCodeView resignFirstResponderWithTextFieldAndTextFieldView];
+    [_InviteCodeTextField resignFirstResponder];
+    
+}
+- (void)didReceiveMemoryWarning {
+    [super didReceiveMemoryWarning];
+    // Dispose of any resources that can be recreated.
+}
+
+/*
+#pragma mark - Navigation
+
+// In a storyboard-based application, you will often want to do a little preparation before navigation
+- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
+    // Get the new view controller using [segue destinationViewController].
+    // Pass the selected object to the new view controller.
+}
+*/
+
+
+@end

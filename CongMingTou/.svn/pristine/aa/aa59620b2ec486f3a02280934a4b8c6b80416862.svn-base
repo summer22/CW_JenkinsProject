@@ -1,0 +1,25 @@
+//
+//  CMT_ShouYiMingXIListModel.m
+//  CongMingTou
+//
+//  Created by wzh on 16/5/26.
+//  Copyright © 2016年 QiYuan. All rights reserved.
+//
+
+#import "CMT_ShouYiMingXIListModel.h"
+
+@implementation CMT_ShouYiMingXIListModel
++ (CMT_ShouYiMingXIListModel *)shouYiMingXiListModelWith:(NSDictionary *)dic{
+    return [[self alloc]initWithDic:dic];
+}
+- (id)initWithDic:(NSDictionary *)dic{
+    if(self = [super init]){
+        [self setValuesForKeysWithDictionary:dic];
+    }
+    return self;
+}
+
+- (void)setValue:(id)value forUndefinedKey:(NSString *)key{
+    
+}
+@end

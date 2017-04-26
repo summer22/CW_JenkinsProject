@@ -1,0 +1,126 @@
+//
+//  CMT_BaseVIewController.m
+//  CongMingTou
+//
+//  Created by wzh on 16/5/10.
+//  Copyright © 2016年 wzh. All rights reserved.
+//
+
+#import "CMT_BaseVIewController.h"
+#import "IQKeyboardManager.h"
+#import "AppDelegate.h"
+
+@interface CMT_BaseVIewController()
+/** netStatusBtn */
+@property (nonatomic,strong)UIButton *netStatusBtn;
+/** 首页网络状态btn */
+@property (nonatomic,strong)UIButton *firstNetBtn;
+@end
+
+@implementation CMT_BaseVIewController
+
+//没有头部的view使用
+- (UIButton *)netBtn
+{
+    if (!_netBtn) {
+        self.netBtn = [UIButton buttonWithType:UIButtonTypeCustom];
+        self.netBtn.frame = CMT_CGRECTMAKE((CMT_ScreenWidth - 156 * CMT_6PERCENTY)/2, 0, 156 * CMT_6PERCENTY, 102 * CMT_6PERCENTY);
+        self.netBtn.centerY = self.view.centerY;
+        [self.netBtn setBackgroundImage:[UIImage imageNamed:@"noNetWork"] forState:UIControlStateNormal];
+        [self.netBtn addTarget:self action:@selector(netReloadData) forControlEvents:UIControlEventTouchUpInside];
+        self.netStatusBtn = self.netBtn;
+        [self.view addSubview: self.netBtn];
+    }
+    return _netBtn;
+}
+
+//没有头部的view使用
+- (UIView *)financialNetView
+{
+    if (!_financialNetView) {
+        _financialNetView = [[UIView alloc] init];
+        _financialNetView.frame = self.view.frame;
+        self.netBtnStatus = [UIButton buttonWithType:UIButtonTypeCustom];
+        self.netBtnStatus.frame = CMT_CGRECTMAKE((CMT_ScreenWidth - 156 * CMT_6PERCENTY)/2, 0, 156 * CMT_6PERCENTY, 102 * CMT_6PERCENTY);
+        self.netBtnStatus.centerY = _financialNetView.centerY + 50 * CMT_6PERCENTY;
+        [self.netBtnStatus setBackgroundImage:[UIImage imageNamed:@"noNetWork"] forState:UIControlStateNormal];
+        [self.netBtnStatus addTarget:self action:@selector(netReloadData) forControlEvents:UIControlEventTouchUpInside];
+        self.firstNetBtn = self.netBtnStatus;
+        [_financialNetView addSubview: self.netBtnStatus];
+    }
+    return _financialNetView;
+}
+
+- (void)viewDidLoad {
+    [super viewDidLoad];
+
+    self.view.backgroundColor = CommonBgColor;
+    IQKeyboardManager *manager =  [IQKeyboardManager sharedManager];
+    [manager setEnableAutoToolbar:YES];
+    
+    if(self.navigationController.viewControllers.count > 1){
+        self.navigationItem.leftBarButtonItem = [UIBarButtonItem itemWithImageName:@"NavBarBack" target:self action:@selector(back)];
+    }
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(netStatusChange) name:@"NETWORKSTATUS" object:nil];
+}
+
+//没有网络状态下的提示和点击试图
+- (void)noNetView:(BOOL)isHide{
+    self.netBtn.hidden = isHide;
+}
+
+//加载没有数据变换图片
+- (void)changeStatusBtn
+{
+    self.netStatusBtn.userInteractionEnabled = NO;
+    [self.netStatusBtn setBackgroundImage:[UIImage imageNamed:@"noDataShow"] forState:UIControlStateNormal];
+
+}
+
+//没有网络状态下点击事件
+- (void)netReloadData{
+    NSLog(@"来自父类");
+}
+
+//网络状态监听通知方法
+- (void)netStatusChange
+{
+    AppDelegate *app = (AppDelegate *)[UIApplication sharedApplication].delegate;
+    if (app.isReachable == NO) {
+        self.netStatusBtn.userInteractionEnabled = YES;
+        [self.netStatusBtn setBackgroundImage:[UIImage imageNamed:@"noNetWork"] forState:UIControlStateNormal];
+    }
+}
+
+- (void)viewWillAppear:(BOOL)animated{
+    [super viewWillAppear:animated];
+
+    //神策数据 屏幕浏览
+    SensorsAnalyticsSDK *sdk = [SensorsAnalyticsSDK sharedInstance];
+    if (sdk != nil) {
+        [sdk track:@"viewScreen" withProperties:@{@"pageName": NSStringFromClass([self class]),
+                                                @"distinctId": [NSString convertNull:[CMT_AnalyticsTool userID]]}];
+    }
+}
+
+- (void)setLeftNavItemButton
+{
+    UIButton * leftItemBtn = [UIButton buttonWithType:UIButtonTypeCustom];
+    [leftItemBtn addTarget:self action:@selector(back) forControlEvents:UIControlEventTouchUpInside];
+    [leftItemBtn setBackgroundImage:[UIImage imageNamed:@"NavBarBack"] forState:UIControlStateNormal];
+    leftItemBtn.size = leftItemBtn.currentBackgroundImage.size;
+    UIBarButtonItem *leftItem = [[UIBarButtonItem alloc]initWithCustomView:leftItemBtn];
+    self.navigationItem.leftBarButtonItem = leftItem;
+}
+
+- (void)dealloc
+{
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:@"NETWORKSTATUS" object:nil];
+
+}
+
+- (void)back
+{
+    [self.navigationController popViewControllerAnimated:YES];
+}
+@end

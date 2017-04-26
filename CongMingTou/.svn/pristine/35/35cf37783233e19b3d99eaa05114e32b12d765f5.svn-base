@@ -1,0 +1,37 @@
+//
+//  CMT_ChongZhiTiXianListModel.h
+//  CongMingTou
+//
+//  Created by wzh on 16/5/25.
+//  Copyright © 2016年 QiYuan. All rights reserved.
+//
+
+
+@interface CMT_ChongZhiTiXianListModel : NSObject
+
+
+
+/**
+ *  提现 或者 充值的金额
+ */
+@property (nonatomic ,copy) NSString *amount;
+/**
+ *  用户余额
+ */
+@property (nonatomic ,copy) NSString *balance;
+/**
+ *  操作时间
+ */
+@property (nonatomic ,copy) NSString *time;
+/**
+ *  描述
+ */
+@property (nonatomic ,copy) NSString *operation;
+/**
+ *  0：成功 1：失败 －提现才有这个字段
+ */
+@property (nonatomic, copy) NSString *withdrawFlag;
+
+
++ (CMT_ChongZhiTiXianListModel *)chongZhiTiXianListModelWithDic:(NSDictionary *)dic;
+@end

@@ -1,0 +1,17 @@
+//
+//  CMT_TenderTypeNoNperView.h
+//  CongMingTou
+//
+//  Created by wzh on 16/5/27.
+//  Copyright © 2016年 QiYuan. All rights reserved.
+//
+
+#import <UIKit/UIKit.h>
+
+@interface CMT_TenderTypeNoNperView : UIView
+@property (nonatomic, assign) CMTTenderType tenderType;
+@property (strong, nonatomic) IBOutlet UIImageView *backImageView;
+@property (strong, nonatomic) IBOutlet UILabel *titleLab;
+- (void)yuYueAndShuHuiTenderStr:(NSString *)tenderStr andTenderType:(CMTTenderType)tenderType;
+
+@end

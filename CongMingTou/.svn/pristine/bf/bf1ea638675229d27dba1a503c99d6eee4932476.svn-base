@@ -1,0 +1,403 @@
+//
+//  CMT_ProcessTheDataTool.h
+//  CongMingTou
+//
+//  Created by wzh on 16/5/9.
+//  Copyright © 2016年 QiYuan All rights reserved.
+//
+
+#import <Foundation/Foundation.h>
+#import "CMT_GetVerificationcodeModel.h"
+#import "CMT_RegisteredModel.h"
+#import "CMT_AccountModel.h"
+#import "CMT_MyWelfareModel.h"
+#import "CMT_MyInforModel.h"
+#import "CMT_RealNameAuthenticateModel.h"
+#import "CMT_GetNewsModel.h"
+#import "CMT_IDCardInforModel.h"
+#import "CMT_ChongZhiTiXianModel.h"
+#import "CMT_ShouYiMingXIModel.h"
+#import "CMT_MyInverstmentModel.h"
+#import "CMT_UserRechargeModel.h"
+#import "CMT_BitAndInvestModel.h"
+#import "CMT_GetShareContentModel.h"
+#import "CMT_GetShareFirendInforModel.h"
+#import "CMT_InvestmentPreBankModel.h"
+#import "CMT_GetShareFirendInforAfterModel.h"
+#import "CMT_ActivityShareContentModel.h"
+@interface CMT_ProcessTheDataTool : NSObject
+
+/**
+ *  广告位开启状态
+ *
+ *  @param block <#block description#>
+ */
++ (void)advertisingOpenStateWithBlock:(void(^)(CMT_BaseModel *baseModel, NSError *error))block;
+/**
+ *  获取验证码
+ *
+ *  @param phoneNum 手机号
+ *  @param type (0:注册，1：找回密码，2：登录3：设置密码，4:实名认证，5：其他 6:重置手势密码)
+ *  @param block    回调
+ */
++ (void)getVerificationcodeWithPhonNum:(NSString *)phoneNum type:(NSString *)type andBlock:(void (^)(CMT_GetVerificationcodeModel *getVerificationcodeModel, NSError *error))block;
+/**
+ *  注册
+ *
+ *  @param phoneNum        手机号
+ *  @param verificatonCode 验证码
+ *  @param invitationCode  邀请码
+ *  @param block           回调
+ */
++ (void)registeredWithPhoneNum:(NSString *)phoneNum verificatonCode:(NSString *)verificatonCode andInvitationCode:(NSString *)invitationCode mobileType:(NSString *)mobileType channelNumber:(NSString *)channelNumber block:(void(^)(CMT_AccountModel *registerdModel, NSError *error))block;
+/**
+ *  登陆
+ *
+ *  @param phoneNum        手机号
+ *  @param verificatonCode 验证码
+ *  @param block           回调
+ */
++ (void)loginWithPhoneNum:(NSString *)phoneNum verificatonCode:(NSString *)verificatonCode block:(void(^)(CMT_AccountModel *loginModel, NSError *error))block;
+
+/**
+ *  我的福利
+ *
+ *  @param userId userId
+ *  @param block  回调
+ *  @param   type：0:获取所有加息券和本金券    1，所有可用加息券    2，所有可用本金券
+ *  @param investAmount 投资金额   默认 为“no”
+ *  @param bid 标的id
+ *  @param bidpre 标的期限
+ */
++ (void)myFuLiWithUserId:(NSString *)userId type:(NSString *)type investAmount:(NSString *)investAmount bid:(NSString *)bid bidpre:(NSString *)bidpre block:(void(^)(CMT_MyWelfareModel *model, NSError *error))block;
+
+/**
+ *  获取我的交易记录
+ *
+ *  @param userId userId
+ *  @param page   当前页数
+ *  @param size   每页显示数
+ *  @param type   类型 类型(1：充值；2：提现；)
+ *  @param token  时间戳
+ *
+ *  block  回调
+ */
++ (void)getJiaoYiJiLuListWithUserId:(NSString *)userId page:(int)page size:(int)size type:(int)type andBlock:(void(^)(CMT_ChongZhiTiXianModel *chongZhiTiXianmdoel, NSError *error))block;
+
+/**
+ *  实名认证和绑定银行卡
+ *  @param userId        用户ID
+ *  @param userIdentity  身份证号
+ *  @param userName      真实姓名
+ *  @param bankCardNum   银行卡号
+ *  @param userMobile    预留手机号
+ *  @param mobileSmsCode 短信验证码
+ *  @param block  回调
+ */
++ (void)realNameAuthenticateWithUserId:(NSString *)userId userIdentity:(NSString *)userIdentity userName:(NSString *)userName bankCardNum:(NSString *)bankCardNum userMobile:(NSString *)userMobile mobileSmsCode:(NSString *)mobileSmsCode rePassword:(NSString *)rePassword andBlock:(void(^)(CMT_CodeBaseModel *realNameAuthenticateModel, NSError *error))block;
+
+/**
+ *  充值支付密码
+ *
+ *  @param phoneNum    手机号
+ *  @param resetPayPwd 重置的密码
+ *  @param captch      验证码
+ *  @param block       回调
+ */
++ (void)resetPayPwdWithPhoneNum:(NSString *)phoneNum resetPayPwd:(NSString *)resetPayPwd andBlock:(void(^)(CMT_BaseModel *baseModel, NSError *error))block;
+/**
+ *  验证支付密码是否正确
+ *
+ *  @param phoneNum    用户手机号
+ *  @param oldPassword 旧密码
+ *  @param block
+ */
++ (void)confirmPayPasswordWithPhoneNum:(NSString *)phoneNum andOldPassword:(NSString *)oldPassword andBlock:(void(^)(CMT_BaseModel *baseModel, NSError *error))block;
+/**
+ *  修改支付密码
+ *
+ *  @param phoneNum  用户手机号
+ *  @param newPayPwd 新密码
+ *
+ *  @return
+ */
++ (void)modifyPayPwdWithPhoneNum:(NSString *)phoneNum andNewsPayPwd:(NSString *)newPayPwd andBlock:(void(^)(CMT_BaseModel *baseModel, NSError *error))block;
+/**
+ *  我的infor
+ *
+ *  @param userId userid
+ *  @param block  
+ */
++ (void)getMyUserInforWithUserId:(NSString *)userId andBlock:(void(^)(CMT_MyInforModel *inforModel, NSError *error))block;
+/**
+ *  理财列表
+ *
+ *  @param startStr 分页标示
+ *  @param endStr   每页返回数据的个数
+ *  @param endStr   缺省类型值
+ */
++ (void)getFinancialListDataPageCount:(NSString *)startStr pageDataCount:(NSString *)endStr typeDefault:(NSString *)typeStr andBlock:(void(^)(id jsonObject, NSError *error))block;
+
+/**
+ *  产品详情
+ *
+ *  @param bidIdStr 标的id
+ *  @param userId   用户的userId
+ */
++ (void)getProductDetailDataBidId:(NSString *)bidIdStr userIdStr:(NSString *)userId andBlock:(void(^)(id jsonObject, NSError *error))block;
+
+/**
+ *  投资记录
+ *
+ *  @param bidIdStr 标的id
+ *  @param pageStr  分页
+ *  @param block    回调返回数据
+ */
++ (void)getInestRecordListDataBidId:(NSString *)bidIdStr page:(NSString *)pageStr andBlock:(void(^)(id jsonObject, NSError *error))block;
+/**
+ *  消息列表
+ *
+ *  @param userId userid
+ *  @param start  开始
+ *  @param end    结束
+ *
+ *  @return
+ */
++ (void)getNewsListWithUserId:(NSString *)userId start:(int)start end:(int)end andBlock:(void(^)(CMT_GetNewsModel *model, NSError *error))block;
+
+/**
+ *   消息详情界面
+ *
+ *  @param newsId 消息id
+ *
+ *  @return
+ */
++ (void)getNewsDetailWithId:(NSString *)newsId andBlock:(void(^)(CMT_GetNewsListModel *model, NSError *error))block;
+/**
+ *  全部标记已读
+ *
+ *  @param userId userId
+ *
+ *  @return
+ */
++ (void)allReadWithUserId:(NSString *)userId andBlock:(void(^)(CMT_BaseModel *model, NSError *error))block;
+/**
+ *  银行卡信息接口
+ *
+ *  @param userId userId
+ *
+ *  @return
+ */
++ (void)getIDCardInforWithUserId:(NSString *)userId andBlock:(void(^)(CMT_IDCardInforModel *model, NSError *error))block;
+/**
+ *  加息券列表
+ *
+ *  @param userId userid
+ *  @param block  回调返回数据
+ *  @param investAmount 投资金额  默认 为“no”
+ *  @param bid 标的id
+ *  @param bidpre 标的期限
+ */
++ (void)getTicketListDataUserId:(NSString *)userId typeStr:(NSString *)type investAmount:(NSString *)investAmount bidId:(NSString *)bidId bidpre:(NSString *)bidpre andBlock:(void(^)(id jsonObject, NSError *error))block;
+
+/**
+ *  我的投资(持有中、预约中、已赎回)
+ *
+ *  @param userId 当前页数
+ *  @param size   分页参数-每页显示数
+ *  @param type   类型(0:持有中；1：预约中；2：已赎回)
+ *
+ *  @return
+ */
++ (void)myInvestmentWithUserId:(NSString *)userId page:(int)page size:(int)size andType:(int)type andBlock:(void(^)(CMT_MyInverstmentModel *model, NSError *error))block;
+/**
+ *  标的详细信息
+ *  @param investId  投资ID
+ *  @param type (持有中和已赎回传0，预约中传1)
+ *  @return
+ */
++ (void)investmentWithInvestId:(NSString *)investId type:(NSString *)type andBlock:(void(^)(CMT_BitAndInvestModel *model, NSError *error))block;
+
+/**
+ *  取消预约投资
+ *
+ *  @param userId   用户id
+ *  @param investId 投资记录id
+ *
+ *  @return
+ */
++ (void)cancelYuYueInvestmentWithUserId:(NSString *)userId investId:(NSString *)investId andBlock:(void(^)(CMT_BaseModel *baseModel, NSError *error))block;
+/**
+ *  收益明细
+ *
+ *  @param userId           用户id
+ *  @param pageIndex <#pageIndex description#>
+ *  @param pageSize  <#pageSize description#>
+ *
+ *  @return
+ */
++ (void)myShouYiMingXiWithUserId:(NSString *)userId pageIndex:(int)pageIndex pageSize:(int)pageSize  andBlock:(void(^)(CMT_ShouYiMingXIModel *model, NSError *error))block;
+
+/**
+ *  预约投资列表
+ *
+ *  @param pageSizeStr 分页size
+ *  @param block       <#block description#>
+ */
++ (void)getPreInvestListDataPageCount:(NSString *)pageSizeStr andBlock:(void(^)(id jsonObject, NSError *error))block;
+/**
+ *  银生支付获取用户信息
+ *
+ *  @param userId 用户id
+ *
+ *  @return
+ */
++ (void)getRechargeUserInforWithUserId:(NSString *)userId andBlock:(void(^)(CMT_UserRechargeInfoModel *model, NSError *error))block;
+/**
+ *  充值申请
+ *
+ *  @param userId  用户ID
+ *  @param amount  数额
+ *  @param orderId  订单Id
+ *
+ *  @return
+ */
++ (void)getRechargeRequestWithUserId:(NSString *)userId amount:(NSString *)amount andBlock:(void(^)(CMT_UserRechargeModel *model, NSError *error))block;
+/**
+ *  充值申请验证验证码
+ *
+ *  @param userId       用户id
+ *  @param amount       金额
+ *  @param orderNoThird 第三方平台订单号
+ *  @param payToken     支付令牌
+ *  @param orderNo      聪明投订单号
+ *  @param captch        验证码
+ *
+ *  @return
+ */
++ (void)topUpApplicationVerificationCodeWithUserId:(NSString *)userId amount:(NSString *)amount orderNoThird:(NSString *)orderNoThird payToken:(NSString *)payToken orderNo:(NSString *)orderNo captch:(NSString *)captch andBlock:(void(^)(CMT_BaseModel *model, NSError *error))block;
+
+/**
+ *  确认支付列表接口
+ *
+ *  @param bidStr    标id
+ *  @param amountStr 金额
+ */
++ (void)getInvestConfirmData:(NSString *)bidStr amount:(NSString *)amountStr userIdStr:(NSString *)userId andBlock:(void(^)(id jsonObject, NSError *error))block;
+
+/**
+ *  提现申请
+ *
+ *  @param userId      用户id
+ *  @param amount      金额
+ *  @param bankId      银行ID
+ *  @param payPassword 支付密码
+ *  @param type        类型(默认传1)
+ *
+ *  @return
+ */
++ (void)getWithdrawalRequestWithUserId:(NSString *)userId amount:(NSString *)amount bankId:(NSString *)bankId payPassword:(NSString *)payPassword type:(NSString *)type andBlock:(void(^)(CMT_CodeBaseModel *model, NSError *error))block;
+/**
+ *  重置手势密码验证
+ *
+ *  @param phoneNum 手机号
+ *  @param captch   验证码
+ *
+ *  @return
+ */
++ (void)resetGesturePasswordWithPhoneNum:(NSString *)phoneNum andCaptch:(NSString *)captch andBlock:(void(^)(CMT_BaseModel *model, NSError *error))block;
+
+//立即投资
++ (void)atOnceToInvest:(NSString *)userId bidIdStr:(NSString *)bidStr investAmount:(NSString *)investAmountStr  cashId:(NSString *)cashIdStr rateStr:(NSString *)jrateId token:(NSString *)investToken andBlock:(void(^)(id jsonObject, NSError *error))block;
+
+//预约投资
++ (void)preinvestInvest:(NSString *)userId preInvestAmount:(NSString *)preInvestAmountStr period:(NSString *)periodStr investId:(NSString *)investIdStr rateStr:(NSString *)rateId  andBlock:(void(^)(id jsonObject, NSError *error))block;
+
+//预约金额获取接口
++ (void)preinvestInvest:(NSString *)investIdStr andBlock:(void(^)(id jsonObject, NSError *error))block;
+
+//确认预约
++ (void)preinvestInvest:(NSString *)userId period:(NSString *)periodStr investId:(NSString *)investIdStr apr:(NSString *)aprStr andBlock:(void(^)(id jsonObject, NSError *error))block;
+/**
+ *  获取分享给网友的内容
+ *
+ *  @param userId 用户id
+ *
+ *  @return
+ */
++ (void)getShareContentWithUserId:(NSString *)userId andBlock:(void(^)(CMT_GetShareContentModel *baseModel, NSError *error))block;
+///**
+// *  获取分享内容
+// *
+// *  @param userId 用户id
+// *
+// *  @return
+// */
+//+ (void)getShareFirendContentWithUserId:(NSString *)userId andBlock:(void(^)(CMT_GetShareFirendInforModel *baseModel, NSError *error))block;
+/**
+ *   获取分享给网友页面 －－ 内容 改后
+ *
+ *  @param userId 用户id
+ *  @param type   接口标识(0:点击发现分享查询接口 1：分享成功后回调保存数据接口)
+ *  @param block
+ */
++ (void)getShareFirendContentWithUserId:(NSString *)userId type:(NSString *)type andBlock:(void(^)(CMT_GetShareFirendInforAfterModel *baseModel, NSError *error))block;
+
+/**
+ *  分享加息接口
+ *
+ *  @param phoneNum 手机号
+ *  @param bitId    标得id
+ *  @param investId 投资id
+ *  @param amount 投资金额
+ *  @return
+ */
++ (void)shareSuccessAddRatesWithPhoneNum:(NSString *)phoneNum bitId:(NSString *)bitId investId:(NSString *)investId amount:(NSString *)amount andBlock:(void(^)(CMT_BaseModel *model, NSError *error))block;
+/**
+ *  验证验证码是否正确
+ *
+ *  @param phoneNum         手机号
+ *  @param verificationCode验证码
+ *
+ *  @return
+ */
++ (void)verificationCodeIsOkWithPhoneNum:(NSString *)phoneNum verificationCode:(NSString *)verificationCode andBlock:(void(^)(CMT_BaseModel *model, NSError *error))block;
+//应用雷达
++ (void)liveModelIdfiAndBlock:(void(^)(id jsonObject, NSError *error))block;
+/**
+ *  获取债权列表
+ */
++ (void)getCreditors:(NSString *)markNumb block:(void(^)(id jsonObject, NSError *error))block;
+
++ (void)getFinalCreditors:(NSString *)creditorNumb block:(void(^)(id jsonObject, NSError *error))block;
+
+/**
+ *  版本更新
+ *
+ *  @param block 回调数据
+ */
++ (void)getUpdateVersion:(void(^)(id jsonObject, NSError *error))block;
+
+/**
+ *  获取合同信息
+ *
+ *  @param investId 投资id
+ *  @param period   期限
+ *
+ *  @return
+ */
++ (void)getContractInforWithInvestId:(NSString *)investId period:(NSString *)period block:(void(^)(id jsonObject, NSError *error))block;
+
+/**
+ *  获取银行卡号信息
+ *
+ *  @return
+ */
++ (void)getBanklistBlock:(void(^)(CMT_InvestmentPreBankModel *model, NSError *error))block;
++ (void)getActivityShareContentWithActivityId:(NSString *)activityId userId:(NSString *)userId andBlock:(void(^)(CMT_ActivityShareContentModel
+ *model, NSError *error))block;
+/**
+ *  首页banner接口
+ */
++ (void)getFinacialBannerBlock:(void(^)(id jsonObject, NSError *error))block;
+@end

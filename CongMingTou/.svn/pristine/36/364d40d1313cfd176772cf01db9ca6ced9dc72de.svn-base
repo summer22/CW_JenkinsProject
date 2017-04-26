@@ -1,0 +1,47 @@
+//
+//  CMT_AboutUsViewController.m
+//  CongMingTou
+//
+//  Created by wzh on 16/5/16.
+//  Copyright © 2016年 QiYuan. All rights reserved.
+//
+
+#import "CMT_AboutUsViewController.h"
+
+@interface CMT_AboutUsViewController ()
+
+@end
+
+@implementation CMT_AboutUsViewController
+
+- (void)viewDidLoad {
+    [super viewDidLoad];
+    // Do any additional setup after loading the view from its nib.
+    [self createUIWeb];
+}
+- (void)createUIWeb{
+//    self.webView.height =  CMT_ScreenHeight - CMT_NAV_Height - CMT_TAB_Height;
+    NSString *urlStr = [NSString stringWithFormat:@"%@%@",CMT_H5SERVEr_URL,CMT_H5AboutMeVC];
+    CMT_Log(@"%@",urlStr);
+    NSURLRequest *request =[NSURLRequest requestWithURL:[NSURL URLWithString:urlStr]];
+    [self.webView loadRequest:request];
+}
+- (void)noNetWorkbtnClicked:(UIButton *)button{
+    [self createUIWeb];
+}
+- (void)didReceiveMemoryWarning {
+    [super didReceiveMemoryWarning];
+    // Dispose of any resources that can be recreated.
+}
+
+/*
+#pragma mark - Navigation
+
+// In a storyboard-based application, you will often want to do a little preparation before navigation
+- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
+    // Get the new view controller using [segue destinationViewController].
+    // Pass the selected object to the new view controller.
+}
+*/
+
+@end

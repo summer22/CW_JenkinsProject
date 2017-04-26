@@ -1,0 +1,37 @@
+//
+//  CMT_CoponBgView.m
+//  CongMingTou
+//
+//  Created by summer on 16/5/26.
+//  Copyright © 2016年 QiYuan. All rights reserved.
+//
+
+#import "CMT_CoponBgView.h"
+#import "CMT_CouponViewScrollView.h"
+
+@implementation CMT_CoponBgView
+
+
+- (id)initWithFrame:(CGRect)frame
+{
+    self = [super initWithFrame:frame];
+    if (self) {
+        self.myScrollView = [[CMT_CouponViewScrollView alloc] initWithFrame:frame];
+        [self.myScrollView setPagingEnabled:YES];
+        [self.myScrollView setClipsToBounds:NO];
+        self.myScrollView.frame = CGRectMake(0, 0, 350 * CMT_6PERCENTY, self.frame.size.height);
+        [self.myScrollView setPagingEnabled:YES];
+        [self addSubview:self.myScrollView];
+    }
+    return self;
+}
+
+- (UIView *)hitTest:(CGPoint)point withEvent:(UIEvent *)event {
+    if (CGRectContainsPoint(self.myScrollView.frame, point)) {
+        return self.myScrollView;
+    }
+    return [super hitTest:point withEvent:event];
+}
+
+
+@end

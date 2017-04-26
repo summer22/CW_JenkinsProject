@@ -1,0 +1,135 @@
+//
+//  CMT_ BouncedView.m
+//  CongMingTou
+//
+//  Created by wzh on 16/5/12.
+//  Copyright © 2016年 wzh. All rights reserved.
+//
+
+#import "CMT_BouncedView.h"
+#import "CMT_ChongZhiOrTiXianView.h"
+//充值弹框frame
+#define ChoongZhiViewW 200 //* CMT_PercenX
+#define ChoongZhiViewH 150 //* CMT_PercenX
+
+#define TiXianViewW 200
+#define TiXianViewH 150
+@interface CMT_BouncedView ()
+
+/**
+ *  充值或者提现View
+ */
+@property (nonatomic, strong) CMT_ChongZhiOrTiXianView *chongZhiOrTiXianView;
+
+
+
+@end
+
+@implementation CMT_BouncedView
+
+- (CMT_ChongZhiOrTiXianView *)chongZhiOrTiXianView{
+    if(!_chongZhiOrTiXianView){
+
+        _chongZhiOrTiXianView = [[CMT_ChongZhiOrTiXianView alloc]init];
+        _chongZhiOrTiXianView.backgroundColor = [UIColor brownColor];
+        [_chongZhiOrTiXianView.shutDownBtn addTarget:self action:@selector(shutDownBtnClicked:) forControlEvents:UIControlEventTouchUpInside];
+        [_chongZhiOrTiXianView.enterPasswordTypeBtn addTarget:self action:@selector(enterPasswordTypeBtnClicked:) forControlEvents:UIControlEventTouchUpInside];
+        [_chongZhiOrTiXianView.commitBtn addTarget:self action:@selector(commitBtnClicked:) forControlEvents:UIControlEventTouchUpInside];
+        [_chongZhiOrTiXianView.layer addBeatingAnimationWithDuration2:1];
+        [self addSubview:_chongZhiOrTiXianView];
+    }
+    return _chongZhiOrTiXianView;
+    
+    
+}
+
+- (void)shutDownBtnClicked:(UIButton *)button{
+    
+    
+   [self removeAllAndWithNil];
+    CMT_Log(@"点击了关闭按钮");
+    if([self.delegate respondsToSelector:@selector(didClickedShutDownBtn)]){
+        [self.delegate performSelector:@selector(didClickedShutDownBtn)];
+    }//外面响应代理
+   
+}
+- (void)enterPasswordTypeBtnClicked:(UIButton *)button{
+    CMT_Log(@"点击了输入密码类型按钮");
+    [self removeAllAndWithNil];
+    if([self.delegate respondsToSelector:@selector(didClickedEnterPasswordTypeBtn)]){
+        [self.delegate performSelector:@selector(didClickedEnterPasswordTypeBtn)];
+    }//外面响应代理
+
+}
+- (void)commitBtnClicked:(UIButton *)button{
+    CMT_Log(@"点击了提交按钮");
+    [self removeAllAndWithNil];
+    if([self.delegate respondsToSelector:@selector(didClickedCommitBtn)]){
+        [self.delegate performSelector:@selector(didClickedCommitBtn)];
+    }//外面响应代理
+}
+
+
+
+- (instancetype)initWithFrame:(CGRect)frame{
+    if(self = [super initWithFrame:frame]){
+        self.bouncedViewType = CMTBouncedViewTypeChongZhi;
+    }
+    return self;
+}
+
+- (void)layoutSubviews{
+    [super layoutSubviews];
+    
+    self.chongZhiOrTiXianView.center = CGPointMake(self.width / 2, self.height / 2 - CMT_NAV_Height);
+    if(_bouncedViewType == CMTBouncedViewTypeChongZhi){//充值
+        self.chongZhiOrTiXianView.titleLab.text = @"充值";
+        if(_chongZhiOrTiXianStepType == CMTChongZhiOrTiXianStepTypeOne){//第一步
+            self.chongZhiOrTiXianView.commitBtn.hidden = NO;
+            self.chongZhiOrTiXianView.inputView.hidden = YES;
+        }else if (_chongZhiOrTiXianStepType == CMTChongZhiOrTiXianStepTypeTwo){//第二步
+            self.chongZhiOrTiXianView.commitBtn.hidden = YES;
+            self.chongZhiOrTiXianView.inputView.hidden = NO;
+        }
+        
+    }else if (_bouncedViewType == CMTBouncedViewTypeTiXian){
+        self.chongZhiOrTiXianView.titleLab.text = @"提现";
+        if(_chongZhiOrTiXianStepType == CMTChongZhiOrTiXianStepTypeOne){//第一步
+            self.chongZhiOrTiXianView.commitBtn.hidden = NO;
+            self.chongZhiOrTiXianView.inputView.hidden = YES;
+        }else if (_chongZhiOrTiXianStepType == CMTChongZhiOrTiXianStepTypeTwo){//第二步
+            self.chongZhiOrTiXianView.commitBtn.hidden = YES;
+            self.chongZhiOrTiXianView.inputView.hidden = NO;
+        }
+
+    }
+}
+
+- (void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event{
+    UITouch *touch = [touches anyObject];
+        //获取当前点
+    CGPoint point = [touch locationInView:self];
+   BOOL ool =  [_chongZhiOrTiXianView pointInside:point withEvent:event];
+    CMT_Log(@"%d",ool);
+    [self removeAllAndWithNil];
+    
+}
+
+- (BOOL)removeAllAndWithNil{
+    CMT_Log(@"%@",self.subviews);
+    [self removeFromSuperview];
+    for (UIView *subView in self.subviews) {
+        [subView removeFromSuperview];
+    }
+    _chongZhiOrTiXianView = nil;
+
+//    [_tiXianView removeFromSuperview];
+//    _chongZhiView = nil;
+//    _tiXianView = nil;
+    
+    return _chongZhiOrTiXianView == nil ? YES : NO;
+}
+- (void)dealloc{
+    CMT_Log(@"dealloc");
+}
+@end

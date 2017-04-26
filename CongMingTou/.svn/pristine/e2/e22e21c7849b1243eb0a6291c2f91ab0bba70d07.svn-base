@@ -1,0 +1,16 @@
+//
+//  CMT_CustomPushAnimationTransition.h
+//  CongMingTou
+//
+//  Created by wzh on 16/6/12.
+//  Copyright © 2016年 QiYuan. All rights reserved.
+//
+
+#import <Foundation/Foundation.h>
+
+#define CMT_Transform1 0.1
+#define CMT_Transform2 0.1
+@interface CMT_CustomPushAnimationTransition : NSObject<UIViewControllerAnimatedTransitioning>
+
+@property (nonatomic, assign) CGRect didSelecctCellRect;
+@end

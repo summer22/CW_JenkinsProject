@@ -1,0 +1,18 @@
+//
+//  CMT_detileTableViewCell.h
+//  CongMingTou
+//
+//  Created by summer on 16/5/12.
+//  Copyright © 2016年 wzh. All rights reserved.
+//
+
+#import <UIKit/UIKit.h>
+#import "CMT_ProductDetModel.h"
+
+@interface CMT_detileTableViewCell : UITableViewCell
+
++ (CMT_detileTableViewCell *)cellWithTablebView:(UITableView *)tableView indexPath:(NSIndexPath *)index;
+
+- (void)setModel:(CMT_ProductDetModel *)model dataArr:(NSArray *)dataSourceArr index:(NSInteger)row;
+
+@end

@@ -1,0 +1,111 @@
+//
+//  CMT_CustomPopAnimationTransition.m
+//  CongMingTou
+//
+//  Created by wzh on 16/6/21.
+//  Copyright © 2016年 QiYuan. All rights reserved.
+//
+
+#import "CMT_CustomPopAnimationTransition.h"
+#import "CMT_productDetViewController.h"
+//#define CMT_Transform1 0.5
+#define CMT_Transform 0.3
+
+@interface CMT_CustomPopAnimationTransition()
+
+@property (nonatomic ,strong) id <UIViewControllerContextTransitioning> transitionContext;
+@end
+
+
+@implementation CMT_CustomPopAnimationTransition
+- (NSTimeInterval)transitionDuration:(id <UIViewControllerContextTransitioning>)transitionContext {
+    return CMT_Transform;
+}
+
+
+- (void)animateTransition:(id <UIViewControllerContextTransitioning>)transitionContext {
+
+    CMT_RootVC.tabBar.x = 0;
+    CMT_RootVC.tabBar.alpha = 1;
+    self.transitionContext = transitionContext;
+
+    UIView *contView = [transitionContext containerView];
+    UIViewController *toVC = [transitionContext viewControllerForKey:UITransitionContextToViewControllerKey];
+    [contView addSubview:toVC.view];
+    UIViewController *fromVC = [transitionContext viewControllerForKey:UITransitionContextFromViewControllerKey];
+    [contView addSubview:fromVC.view];
+    [toVC.navigationController setNavigationBarHidden:YES animated:NO];
+    
+    
+    //创建两个圆形的 UIBezierPath 实例；一个是 button 的 size ，另外一个则拥有足够覆盖屏幕的半径。最终的动画则是在这两个贝塞尔路径之间进行的
+    //结束
+    CGRect endRect = CGRectMake(CMT_ScreenWidth / 2, CMT_ScreenHeight / 2 - CMT_NAV_Height, 0, 0);
+    UIBezierPath *maskEndBP =  [UIBezierPath bezierPathWithOvalInRect:endRect];
+    
+    //开始点
+    CGPoint startPoint = CGPointMake(CMT_ScreenWidth / 2, CMT_ScreenHeight / 2 );
+    CGFloat radius = sqrt((startPoint.x * startPoint.x) + (startPoint.y * startPoint.y));
+    UIBezierPath *maskFinalBP = [UIBezierPath bezierPathWithOvalInRect:CGRectInset(endRect, -radius, -radius)];
+    //创建一个 CAShapeLayer 来负责展示圆形遮盖
+    CAShapeLayer *maskLayer = [CAShapeLayer layer];
+    maskLayer.fillColor = [UIColor redColor].CGColor;
+    //将它的 path 指定为最终的 path 来避免在动画完成后会回弹
+    maskLayer.path = maskEndBP.CGPath;
+    fromVC.view.layer.mask = maskLayer;
+    //创建一个关于 path 的 CABasicAnimation 动画来从 circleMaskPathInitial.CGPath 到 circleMaskPathFinal.CGPath 。同时指定它的 delegate 来在完成动画时做一些清除工作
+    CABasicAnimation *maskLayerAnimation = [CABasicAnimation animationWithKeyPath:@"path"];
+    maskLayerAnimation.fromValue = (__bridge id)(maskFinalBP.CGPath);
+    maskLayerAnimation.toValue = (__bridge id)(maskEndBP.CGPath);
+    maskLayerAnimation.duration = [self transitionDuration:transitionContext];
+    maskLayerAnimation.delegate = self;
+    [maskLayer addAnimation:maskLayerAnimation forKey:@"path"];
+
+
+//    UIViewController *toVC = [transitionContext viewControllerForKey:UITransitionContextToViewControllerKey];
+//    toVC.view.frame = CGRectMake(0, 0, toVC.view.width, toVC.view.height);
+//    [[transitionContext containerView] addSubview:toVC.view];
+//    toVC.view.transform = CGAffineTransformMakeScale(0.85, 1);
+//    UIView* shadowBack = [[UIView alloc]initWithFrame:CGRectMake(0, 0, CMT_ScreenWidth, CMT_ScreenHeight)];
+//    shadowBack.backgroundColor = [UIColor blackColor];
+//    shadowBack.alpha = 0.8;
+//    [[transitionContext containerView] addSubview:shadowBack];
+//    CMT_RootVC.tabBar.hidden = NO;
+//    CMT_RootVC.tabBar.x = 0;
+//    CMT_RootVC.tabBar.alpha = 0;
+//
+//    
+//    UIViewController *fromVC = [transitionContext viewControllerForKey:UITransitionContextFromViewControllerKey];
+//    fromVC.view.frame = CGRectMake(0, CMT_NAV_Height, fromVC.view.width, fromVC.view.height);
+//    [[transitionContext containerView] addSubview:fromVC.view];
+//    
+//
+//    [UIView animateWithDuration:CMT_Transform1 animations:^{
+//        fromVC.view.alpha = 0;
+//        shadowBack.alpha = 0;
+//        CMT_RootVC.tabBar.alpha = 1;
+//        toVC.navigationController.navigationBar.alpha = 0;
+//
+//        toVC.view.transform = CGAffineTransformMakeScale(1, 1);
+//        
+//    } completion:^(BOOL finished) {
+//        [toVC.navigationController setNavigationBarHidden:YES animated:NO];
+//        //动画结束后属性设为初始值
+//        [shadowBack removeFromSuperview];
+//        //通知系统动画切换成功
+//        [transitionContext completeTransition:YES];
+//        
+//    }];
+}
+
+#pragma mark - CABasicAnimation的Delegate
+- (void)animationDidStop:(CAAnimation *)anim finished:(BOOL)flag{
+    //告诉 iOS 这个 transition 完成
+    [self.transitionContext completeTransition:![self. transitionContext transitionWasCancelled]];
+    //清除 fromVC 的 mask
+    [self.transitionContext viewControllerForKey:UITransitionContextFromViewControllerKey].view.layer.mask = nil;
+//    [self.transitionContext viewControllerForKey:UITransitionContextToViewControllerKey].view.layer.mask = nil;
+    CMT_RootVC.tabBar.alpha = 1;
+
+
+}
+@end

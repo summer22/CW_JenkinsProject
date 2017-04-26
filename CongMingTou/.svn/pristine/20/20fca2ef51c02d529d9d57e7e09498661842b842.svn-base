@@ -1,0 +1,96 @@
+//
+//  CMT_BitInforModel.h
+//  CongMingTou
+//
+//  Created by wzh on 16/6/1.
+//  Copyright © 2016年 QiYuan. All rights reserved.
+//
+
+#import <Foundation/Foundation.h>
+
+@interface CMT_BitInforModel : NSObject
+
+/**
+ *   总金额
+ */
+@property (nonatomic, copy) NSString *amount;
+/**
+ *   年利率
+ */
+@property (nonatomic, copy) NSString *apr;
+/**
+ *   标的ID
+ */
+@property (nonatomic, copy) NSString *bidId;
+/**
+ *  到期时间
+ */
+@property (nonatomic, copy) NSString *endDate;
+/**
+ * 剩余金额(可投金额)
+ */
+@property (nonatomic, copy) NSString *leftAmount;
+/**
+ * 借款进度比例
+ */
+@property (nonatomic, copy) NSString *loanSchedule;
+/**
+ * 还款方式
+ */
+@property (nonatomic, copy) NSString *repayType;
+//@property (nonatomic ,copy) NSString *repaymentType;
+/**
+ * 起投金额
+ */
+@property (nonatomic, copy) NSString *minInvestAmount;
+/**
+ * 标题期数
+ */
+@property (nonatomic, copy) NSString *bidNumber;
+/**
+ *  标的类型
+ */
+@property (nonatomic, copy) NSString *bidType;
+/**
+ *  标名称
+ */
+@property (nonatomic, copy) NSString *bidTitle;
+/**
+ *  	0:持有中;1预约中;2:已赎回
+ */
+@property (nonatomic, copy) NSString *holdState;
+/**
+ *
+ */
+@property (nonatomic, copy) NSString *status;
+///**
+// *
+// */
+@property (nonatomic, copy) NSString *descption;
+
+/** 债权列表里面使用的bidNo */
+@property (nonatomic,copy)NSString *bidNo;
+
+//合同专用
+
+/**
+ *   期限
+ */
+@property (nonatomic, copy) NSString *period;
+/**
+ *  用户投资记录Id
+ */
+@property (nonatomic, copy) NSString *investId;
+/**
+ *   总加息率  (总是保留两位小数，如果为0，则返回0.00)
+ */
+@property (nonatomic, copy) NSString *totalAddApr;
+
+
+
+//
+//myInterestCount               加息券数量
+
++ (CMT_BitInforModel *)bitInforModelWithDic:(NSDictionary *)dic;
+
+@end

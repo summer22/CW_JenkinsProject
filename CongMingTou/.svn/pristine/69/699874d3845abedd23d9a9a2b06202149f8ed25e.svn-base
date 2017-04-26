@@ -1,0 +1,15 @@
+//
+//  CMT_StateView.h
+//  CongMingTou
+//
+//  Created by wzh on 16/6/20.
+//  Copyright © 2016年 QiYuan. All rights reserved.
+//
+
+#import <UIKit/UIKit.h>
+
+@interface CMT_StateView : UIView
+@property (nonatomic, strong) UIButton *stateButton;
+
+@property (nonatomic, strong) NSMutableArray *dataArray;
+@end

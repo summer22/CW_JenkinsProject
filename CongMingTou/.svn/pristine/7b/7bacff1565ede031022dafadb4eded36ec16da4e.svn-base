@@ -1,0 +1,19 @@
+//
+//  CMT_financialModel.m
+//  CongMingTou
+//
+//  Created by summer on 16/5/23.
+//  Copyright © 2016年 QiYuan. All rights reserved.
+//
+
+#import "CMT_financialModel.h"
+
+@implementation CMT_financialModel
+- (NSMutableArray *)memoryCacheDataArr
+{
+    if (!_memoryCacheDataArr) {
+        _memoryCacheDataArr = [[NSMutableArray alloc] init];
+    }
+    return  _memoryCacheDataArr;
+}
+@end

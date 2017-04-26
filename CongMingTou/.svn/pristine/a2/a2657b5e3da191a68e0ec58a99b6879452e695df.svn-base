@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="10116" systemVersion="15G31" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES">
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="10085"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="CMT_BottomBankLogoView">
+            <connections>
+                <outlet property="inforLab" destination="wbA-HM-doj" id="QAZ-gJ-ZD1"/>
+                <outlet property="view" destination="g5R-kJ-waO" id="wWT-P3-FBD"/>
+            </connections>
+        </placeholder>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <view contentMode="scaleToFill" id="g5R-kJ-waO">
+            <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+            <subviews>
+                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="B25-Tl-Qz5">
+                    <rect key="frame" x="215" y="289" width="170" height="22"/>
+                    <subviews>
+                        <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="My_YingHangLogo" translatesAutoresizingMaskIntoConstraints="NO" id="98A-qp-UdY">
+                            <rect key="frame" x="100" y="3" width="60" height="14"/>
+                        </imageView>
+                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="燕赵财险战略合作" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="wbA-HM-doj">
+                            <rect key="frame" x="0.0" y="0.0" width="100" height="20"/>
+                            <fontDescription key="fontDescription" type="system" pointSize="12"/>
+                            <color key="textColor" red="0.5568627451" green="0.63137254899999995" blue="0.70588235290000001" alpha="1" colorSpace="calibratedRGB"/>
+                            <nil key="highlightedColor"/>
+                        </label>
+                    </subviews>
+                    <constraints>
+                        <constraint firstAttribute="height" constant="22" id="Vpn-ig-Jey"/>
+                        <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="170" id="ans-lV-tCv"/>
+                    </constraints>
+                </view>
+            </subviews>
+            <constraints>
+                <constraint firstItem="B25-Tl-Qz5" firstAttribute="centerY" secondItem="g5R-kJ-waO" secondAttribute="centerY" id="vtl-1U-1Ad"/>
+                <constraint firstItem="B25-Tl-Qz5" firstAttribute="centerX" secondItem="g5R-kJ-waO" secondAttribute="centerX" id="z6T-23-bqk"/>
+            </constraints>
+        </view>
+    </objects>
+    <resources>
+        <image name="My_YingHangLogo" width="64" height="15"/>
+    </resources>
+</document>

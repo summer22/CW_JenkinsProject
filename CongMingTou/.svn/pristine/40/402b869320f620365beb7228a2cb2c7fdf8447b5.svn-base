@@ -1,0 +1,25 @@
+{
+  "DVTSourceControlWorkspaceBlueprintPrimaryRemoteRepositoryKey" : "f00f0374-1f24-8647-a99e-21cb8f5fb93c++6557",
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyRepositoryLocationsKey" : {
+    "f00f0374-1f24-8647-a99e-21cb8f5fb93c++6557" : {
+
+    }
+  },
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyStatesKey" : {
+    "f00f0374-1f24-8647-a99e-21cb8f5fb93c++6557" : 0
+  },
+  "DVTSourceControlWorkspaceBlueprintIdentifierKey" : "71B21258-E56C-4FFD-8201-FD5FAB4BD5D2",
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyPathsKey" : {
+    "f00f0374-1f24-8647-a99e-21cb8f5fb93c++6557" : "CongMingTou\/"
+  },
+  "DVTSourceControlWorkspaceBlueprintNameKey" : "CongMingTou",
+  "DVTSourceControlWorkspaceBlueprintVersion" : 204,
+  "DVTSourceControlWorkspaceBlueprintRelativePathToProjectKey" : "CongMingTou.xcodeproj",
+  "DVTSourceControlWorkspaceBlueprintRemoteRepositoriesKey" : [
+    {
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryURLKey" : "https:\/\/192.168.6.168:8443\/svn\/Hengxin",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositorySystemKey" : "com.apple.dt.Xcode.sourcecontrol.Subversion",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryIdentifierKey" : "f00f0374-1f24-8647-a99e-21cb8f5fb93c++6557"
+    }
+  ]
+}

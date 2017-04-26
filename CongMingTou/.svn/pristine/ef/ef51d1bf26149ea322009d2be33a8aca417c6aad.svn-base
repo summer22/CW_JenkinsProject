@@ -1,0 +1,37 @@
+//
+//  CMT_CapitalSubsidiaryOtherTableViewCell.m
+//  CongMingTou
+//
+//  Created by wzh on 16/5/17.
+//  Copyright © 2016年 QiYuan. All rights reserved.
+//
+
+#import "CMT_CapitalSubsidiaryOtherTableViewCell.h"
+
+@implementation CMT_CapitalSubsidiaryOtherTableViewCell
+
+- (void)awakeFromNib {
+    // Initialization code
+}
++ (CMT_CapitalSubsidiaryOtherTableViewCell *)cellWithTablebView:(UITableView *)tableView{
+    static NSString *indent = @"chongZhicell";
+    [tableView registerNib:[UINib nibWithNibName:@"CMT_CapitalSubsidiaryOtherTableViewCell" bundle:nil] forCellReuseIdentifier:indent];
+    CMT_CapitalSubsidiaryOtherTableViewCell  *cell = [tableView dequeueReusableCellWithIdentifier:indent];
+    cell.selectionStyle = UITableViewCellSelectionStyleNone;
+    return cell;
+    
+}
+
+- (void)setModel:(CMT_ShouYiMingXIListModel *)model{
+    _model = model;
+    _titleLab.text = [NSString stringWithFormat:@"%@",_model.title];
+    _datalab.text = [NSString stringWithFormat:@"%@",_model.receive_timeString];
+    _moneyDesLab.text = [NSString stringWithFormat:@"%@",_model.receive_interestString];
+}
+- (void)setSelected:(BOOL)selected animated:(BOOL)animated {
+    [super setSelected:selected animated:animated];
+
+    // Configure the view for the selected state
+}
+
+@end

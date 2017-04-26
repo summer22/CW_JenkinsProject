@@ -1,0 +1,64 @@
+//
+//  CMT_MySetTableViewCell.m
+//  CongMingTou
+//
+//  Created by wzh on 16/5/16.
+//  Copyright © 2016年 QiYuan. All rights reserved.
+//
+
+#import "CMT_MySetTableViewCell.h"
+
+@implementation CMT_MySetTableViewCell
+
+- (void)awakeFromNib {
+    // Initialization code
+    self.phoneLab.text = [NSString stringWithFormat:@"%@",CMT_CustomerServicePhonNum];
+}
+- (instancetype)initWithCoder:(NSCoder *)aDecoder{
+    
+    if (self = [super initWithCoder:aDecoder]) {
+        
+    }
+    
+    return self;
+}
++ (CMT_MySetTableViewCell *)cellWithTablebView:(UITableView *)tableView andIndexPath:(NSIndexPath *)indexPath{
+    static NSString *indent = @"cell";
+    [tableView registerNib:[UINib nibWithNibName:@"CMT_MySetTableViewCell" bundle:nil] forCellReuseIdentifier:indent];
+    CMT_MySetTableViewCell  *cell = [tableView dequeueReusableCellWithIdentifier:indent];
+    cell.selectionStyle = UITableViewCellSelectionStyleNone;
+    cell.messageSwitch.hidden =  YES;
+    cell.nextBtn.hidden = !cell.messageSwitch.hidden;
+    
+    if(indexPath.section == 2 && indexPath.row == 1){//客服热线
+        cell.phoneLab.hidden = NO;
+    }else{
+        cell.phoneLab.hidden = YES;
+    }
+    
+    if(indexPath.section == 4){//版本号
+        cell.nextBtn.hidden = YES;
+        cell.versonLab.hidden = NO;
+        NSString *versionKey = @"CFBundleShortVersionString";
+        NSString *currentVersion = [NSBundle mainBundle].infoDictionary[versionKey];
+        cell.versonLab.text = [NSString stringWithFormat:@"V%@",currentVersion];
+      
+    }else{
+        cell.versonLab.hidden = YES;
+    }
+    return cell;
+    
+}
+- (void)setSelected:(BOOL)selected animated:(BOOL)animated {
+    [super setSelected:selected animated:animated];
+
+    // Configure the view for the selected state
+}
+
+
+- (void)layoutSubviews{
+    [super layoutSubviews];
+
+}
+
+@end

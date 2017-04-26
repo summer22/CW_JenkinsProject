@@ -1,0 +1,13 @@
+//
+//  CMT_PreInvestModel.m
+//  CongMingTou
+//
+//  Created by summer on 16/5/27.
+//  Copyright © 2016年 QiYuan. All rights reserved.
+//
+
+#import "CMT_PreInvestModel.h"
+
+@implementation CMT_PreInvestModel
+
+@end

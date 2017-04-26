@@ -1,0 +1,63 @@
+//
+//  CMT_recordTableViewCell.m
+//  CongMingTou
+//
+//  Created by summer on 16/5/12.
+//  Copyright © 2016年 wzh. All rights reserved.
+//
+
+#import "CMT_recordTableViewCell.h"
+#import "CMT_InvestRecordModel.h"
+
+@interface CMT_recordTableViewCell()
+@property (weak, nonatomic) IBOutlet UILabel *moneyLabel;
+@property (weak, nonatomic) IBOutlet UILabel *phoneLabel;
+@property (weak, nonatomic) IBOutlet UILabel *lineLabel;
+@property (weak, nonatomic) IBOutlet NSLayoutConstraint *lineConsHeight;
+@property (weak, nonatomic) IBOutlet UILabel *dateLabel;
+
+@end
+
+@implementation CMT_recordTableViewCell
+
+- (void)awakeFromNib {
+    // Initialization code
+    self.lineLabel.backgroundColor = CommonLineColor;
+    self.dateLabel.textColor = CommonGrayTextColor;
+    self.moneyLabel.textColor = CommonYellowTextColor;
+    self.phoneLabel.textColor = CommonImpTextColor;
+    self.lineConsHeight.constant = 0.5;
+}
+
++ (CMT_recordTableViewCell *)cellWithTablebView:(UITableView *)tableView indexPath:(NSIndexPath *)index{
+    static NSString *indent = @"CMT_recordTableViewCell";
+    [tableView registerNib:[UINib nibWithNibName:@"CMT_recordTableViewCell" bundle:nil] forCellReuseIdentifier:indent];
+    CMT_recordTableViewCell  *cell = [tableView dequeueReusableCellWithIdentifier:indent];
+    cell.backgroundColor = CommonWhiteColor;
+    if (index.row == 0) {
+        cell.lineLabel.hidden = YES;
+    }else{
+        cell.lineLabel.hidden = NO;
+    }
+
+    return cell;
+}
+
+-(void)setModel:(CMT_InvestRecordModel *)model
+{
+    _model = model;
+    self.lineLabel.hidden = _model ? NO : YES;
+    self.moneyLabel.text = _model.iAmount;
+    self.phoneLabel.text = _model.iMobile;
+    self.dateLabel.text = _model.iTime;
+    
+}
+
+
+- (void)setSelected:(BOOL)selected animated:(BOOL)animated {
+    [super setSelected:selected animated:animated];
+
+    // Configure the view for the selected state
+}
+
+@end

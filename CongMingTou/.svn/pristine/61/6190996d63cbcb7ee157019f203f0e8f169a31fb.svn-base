@@ -1,0 +1,274 @@
+//
+//  CMT_ThreeInvestPreViewController.m
+//  CongMingTou
+//
+//  Created by summer on 16/5/11.
+//  Copyright © 2016年 wzh. All rights reserved.
+//
+
+#import "CMT_ThreeInvestPreViewController.h"
+#import "CMT_PayTextFiled.h"
+#import "CMT_ChongZhIAndTiXIanViewController.h"
+#import "CMT_BankCardViewController.h"
+#import "CMT_RealNameAuthenticationViewController.h"
+#import "CMT_AccountAndPasswordViewController.h"
+#import "CMT_productDetViewController.h"
+
+@interface CMT_ThreeInvestPreViewController ()<UITextFieldDelegate>
+
+/** 全局父试图scrollview */
+@property (nonatomic,strong)UIScrollView *myBgScrollView;
+/** 密码控件 */
+@property (nonatomic,strong)  CMT_PayTextFiled *textFiled;
+/** 下一步按钮 */
+@property (nonatomic,strong)UIButton *investNextBtn;
+/** 提示label */
+@property (nonatomic,strong)UILabel *showLabel;
+/** 上次输入的密码值 */
+@property (nonatomic,copy)NSString *passWordStr;
+
+@end
+
+@implementation CMT_ThreeInvestPreViewController
+
+- (UIScrollView *)myBgScrollView
+{
+    if (!_myBgScrollView) {
+        
+        _myBgScrollView = [[UIScrollView alloc] initWithFrame:CMT_CGRECTMAKE(0, 0, CMT_ScreenWidth, CMT_ScreenHeight)];
+        _myBgScrollView.contentSize = CGSizeMake(0, CMT_ScreenHeight + 10);
+        _myBgScrollView.showsVerticalScrollIndicator = NO;
+        
+        UIImageView *topImg = [[UIImageView alloc] initWithFrame:CMT_CGRECTMAKE((CMT_ScreenWidth - 297 * CMT_6PERCENTY)/2, 33 * CMT_6PERCENTY, 297 * CMT_6PERCENTY, 45 * CMT_6PERCENTY)];
+        topImg.image = [UIImage imageNamed:@"My_InvestPreThree"];
+        [_myBgScrollView addSubview:topImg];
+        
+        UILabel *bottomLabel = [[UILabel alloc] initWithFrame:CMT_CGRECTMAKE((CMT_ScreenWidth - 300 * CMT_6PERCENTY)/2, topImg.bottom + 30 * CMT_6PERCENTY, 300 * CMT_6PERCENTY, 25 * CMT_6PERCENTY)];
+        bottomLabel.textAlignment = NSTextAlignmentCenter;
+        bottomLabel.font = [UIFont systemFontOfSize:12];
+        bottomLabel.textColor = customColor(@"#8EA1B4");
+        bottomLabel.text = @"设置用于交易的6位数字密码";
+        self.showLabel = bottomLabel;
+        [_myBgScrollView addSubview:bottomLabel];
+        
+        _textFiled = [[CMT_PayTextFiled alloc]initWithFrame:CGRectMake(28 * CMT_6PERCENTY, bottomLabel.bottom + 29 * CMT_6PERCENTY, CMT_ScreenWidth - 56 * CMT_6PERCENTY, 50 * CMT_6PERCENTY)];
+        _textFiled.delegate = self;
+        _textFiled.font = [UIFont systemFontOfSize:30];
+        [_textFiled addTarget:self action:@selector(textFiledEdingChanged) forControlEvents:UIControlEventEditingChanged];
+        [_myBgScrollView addSubview:_textFiled];
+        
+        
+        UIButton *nextBtn = [CMT_Tools getButtonWithFrame:CMT_CGRECTMAKE(15, _textFiled.bottom + 30, CMT_ScreenWidth - 30, 50 * CMT_6PERCENTY) BackGroudColor:CommonYellowTextColor Title:@"下一步"  TitleColor:CommonWhiteColor textFont:15];
+        [nextBtn styteWithCornerRadius:25* CMT_6PERCENTY shadowColor:CommonYellowTextColor shadowOffset:CGSizeMake(0,5) shadowOpacity:0.5 shadowRadius:6];
+        [nextBtn addTarget:self action:@selector(nextBtnClick:) forControlEvents:UIControlEventTouchUpInside];
+        nextBtn.userInteractionEnabled = NO;
+        nextBtn.alpha = 0.5;
+        self.investNextBtn = nextBtn;
+        [_myBgScrollView addSubview:nextBtn];
+        
+        UILabel *bottomViewLabel = [[UILabel alloc] initWithFrame:CMT_CGRECTMAKE(0, 0, 100, 30 * CMT_6PERCENTY)];
+        bottomViewLabel.textAlignment = NSTextAlignmentCenter;
+        bottomViewLabel.font = [UIFont systemFontOfSize:12];
+        bottomViewLabel.textColor = customColor(@"#8EA1B4");
+        bottomViewLabel.centerY = nextBtn.centerY + 55 * CMT_6PERCENTY;
+        bottomViewLabel.centerX = nextBtn.centerX - 25 *CMT_6PERCENTY;
+        bottomViewLabel.text = [NSString stringWithFormat:@"%@", CMT_BottomBankInfor];
+        [_myBgScrollView addSubview:bottomViewLabel];
+        
+        
+        UIImageView *thumImg = [[UIImageView alloc] initWithFrame:CMT_CGRECTMAKE(bottomViewLabel.right, 0, 64  * CMT_6PERCENTY, 15 *CMT_6PERCENTY)];
+        thumImg.centerY = bottomViewLabel.centerY;
+        thumImg.image = [UIImage imageNamed:@"My_YingHangLogo"];
+        [_myBgScrollView addSubview:thumImg];
+        
+    }
+    return _myBgScrollView;
+}
+
+- (void)viewWillAppear:(BOOL)animated
+{
+    [super viewWillAppear:animated];
+    
+//    _textFiled.text = nil;    
+//    [self textFiledEdingChanged];
+}
+
+- (void)viewDidLoad {
+    [super viewDidLoad];
+    
+    self.title = @"投资前准备";
+    [self.view addSubview:self.myBgScrollView];
+    
+}
+- (void)viewDidAppear:(BOOL)animated
+{
+    [super viewDidAppear:animated];
+    [_textFiled becomeFirstResponder];
+    self.passWordStr = nil;
+}
+
+#pragma mark -- 密码输入框的监听
+-(void)textFiledEdingChanged
+{
+    NSInteger length = _textFiled.text.length;
+    
+    for(NSInteger i=0;i<kPasswordLength;i++){
+        UILabel *dotLabel = (UILabel *)[_textFiled viewWithTag:kDotTag + i];
+        if(dotLabel){
+            dotLabel.hidden = length <= i;
+        }
+    }
+    [_textFiled sendActionsForControlEvents:UIControlEventValueChanged];
+    
+    if(length>=kPasswordLength){
+        //数据统计
+        SensorsAnalyticsSDK *sdk = [SensorsAnalyticsSDK sharedInstance];
+        if (sdk != nil) {
+            [sdk track:@"pre_invest_passwd" withProperties:@{@"distinctId": [NSString convertNull:[CMT_AnalyticsTool userID]]}];
+        }
+        [sdk flush];
+
+        if (self.passWordStr) {
+            
+            if ([_textFiled.text isEqualToString:self.passWordStr]) {
+                self.investNextBtn.userInteractionEnabled = YES;
+                self.investNextBtn.alpha = 1;
+            }else{
+                [_textFiled resignFirstResponder];
+                [self showHint:@"两次密码输入不一致"];
+            }
+            
+        }else{
+            
+            for(NSInteger i=0;i<kPasswordLength;i++){
+                UILabel *dotLabel = (UILabel *)[self.textFiled viewWithTag:kDotTag + i];
+                if(dotLabel){
+                    dotLabel.hidden = !(length <= i);
+                }
+            }
+            
+            [self againCheckTextFiled];//重新清空验证一次
+        }
+    }else{
+        self.investNextBtn.userInteractionEnabled = NO;
+        self.investNextBtn.alpha = 0.5;
+    }
+}
+
+//再次验证密码输入框
+- (void)againCheckTextFiled
+{
+    self.passWordStr = _textFiled.text;
+    self.textFiled.text = nil;
+    [self textFiledEdingChanged];
+    self.showLabel.text = @"请再次输入以确认";
+    [self.investNextBtn setTitle:@"提交" forState:UIControlStateNormal];
+}
+
+#pragma mark -- 下一步点击事件
+- (void)nextBtnClick:(UIButton *)sender
+{
+    [self.view endEditing:YES];
+    
+    NSString *subTextFeildStr = [_textFiled.text substringToIndex:6];;
+    [self loadDataWithRealNameAuthenticateWithUserId:[CMT_AccountTool accountModel].userId userIdentity:_idNumberStr userName:_nameStr bankCardNum:_bankCardNumberStr userMobile:_phoneStr mobileSmsCode:_verificationCodeStr resetPayPwd:subTextFeildStr];
+    
+}
+- (void)loadDataWithRealNameAuthenticateWithUserId:(NSString *)userId userIdentity:(NSString *)userIdentity userName:(NSString *)userName bankCardNum:(NSString *)bankCardNum userMobile:(NSString *)userMobile mobileSmsCode:(NSString *)mobileSmsCode resetPayPwd:(NSString *)resetPayPwd{
+    [self showHudInView:self.view hint:CMT_LoadDataRealNameAuthenticate];
+    [CMT_ProcessTheDataTool realNameAuthenticateWithUserId:userId userIdentity:userIdentity userName:userName bankCardNum:bankCardNum userMobile:userMobile mobileSmsCode:mobileSmsCode rePassword:resetPayPwd  andBlock:^(CMT_CodeBaseModel *baseModel, NSError *error) {
+        [self hideHud];
+        if(!error){
+            if([[NSString stringWithFormat:@"%@",baseModel.code] isEqualToString:@"1"]){
+                CMT_Log(@"实名认证成功");
+                [self showHint:CMT_LoadDataRealNameAuthenticateSuccessful];
+                
+                CMT_AccountModel *model = [CMT_AccountTool accountModel];
+                model.realNameState = @"1";
+                model.realName = userName;
+                model.bankReservedPhoneNum = [NSString stringWithFormat:@"%@",userMobile];
+                model.idCardNumber = userIdentity;
+                [CMT_AccountTool save:model];
+                [self nextVC];
+            }else if ([[NSString stringWithFormat:@"%@",baseModel.code] isEqualToString:CMT_SinglePointCode]){
+                [CMT_SinglePointLoginTool addSinglePointLoginWithSelfVC:self];
+            }else{
+                [self showHint:baseModel.message];
+            }
+        }else{
+            CMT_Log(@"实名认证失败");
+            [self showHint:CMT_Error_NotNetWork];
+        }
+    }];
+}
+
+- (void)nextVC{
+    
+    //数据统计
+    SensorsAnalyticsSDK *sdk = [SensorsAnalyticsSDK sharedInstance];
+    if (sdk != nil) {
+        [sdk track:@"pre_invest_complete" withProperties:@{@"distinctId": [NSString convertNull:[CMT_AnalyticsTool userID]]}];
+    }
+    [sdk flush];
+    
+    UIViewController *vc = nil;
+    if(_enterInvestmentPreparationType == CMTEnterInvestmentPreparationTypeChongZhi){
+        CMT_ChongZhIAndTiXIanViewController *chongZhiVC = [[CMT_ChongZhIAndTiXIanViewController alloc]init];
+        chongZhiVC.enterType = EnterTypeChongZhiType;
+        vc = chongZhiVC;
+    }else if (_enterInvestmentPreparationType == CMTEnterInvestmentPreparationTypeTiXian){
+        CMT_ChongZhIAndTiXIanViewController *tiXianVC = [[CMT_ChongZhIAndTiXIanViewController alloc]init];
+        tiXianVC.enterType = EnterTypeTiXianType;
+        vc = tiXianVC;
+    }else if (_enterInvestmentPreparationType == CMTEnterInvestmentPreparationTypeBankCard){
+        CMT_BankCardViewController *bankCardVC = [[CMT_BankCardViewController alloc]init];
+        vc = bankCardVC;
+    }else if (_enterInvestmentPreparationType == CMTEnterInvestmentPreparationTypeCertification){
+        CMT_RealNameAuthenticationViewController *realNameAuthenticationVC = [[CMT_RealNameAuthenticationViewController alloc]init];
+        vc= realNameAuthenticationVC;
+    }else if (_enterInvestmentPreparationType == CMTEnterInvestmentPreparationTypeImmediateInvestment){
+        for (UIViewController *subVc in self.navigationController.viewControllers) {
+            if([subVc isKindOfClass:[CMT_productDetViewController class]]){
+                [self.navigationController popToViewController:subVc animated:YES];
+            }
+        }
+    }else if (_enterInvestmentPreparationType == CMTEnterYueyueInvestTypeImmediateInvestment){
+        for (UIViewController *subVc in self.navigationController.viewControllers) {
+            if([subVc isKindOfClass:[CMT_productDetViewController class]]){
+                [self.navigationController popToViewController:subVc animated:YES];
+            }
+        }
+    }else if (_enterInvestmentPreparationType == CMTEnterInvestmentPreparationTypeModifyPayPwd){
+        for (UIViewController *subVc in self.navigationController.viewControllers) {
+            if([subVc isKindOfClass:[CMT_AccountAndPasswordViewController class]]){
+                [self.navigationController popToViewController:subVc animated:YES];
+            }
+        }
+    }
+    if(vc){
+        [self.navigationController pushViewController:vc animated:YES];
+    }
+    
+}
+
+- (void)dealloc{
+    [self.view endEditing:YES];
+}
+
+
+- (void)didReceiveMemoryWarning {
+    [super didReceiveMemoryWarning];
+    // Dispose of any resources that can be recreated.
+}
+
+/*
+ #pragma mark - Navigation
+ 
+ // In a storyboard-based application, you will often want to do a little preparation before navigation
+ - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
+ // Get the new view controller using [segue destinationViewController].
+ // Pass the selected object to the new view controller.
+ }
+ */
+
+@end

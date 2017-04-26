@@ -1,0 +1,641 @@
+//
+//  CMT_makeSureViewController.m
+//  CongMingTou
+//
+//  Created by summer on 16/5/27.
+//  Copyright © 2016年 QiYuan. All rights reserved.
+//
+
+#import "CMT_makeSureViewController.h"
+#import "CMT_makeSureTableViewCell.h"
+#import "CMT_makeSureTwoSectionTableViewCell.h"
+#import "CMT_PayMaskView.h"
+#import "CMT_InvestConfirmModel.h"
+#import "CMT_InvestResultViewController.h"
+#import "CMT_MyWelfareViewController.h"
+#import "CMT_BaseModel.h"
+#import "CMT_MyWelfareListModel.h"
+#import "CMT_ForgetPasswordViewController.h"
+#import "CMT_MyInvestmentViewController.h"
+
+@interface CMT_makeSureViewController ()<CMT_PayMaskViewDelegate>
+
+/** bottomView */
+@property (nonatomic,strong)UIView *bottomView;
+/** 数据源模型 */
+@property (nonatomic,strong) CMT_InvestConfirmModel *model;
+/** 待支付label */
+@property (nonatomic,strong)UILabel *toPayLabel;
+/** 确认支付按钮 */
+@property (nonatomic,strong)UIButton *toPayBtn;
+/** 加息券加息率 */
+@property (nonatomic,copy)NSString *rateStr;
+/** 加息券id */
+@property (nonatomic,copy)NSString *rateId;
+/** 本金券额度 */
+@property (nonatomic,copy)NSString *ticketNum;
+/** 本金券id */
+@property (nonatomic,copy)NSString *ticketId;
+/** 支付或者预约金额 */
+@property (nonatomic,copy)NSString *moneyNum;
+/** 使用加息率的值 */
+@property (nonatomic,copy)NSString *useRate;
+/** 使用本金券的值 */
+@property (nonatomic,copy)NSString *cashTicketStr;
+
+
+
+@property (weak, nonatomic) IBOutlet UIScrollView *myBgScrollView;
+@property (strong, nonatomic) IBOutlet UIView *bgView;
+@property (weak, nonatomic) IBOutlet UIView *topView;
+@property (weak, nonatomic) IBOutlet UIView *topSectionView;
+@property (weak, nonatomic) IBOutlet UIView *bottomSectionView;
+@property (weak, nonatomic) IBOutlet UILabel *sectionTitle;
+@property (weak, nonatomic) IBOutlet UILabel *sectionTitleTwo;
+@property (weak, nonatomic) IBOutlet UIView *scetionLine;
+@property (weak, nonatomic) IBOutlet UIButton *topSectionTicket;
+@property (weak, nonatomic) IBOutlet UIButton *bottomSectionBtn;
+@property (weak, nonatomic) IBOutlet UIView *oneLine;
+@property (weak, nonatomic) IBOutlet UIView *twoLine;
+@property (weak, nonatomic) IBOutlet UIView *threeLine;
+@property (weak, nonatomic) IBOutlet UIView *fourLine;
+@property (weak, nonatomic) IBOutlet UIView *fiveLine;
+@property (weak, nonatomic) IBOutlet UILabel *oneTitleLabel;
+@property (weak, nonatomic) IBOutlet UILabel *twoTitleLabel;
+@property (weak, nonatomic) IBOutlet UILabel *threeTitleLabel;
+@property (weak, nonatomic) IBOutlet UILabel *fourTitleLabel;
+@property (weak, nonatomic) IBOutlet UILabel *fiveTitleLabel;
+@property (weak, nonatomic) IBOutlet UILabel *sixTitleLabel;
+@property (weak, nonatomic) IBOutlet UILabel *oneContentLabel;
+@property (weak, nonatomic) IBOutlet UILabel *twoContentLabel;
+@property (weak, nonatomic) IBOutlet UILabel *threeContentLabel;
+@property (weak, nonatomic) IBOutlet UILabel *fourContentLabel;
+@property (weak, nonatomic) IBOutlet UILabel *fiveContentLabel;
+@property (weak, nonatomic) IBOutlet UILabel *sixContentLabel;
+@property (weak, nonatomic) IBOutlet NSLayoutConstraint *oneConsHeight;
+@property (weak, nonatomic) IBOutlet NSLayoutConstraint *twoConsHeight;
+@property (weak, nonatomic) IBOutlet NSLayoutConstraint *threeConsHeight;
+@property (weak, nonatomic) IBOutlet NSLayoutConstraint *fourConsHeight;
+@property (weak, nonatomic) IBOutlet NSLayoutConstraint *fiveConsHeight;
+@property (weak, nonatomic) IBOutlet NSLayoutConstraint *sectionLineConsHeight;
+
+@end
+
+@implementation CMT_makeSureViewController
+
+//处理空间的样式
+- (void)setSubviewStyle
+{
+    self.bottomSectionView.hidden = self.fromType == 1 ? YES : NO;
+    //合并xibView
+    [self.myBgScrollView addSubview:self.bgView];
+    self.myBgScrollView.showsVerticalScrollIndicator = NO;
+    self.myBgScrollView.frame  =CGRectMake(0, 0, CMT_ScreenWidth, CMT_ScreenHeight - 64);
+    self.bgView.frame = CGRectMake(0, 0, CMT_ScreenWidth, 550);
+    self.myBgScrollView.contentSize = CGSizeMake(CMT_ScreenWidth,CGRectGetMaxY(self.bgView.frame));
+    
+    //处理view样式
+    self.myBgScrollView.backgroundColor = [UIColor clearColor];
+    self.bgView.backgroundColor = [UIColor clearColor];
+    self.topView.backgroundColor = CommonWhiteColor;
+    self.topSectionView.backgroundColor = CommonWhiteColor;
+    self.bottomSectionView.backgroundColor = CommonWhiteColor;
+    self.oneLine.backgroundColor = CommonLineColor;
+    self.twoLine.backgroundColor = CommonLineColor;
+    self.threeLine.backgroundColor = CommonLineColor;
+    self.fourLine.backgroundColor = CommonLineColor;
+    self.fiveLine.backgroundColor = CommonLineColor;
+    self.scetionLine.backgroundColor = CommonLineColor;
+    self.oneConsHeight.constant = 0.5;
+    self.twoConsHeight.constant = 0.5;
+    self.threeConsHeight.constant = 0.5;
+    self.fourConsHeight.constant = 0.5;
+    self.fiveConsHeight.constant = 0.5;
+    self.sectionLineConsHeight.constant = 0.5;
+    [self.topSectionTicket setTitleColor:CommonYellowTextColor forState:UIControlStateNormal];
+    [self.bottomSectionBtn setTitleColor:CommonYellowTextColor forState:UIControlStateNormal];
+    self.oneTitleLabel.textColor = CommonGrayTextColor;
+    self.twoTitleLabel.textColor = CommonGrayTextColor;
+    self.threeTitleLabel.textColor = CommonGrayTextColor;
+    self.fourTitleLabel.textColor = CommonGrayTextColor;
+    self.fiveTitleLabel.textColor = CommonGrayTextColor;
+    self.sixTitleLabel.textColor = CommonGrayTextColor;
+    self.sectionTitle.textColor = CommonImpTextColor;
+    self.sectionTitleTwo.textColor = CommonImpTextColor;
+    self.oneContentLabel.textColor = CommonImpTextColor;
+    self.twoContentLabel.textColor = CommonImpTextColor;
+    self.threeContentLabel.textColor = CommonImpTextColor;
+    self.fourContentLabel.textColor = CommonImpTextColor;
+    self.fiveContentLabel.textColor = CommonImpTextColor;
+    self.sixContentLabel.textColor = CommonImpTextColor;
+    
+    self.bottomSectionBtn.userInteractionEnabled = NO;
+    self.bottomSectionBtn.alpha = 0.5;
+    self.topSectionTicket.userInteractionEnabled = NO;
+    self.topSectionTicket.alpha = 0.5;
+    
+     self.oneTitleLabel.text = self.fromType == 1 ? @"预约金额":  @"投资金额";
+    
+    self.myBgScrollView.mj_header = [MJRefreshNormalHeader headerWithRefreshingTarget:self refreshingAction:@selector(loadMyListData)];
+
+}
+
+- (UIView *)bottomView
+{
+    if (!_bottomView) {
+        _bottomView = [[UIView alloc] initWithFrame:CMT_CGRECTMAKE(0, CMT_ScreenHeight - 60 * CMT_6PERCENTY - 64, CMT_ScreenWidth, 60 * CMT_6PERCENTY)];
+        _bottomView.backgroundColor = CommonWhiteColor;
+        
+        NSString *strs = self.fromType == 1 ? @"预约金额": @"待支付";
+        NSString *strings = self.fromType == 1 ? @" 确认预约 " :  @" 确认支付 ";
+        //待支付
+        CGSize leftLabelSize = [CMT_Tools getStrSize:strs fontSize:17];
+        UILabel *leftLabel = [CMT_Tools getLabel:strs textFont:16 viewFrame:CMT_CGRECTMAKE(15 * CMT_6PERCENTY, 20 * CMT_6PERCENTY, leftLabelSize.width, 20 * CMT_6PERCENTY) textAlignments:NSTextAlignmentCenter textColors:CommonImpTextColor];
+        [_bottomView addSubview:leftLabel];
+        
+        //待支付金额
+        CGSize amountLabelSize = [CMT_Tools getStrSize:@"100000000元" fontSize:17];
+        UILabel *amountLabel = [CMT_Tools getLabel:@"10000元" textFont:16 viewFrame:CMT_CGRECTMAKE(leftLabel.right + 3, 20 * CMT_6PERCENTY, amountLabelSize.width, 20 * CMT_6PERCENTY) textAlignments:NSTextAlignmentLeft textColors:CommonYellowTextColor];
+        [_bottomView addSubview:amountLabel];
+        self.toPayLabel = amountLabel;
+        //确认支付
+        CGSize sureBtnSize = [CMT_Tools getStrSize:strings fontSize:18];
+        UIButton *sureBtn = [CMT_Tools getButtonWithFrame:CMT_CGRECTMAKE(_bottomView.right - sureBtnSize.width - 15 * CMT_6PERCENTY, 12.5 * CMT_6PERCENTY, sureBtnSize.width, 35 * CMT_6PERCENTY) BackGroudColor:CommonYellowTextColor Title:strings TitleColor:CommonWhiteColor textFont:15];
+        [sureBtn styteWithCornerRadius:35 * CMT_6PERCENTY / 2 shadowColor:CommonYellowTextColor shadowOffset:CGSizeMake(0, 2) shadowOpacity:0.5 shadowRadius:10];
+        [sureBtn addTarget:self action:@selector(toInvestBtnClick) forControlEvents:UIControlEventTouchUpInside];
+        [_bottomView addSubview:sureBtn];
+        sureBtn.alpha = 0.5;
+        sureBtn.userInteractionEnabled = NO;
+        self.toPayBtn = sureBtn;
+    }
+    return _bottomView;
+}
+
+#pragma mark -- 刷新数据
+- (void)loadMyListData
+{
+    if (self.fromType == 1) {
+        [self loadPreInvestData];//来自预约列表
+    }else{
+        [self loadInvestConfirmData];//立即投资
+    }
+}
+
+#pragma mark --使用加息券点击事件
+- (IBAction)topBtn:(id)sender {
+    
+    __weak  typeof(self) weakSelf = self;
+    
+    CMT_MyWelfareViewController * myWelfareVc = [[CMT_MyWelfareViewController alloc] init];
+    if(_fromType == FROMYUYUEINVEST){//来自预约（预约标投资）
+        myWelfareVc.enterMyWelfareType = 1;
+        myWelfareVc.bidTimeLimit = self.preInvestModelmodel.period;
+        myWelfareVc.bidIdStr = self.markIdStr;
+        
+    }else{
+        myWelfareVc.enterMyWelfareType = CMTEnterMyWelfareTypeChooseRateIncreaseVolumeList;
+        myWelfareVc.investAmount = self.model.investMoney;
+        myWelfareVc.bidIdStr = self.markIdStr;
+        myWelfareVc.bidTimeLimit = self.model.period;
+    }
+    
+    //回调加息券
+    myWelfareVc.backBlock = ^(CMT_MyWelfareListModel *model){
+        CMT_Log(@"%@  **** %@",model.rate,model.id);
+        
+        //神策数据采集 -- 加息券消费
+        SensorsAnalyticsSDK *sdk = [SensorsAnalyticsSDK sharedInstance];
+        if (sdk != nil) {
+            [sdk track:@"useCoupon" withProperties:@{@"CouponAmount":[NSString convertNull:model.rate],
+                                                     @"useDemand": [NSString convertNull:model.details],
+                                                     @"limitTime": [NSNumber numberWithDouble:[[NSString convertNull:model.expireDays] doubleValue]],
+                                                     @"distinctId": [NSString convertNull:[CMT_AnalyticsTool userID]]}];
+        }
+        
+        //预约投资福利选择
+        if (self.fromType == 1) {
+            SensorsAnalyticsSDK *sdk = [SensorsAnalyticsSDK sharedInstance];
+            if (sdk != nil) {
+                [sdk track:@"reservationInvest_choiceGift" withProperties:
+                 @{@"investDayLine": [NSNumber numberWithDouble:[self.preInvestModelmodel.period doubleValue]],
+                   @"yearOfReturn": [NSString convertNull:self.preInvestModelmodel.apr],
+                   @"returnType": [NSString convertNull:self.preInvestModelmodel.repayType],
+                   @"tab": [NSString convertNull:self.preInvestModelmodel.bidTitle],
+                   @"distinctId": [NSString convertNull:[CMT_AnalyticsTool userID]]}];
+            }
+        }
+        self.useRate = model.rate;
+        self.rateNum = [model.rate stringByAppendingString:@"%"];
+        CGFloat totleRate =  [weakSelf.model.apr floatValue] + [model.rate floatValue];
+        NSString *aprStr = [[NSString stringWithFormat:@"%.2f",totleRate] stringByAppendingString:@"%"];
+        weakSelf.twoContentLabel.text = aprStr;
+        
+        if (self.fromType == 1) {
+            NSString *earnMoney =  [CMT_Tools apr:[weakSelf.model.apr floatValue] addPercent:[model.rate floatValue] amount:[weakSelf.model.preAmount floatValue] investDay:[weakSelf.preInvestModelmodel.period integerValue]];
+            weakSelf.threeContentLabel.text = earnMoney;
+
+        }else{
+            NSString *earnMoney =  [CMT_Tools apr:[weakSelf.model.apr floatValue] addPercent:[model.rate floatValue] amount:[weakSelf.model.investMoney floatValue] investDay:[weakSelf.model.period integerValue]];
+            weakSelf.threeContentLabel.text = earnMoney;
+
+        }
+        [weakSelf.topSectionTicket setTitle:[model.rate stringByAppendingString:@"%"]  forState:UIControlStateNormal];
+        weakSelf.rateId = model.id;
+    };
+    
+    [self.navigationController pushViewController:myWelfareVc animated:YES];
+
+}
+
+#pragma mark  - 使用本金券点击事件
+- (IBAction)bottomBtn:(id)sender {
+    
+    __weak  typeof(self) weakSelf = self;
+    
+    CMT_MyWelfareViewController * myWelfareVc = [[CMT_MyWelfareViewController alloc] init];
+    myWelfareVc.enterMyWelfareType = 2;
+    myWelfareVc.investAmount = self.model.investMoney;
+    myWelfareVc.bidIdStr = self.markIdStr;
+    //回调金券数据
+    myWelfareVc.backBlock = ^(CMT_MyWelfareListModel *model){
+        
+        //神策数据采集
+        SensorsAnalyticsSDK *sdk = [SensorsAnalyticsSDK sharedInstance];
+        if (sdk != nil) {
+            [sdk track:@"useCashCoupon" withProperties:@{@"cashCouponAmount":[NSNumber numberWithDouble:[model.rate doubleValue]],
+                                                         @"useDemand": [NSString convertNull:model.details],
+                                                         @"limitTime": [NSNumber numberWithDouble:[[NSString convertNull:model.expireDays] doubleValue]],
+                                                         @"distinctId": [NSString convertNull:[CMT_AnalyticsTool userID]]}];
+        }
+
+        [weakSelf.bottomSectionBtn setTitle:[model.rate stringByAppendingString:@"元"]  forState:UIControlStateNormal];
+        weakSelf.ticketId = model.id;
+        self.cashTicketStr = model.rate;//本金券金额
+        weakSelf.moneyNum = [NSString stringWithFormat:@"%ld",[weakSelf.model.investMoney integerValue] - [model.rate integerValue]];
+        if ([weakSelf.moneyNum floatValue] <= 0)  weakSelf.moneyNum = @"0.00";
+        weakSelf.toPayLabel.text = [ weakSelf.moneyNum  stringByAppendingString:@"元"];
+
+    };
+    [self.navigationController pushViewController:myWelfareVc animated:YES];
+
+}
+
+#pragma mark -确认支付按钮点击事件
+- (void)toInvestBtnClick
+{
+    [CMT_PayMaskView showWithDelegateOwer:self];
+}
+
+//密码输入框浮层
+#pragma mark -CMT_PayMaskViewDelegate
+
+#pragma mark -返回点击事件
+- (void)payMaskViewBackClick
+{
+    CMT_Log(@"返回点击事件");
+}
+#pragma mark --使用指纹点击事件
+- (void)payMaskViewFingerPrintBtnClick
+{    
+    [CMT_FingerprintManagerTool  fingerprintValidationWithTitle:@"请输入指纹进行支付" Block:^(BOOL success, NSError *error, NSError *deviceError) {
+        [[NSOperationQueue mainQueue] addOperationWithBlock:^{
+            //用户选择输入密码，切换主线程处理
+            if(success == YES && !error && !deviceError){//验证成功
+                
+                if (self.fromType == 1) {
+                    [self getPreInvestData];//预约投资
+                }else{
+                    [self showHudInView:self.view hint:@"加载中..."];
+                    [self toInvestLoadInterface];//立即投资
+                }
+
+            }else if (success == NO && error){//指纹验证失败，请重新验证
+                if(error.code == LAErrorSystemCancel || error.code == LAErrorUserCancel ||error.code == LAErrorUserFallback){
+                    [self showHint:CMT_FingerprintValidationCancel];
+                }else{
+                    [self showHint:CMT_Error_FingerprintValidation];
+                }
+            }else{
+                if(deviceError.code == LAErrorTouchIDNotEnrolled){////设备Touch ID不可用，用户未录入
+                    [self showHint:CMT_Error_DeviceErrorNOOpenOrNoLogin];
+                }else if (deviceError.code == LAErrorTouchIDNotAvailable){ //设备Touch ID不可用，例如未打开
+                    [self showHint:CMT_Error_DeviceErrorNOOpenOrNoLogin];
+                }else if (deviceError.code == LAErrorPasscodeNotSet){//系统未设置密码
+                    [self showHint:CMT_Error_DeviceErrorNOSetFingerprint];
+                }else if (deviceError.code == LAErrorAuthenticationFailed){//授权失败
+                    [self showHint:CMT_Error_DeviceErrorAuthorizationError];
+                }else{
+                    [self showHint:CMT_Error_DeviceErrorFingerprintValidation];//设备不支持
+                }
+                
+            }
+        }];
+        
+    }];
+}
+//忘记密码点击事件
+- (void)payMaskViewForgetPassBtnClick
+{
+    CMT_ForgetPasswordViewController *forgetVc = [[CMT_ForgetPasswordViewController alloc] init];
+    forgetVc.enterForgetVCType = 2;
+    [self.navigationController pushViewController:forgetVc animated:YES];
+}
+//密码输入框监听事件
+- (void)payMaskViewPassTextField:(NSString *)passNum
+{
+    [self confirmPwdInterface:passNum];
+}
+
+#pragma mark --验证支付密码
+- (void)confirmPwdInterface:(NSString *)pwdStr
+{
+    [self showHudInView:self.view hint:CMT_LoadDataWaitingPwdOK];
+    CMT_AccountModel *accoutModel = [CMT_AccountTool accountModel];
+    
+    [CMT_PayMaskView removeSelf];
+
+    [CMT_ProcessTheDataTool confirmPayPasswordWithPhoneNum:accoutModel.mobileNo andOldPassword:pwdStr  andBlock:^(CMT_BaseModel *baseModel, NSError *error) {
+        if(!error){
+            if([baseModel.status isEqualToString:@"1"]){
+                
+                if (self.fromType == 1) {
+                    //立即预约
+                    [self getPreInvestData];
+                }else{
+                    //立即投资
+                    [self toInvestLoadInterface];
+                }
+               
+            }else if ([baseModel.status isEqualToString:CMT_SinglePointCode]){
+                [CMT_SinglePointLoginTool addSinglePointLoginWithSelfVC:self];
+            }else{
+                [self showHint:baseModel.msg];
+                [self hideHud];
+            }
+        }else{
+            [self showHint:CMT_Error_NotNetWork];
+            [self hideHud];
+        }
+        
+    }];
+}
+
+#pragma mark --立即投资
+- (void)toInvestLoadInterface{
+    //神策数据统计 －－ 提交投资
+    SensorsAnalyticsSDK *sdk = [SensorsAnalyticsSDK sharedInstance];
+    if (sdk != nil) {
+        [sdk track:@"submitInvest" withProperties:@{@"productID": [NSString convertNull:self.markIdStr],
+                                                    @"productName": [NSString convertNull:self.productDetModel.bidTitle],
+                                                    @"investDayLine":[NSNumber numberWithDouble:[self.productDetModel.period doubleValue]],
+                                                    @"yearOfReturn": [NSString convertNull:self.productDetModel.apr],
+                                                    @"productOfAmount": [NSNumber numberWithDouble:[self.productDetModel.amount doubleValue]],
+                                                    @"minimumAmount": [NSNumber numberWithDouble:[self.productDetModel.minInvestAmount doubleValue]],
+                                                    @"returnType": [NSString convertNull:self.productDetModel.repayType],
+                                                    @"useCoupon": [NSString convertNull:self.useRate],
+                                                    @"Amount": [NSNumber numberWithDouble:[self.model.investMoney doubleValue]],
+                                                    @"distinctId": [CMT_AnalyticsTool userID]}];
+    }
+    
+    __weak  typeof(self) weakSelf = self;
+
+    //判断登录状态
+    CMT_AccountModel *accoutModel = [CMT_AccountTool accountModel];
+    if (self.ticketId.length == 0) self.ticketId = @"-1";
+    if (self.rateId.length == 0) self.rateId = @"-1";
+    
+    [CMT_ProcessTheDataTool atOnceToInvest:accoutModel.userId bidIdStr:self.markIdStr investAmount:self.model.investMoney cashId:self.ticketId rateStr:self.rateId token:self.model.investToken andBlock:^(id jsonObject, NSError *error) {
+        [self hideHud];
+        
+        CMT_Log(@"===%@",jsonObject);
+        
+        if(!error){
+            
+            if ([jsonObject[@"status"] isEqualToString:@"0"]) {
+                [weakSelf showHint:jsonObject[@"msg"]];
+                return ;
+            }else if ([jsonObject[@"status"] isEqualToString:@"1"]){
+            
+                [weakSelf showHint:@"投资成功"];
+                
+                //神策数据统计 －－ 完成投资
+                SensorsAnalyticsSDK *sdk = [SensorsAnalyticsSDK sharedInstance];
+                if (sdk != nil) {
+                    [sdk track:@"completeInvest" withProperties:@{@"productID": [NSString convertNull:self.productDetModel.bidId],
+                                                                  @"productName": [NSString convertNull:self.productDetModel.bidTitle],
+                                                                  @"investDayLine":[NSNumber numberWithDouble:[self.productDetModel.period doubleValue]],
+                                                                  @"yearOfReturn": [NSString convertNull:self.productDetModel.apr],
+                                                                  @"availableAmount":[NSNumber numberWithDouble:[self.productDetModel.amount doubleValue]],
+                                                                  @"minimumAmount": [NSNumber numberWithDouble:[self.productDetModel.minInvestAmount doubleValue]],
+                                                                  @"returnType": [NSString convertNull:self.productDetModel.repayType],
+                                                                  @"useCoupon": [NSString convertNull:self.useRate],
+                                                                  @"Amount": [NSNumber numberWithDouble:[self.model.investMoney doubleValue]],
+                                                                  @"cashAmount": [NSNumber numberWithDouble:[self.cashTicketStr doubleValue]],
+                                                                  @"distinctId": [NSString convertNull:[CMT_AnalyticsTool userID]]}];
+                }
+                [sdk flush];
+                
+                CMT_InvestResultViewController * investResult = [[CMT_InvestResultViewController alloc] init];
+                investResult.model = self.model;
+                investResult.markId = self.markIdStr;
+                investResult.investAmount = self.investAmount;
+                investResult.rateTicket = self.rateNum.length == 0 ? @"0%": self.rateNum;
+                investResult.markNameAndDate = self.markNameAndDate;
+                investResult.fromType = self.fromType;
+                investResult.investId = jsonObject[@"investId"];
+                [self.navigationController pushViewController:investResult animated:YES];
+
+            }else if ([jsonObject[@"status"] isEqualToString:CMT_SinglePointCode]){
+                [CMT_SinglePointLoginTool addSinglePointLoginWithSelfVC:self];
+            }else{
+                [self showHint:jsonObject[@"msg"]];
+            }
+           
+        }else{
+            
+          [weakSelf showHint:CMT_Error_NotNetWork];
+        }
+    }];
+}
+
+#pragma mark -- 预约投资接口
+- (void)getPreInvestData
+{
+
+    //神策数据采集 -- 预约投资提交
+    SensorsAnalyticsSDK *sdk = [SensorsAnalyticsSDK sharedInstance];
+    if (sdk != nil) {
+        [sdk track:@"reservationInvest_submit" withProperties:
+         @{@"Amount":[NSNumber numberWithDouble:[self.moneyNum doubleValue]],
+           @"investDayLine": [NSNumber numberWithDouble:[self.preInvestModelmodel.period doubleValue]],
+           @"yearOfReturn": [NSString convertNull:self.preInvestModelmodel.apr],
+           @"returnType": [NSString convertNull:self.preInvestModelmodel.repayType],
+           @"useCoupon": [NSString convertNull:self.useRate],
+           @"tab": [NSString convertNull:self.preInvestModelmodel.bidTitle],
+           @"distinctId": [NSString convertNull:[CMT_AnalyticsTool userID]]}];
+    }
+
+    [self showHudInView:self.view hint:CMT_LoadDataWaitingPwdOK];
+    CMT_AccountModel *accoutModel = [CMT_AccountTool accountModel];
+    
+    if (self.rateId.length == 0) self.rateId = @"-1";
+
+    [CMT_ProcessTheDataTool preinvestInvest:accoutModel.userId preInvestAmount:self.moneyNum period:self.preInvestModelmodel.period investId:self.investId  rateStr:self.rateId andBlock:^(id jsonObject, NSError *error) {
+        [self hideHud];
+        
+        if(!error){
+            if([[NSString stringWithFormat:@"%@",jsonObject[@"status"]] isEqualToString:@"1"]){
+                [self showHint:@"预约成功"];
+                
+                //神策数据采集 －－ 预约投资完成
+                SensorsAnalyticsSDK *sdk = [SensorsAnalyticsSDK sharedInstance];
+                if (sdk != nil) {
+                    [sdk track:@"reservationInvest_complete" withProperties:
+                     @{@"Amount":[NSNumber numberWithDouble:[self.moneyNum doubleValue]],
+                       @"investDayLine": [NSNumber numberWithDouble:[self.preInvestModelmodel.period doubleValue]],
+                       @"yearOfReturn":[NSString convertNull: self.preInvestModelmodel.apr],
+                       @"returnType":[NSString convertNull: self.preInvestModelmodel.repayType],
+                       @"useCoupon": [NSString convertNull:self.useRate],
+                       @"tab": [NSString convertNull:self.preInvestModelmodel.bidTitle],
+                       @"distinctId": [NSString convertNull:[CMT_AnalyticsTool userID]]}];
+                }
+
+                for (UIViewController *invest in self.navigationController.viewControllers) {
+                    //我的界面 和 产品详情
+                    if([invest isKindOfClass:[CMT_MyInvestmentViewController class]]){
+                        
+                        [[NSNotificationCenter defaultCenter] postNotificationName:CMT_NotifReloadKey object:nil];
+                        
+                        [self.navigationController popToViewController:invest animated:YES];
+                    }
+                }
+            }else if ([jsonObject[@"status"] isEqualToString:CMT_SinglePointCode]){
+                [CMT_SinglePointLoginTool addSinglePointLoginWithSelfVC:self];
+            }else{
+                [self showHint:jsonObject[@"msg"]];
+            }
+        }else{
+            [self showHint:CMT_Error_NotNetWork];
+        }
+        
+        
+    }];
+}
+
+- (void)viewDidLoad {
+    
+    [super viewDidLoad];
+    
+    self.title = self.fromType == 1 ? @"确认预约": @"确认支付";
+    
+    [self setSubviewStyle];//初始化并处理控件的样式
+
+    [self.view insertSubview:self.bottomView aboveSubview:self.myBgScrollView];
+    
+     self.model = [[CMT_InvestConfirmModel alloc] init];
+    
+    self.useRate = @"";
+    self.cashTicketStr = @"";
+    
+    if (self.fromType == 1) {
+        [self loadPreInvestData];//来自预约列表
+    }else{
+        [self loadInvestConfirmData];//立即投资
+    }
+}
+
+#pragma mark --获取预约投资数据
+- (void)loadPreInvestData
+{
+    [self showHudInView:self.view hint:@"加载中..."];
+    
+    __weak  typeof(self) weakSelf = self;
+    CMT_AccountModel *accoutModel = [CMT_AccountTool accountModel];
+    
+    [CMT_ProcessTheDataTool preinvestInvest:accoutModel.userId  period:self.preInvestModelmodel.period investId:self.investId apr:self.preInvestModelmodel.apr andBlock:^(id jsonObject, NSError *error) {
+        
+        [self hideHud];
+        [self.myBgScrollView.mj_header endRefreshing];
+        CMT_Log(@"%@",jsonObject);
+        
+        if(!error){
+            self.model = [CMT_InvestConfirmModel mj_objectWithKeyValues:jsonObject[@"data"]];
+            self.toPayLabel.text = [self.model.preAmount stringByAppendingString:@"元"];
+            self.toPayBtn.alpha = 1;
+            self.toPayBtn.userInteractionEnabled = YES;
+            self.bottomSectionBtn.userInteractionEnabled = YES;
+            self.bottomSectionBtn.alpha = 1;
+            self.topSectionTicket.userInteractionEnabled = YES;
+            self.topSectionTicket.alpha = 1;
+            
+            self.oneContentLabel.text =  [NSString stringWithFormat:@"%@元",self.model.preAmount];
+            self.twoContentLabel.text = [self.model.apr stringByAppendingString:@"%"];
+            self.threeContentLabel.text = [self.model.preIncome stringByAppendingString:@"元"];
+            self.fourContentLabel.text = [self.preInvestModelmodel.period stringByAppendingString:@"天"];
+            self.fiveContentLabel.text = self.model.preDate;
+            self.sixContentLabel.text = self.preInvestModelmodel.repayType;
+            [self.topSectionTicket setTitle:[NSString stringWithFormat:@"%@张可用",self.model.myInterestCount] forState:UIControlStateNormal];
+            self.moneyNum = self.model.preAmount;
+        }else{
+            
+            [weakSelf showHint:CMT_Error_NotNetWork];
+        }
+
+    }];
+}
+
+#pragma mark --获取立即投资数据 -- 立即投资
+- (void)loadInvestConfirmData
+{
+    [self showHudInView:self.view hint:@"加载中..."];
+
+    __weak  typeof(self) weakSelf = self;
+    CMT_AccountModel *accoutModel = [CMT_AccountTool accountModel];
+
+    [CMT_ProcessTheDataTool getInvestConfirmData:self.markIdStr amount:self.investAmount userIdStr:accoutModel.userId andBlock:^(id jsonObject, NSError *error) {
+        
+        [self hideHud];
+        [self.myBgScrollView.mj_header endRefreshing];
+
+        CMT_Log(@"获取立即投资数据%@",jsonObject);
+        
+        if(!error){
+            
+            self.model = [CMT_InvestConfirmModel mj_objectWithKeyValues:jsonObject[@"confirmMap"]];
+            self.toPayLabel.text = [self.model.investMoney stringByAppendingString:@"元"];
+            self.toPayBtn.alpha = 1;
+            self.toPayBtn.userInteractionEnabled = YES;
+            self.oneContentLabel.text =  [NSString stringWithFormat:@"%@元",self.model.investMoney];
+            self.twoContentLabel.text = [self.model.apr stringByAppendingString:@"%"];
+            self.threeContentLabel.text = [self.model.earnMoney stringByAppendingString:@"元"];
+            self.fourContentLabel.text = [self.model.period stringByAppendingString:@"天"];
+            self.fiveContentLabel.text = self.model.investTime;
+            self.sixContentLabel.text = self.model.repaymentType;
+            [self.topSectionTicket setTitle:[NSString stringWithFormat:@"%@张可用",self.model.myInterestCount] forState:UIControlStateNormal];
+            [self.bottomSectionBtn setTitle:[NSString stringWithFormat:@"%@张可用",self.model.myCashTicketsCount] forState:UIControlStateNormal];
+             self.moneyNum = self.model.investMoney;
+            
+            self.bottomSectionBtn.userInteractionEnabled = YES;
+            self.bottomSectionBtn.alpha = 1;
+            self.topSectionTicket.userInteractionEnabled = YES;
+            self.topSectionTicket.alpha = 1;
+            
+        }else{
+            
+            [weakSelf showHint:CMT_Error_NotNetWork];
+        }
+    }];
+    
+}
+
+- (void)dealloc{
+    
+    [[NSNotificationCenter defaultCenter] removeObserver:CMT_NotifReloadKey];
+}
+
+- (void)didReceiveMemoryWarning {
+    [super didReceiveMemoryWarning];
+    // Dispose of any resources that can be recreated.
+}
+
+@end

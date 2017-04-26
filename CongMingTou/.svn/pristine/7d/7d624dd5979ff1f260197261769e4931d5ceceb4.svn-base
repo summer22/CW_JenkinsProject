@@ -1,0 +1,108 @@
+//
+//  CMT_RealNameAuthenticationViewController.m
+//  CongMingTou
+//
+//  Created by wzh on 16/5/17.
+//  Copyright © 2016年 QiYuan. All rights reserved.
+//
+
+#import "CMT_RealNameAuthenticationViewController.h"
+#import "CMT_AccountAndPasswordViewController.h"
+@interface CMT_RealNameAuthenticationViewController ()
+@property (strong, nonatomic) IBOutlet UILabel *realNameLab;
+/**
+ *  身份证号
+ */
+@property (strong, nonatomic) IBOutlet UILabel *IDCardLab;
+@property (strong, nonatomic) IBOutlet UILabel *authenticationLab;
+@property (strong, nonatomic) IBOutlet NSLayoutConstraint *viewH;
+@property (strong, nonatomic) IBOutlet NSLayoutConstraint *nameW;
+@property (strong, nonatomic) IBOutlet UIView *midLineView;
+@property (strong, nonatomic) IBOutlet NSLayoutConstraint *midLineVIewH;
+
+@end
+
+@implementation CMT_RealNameAuthenticationViewController
+
+- (void)viewDidLoad {
+    [super viewDidLoad];
+    // Do any additional setup after loading the view from its nib.
+    [self setDefautUI];
+    [self loadDataIDCardInforWithUserId:[CMT_AccountTool accountModel].userId];
+}
+- (void)back{
+    for (UIViewController *subVc in self.navigationController.viewControllers) {
+        if([subVc isKindOfClass:[CMT_AccountAndPasswordViewController class]]){
+            [self.navigationController popToViewController:subVc animated:YES];
+        }
+    }
+}
+- (void)setDefautUI{
+    self.title = @"实名认证";
+    [_authenticationLab styleWithCornerRadius:_authenticationLab.height / 2];
+}
+- (void)loadDataIDCardInforWithUserId:(NSString *)userId{
+    [self showHudInView:self.view hint:CMT_LoadDataWaiting];
+    [CMT_ProcessTheDataTool getIDCardInforWithUserId:userId andBlock:^(CMT_IDCardInforModel *model, NSError *error) {
+        [self hideHud];
+        if(!error){
+            if([[NSString stringWithFormat:@"%@",model.code ] isEqualToString:@"1"]){
+                [self setUILoadModel:model.dataModel];
+            }else if ([[NSString stringWithFormat:@"%@",model.code] isEqualToString:CMT_SinglePointCode]){
+                [CMT_SinglePointLoginTool addSinglePointLoginWithSelfVC:self];
+            }else{
+                [self showHint:model.message];
+            }
+        }else{
+            [self showHint:CMT_Error_NotNetWork];
+        }
+    }];
+}
+- (void)setUILoadModel:(CMT_IDCardInforDataModel *)model{
+    if(model){
+        if(model.idNumber.length - 7 > 0){
+            NSRange range = NSMakeRange(3,  model.idNumber.length - 7);
+            NSMutableString *str = [NSMutableString stringWithFormat:@"%@",model.idNumber];
+            [str replaceCharactersInRange:range withString:@"***********"];
+            _IDCardLab.text = [NSString stringWithFormat:@"%@",str];
+            _realNameLab.text = [NSString stringWithFormat:@"%@",model.accountName];
+        }
+    }
+    /*else{
+        if([CMT_AccountTool accountModel].idCardNumber.length - 7 > 0){
+            NSRange range = NSMakeRange(3,  [CMT_AccountTool accountModel].idCardNumber.length - 7);
+            NSMutableString *str = [NSMutableString stringWithFormat:@"%@",[CMT_AccountTool accountModel].idCardNumber];
+            [str replaceCharactersInRange:range withString:@"***********"];
+            _IDCardLab.text = [NSString stringWithFormat:@"%@",str];
+            _realNameLab.text = [NSString stringWithFormat:@"%@",[CMT_AccountTool accountModel].realName];
+        }
+        //        [self showHint:CMT_Error_NotNetWork];
+    }
+*/
+}
+
+- (void)viewDidLayoutSubviews{
+    [super viewDidLayoutSubviews];
+   _nameW.constant = [CMT_Tools boundingRectWithStrW:_realNameLab.text labStrH:20 andFont:_realNameLab.font];
+    if(CMT_6pAnd6ps){
+        _viewH.constant = CMT_ProportionX *90;
+    }
+    _midLineVIewH.constant = 0.5;
+}
+
+- (void)didReceiveMemoryWarning {
+    [super didReceiveMemoryWarning];
+    // Dispose of any resources that can be recreated.
+}
+
+/*
+#pragma mark - Navigation
+
+// In a storyboard-based application, you will often want to do a little preparation before navigation
+- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
+    // Get the new view controller using [segue destinationViewController].
+    // Pass the selected object to the new view controller.
+}
+*/
+
+@end

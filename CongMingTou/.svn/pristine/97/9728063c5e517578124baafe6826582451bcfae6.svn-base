@@ -1,0 +1,153 @@
+//
+//  CMT_CapitalSubsidiaryViewController.m
+//  CongMingTou
+//
+//  Created by wzh on 16/5/17.
+//  Copyright © 2016年 QiYuan. All rights reserved.
+//
+
+#import "CMT_CapitalSubsidiaryViewController.h"
+#import "CMT_CapitalSubsidiaryTableViewCell.h"
+#import "CMT_CapitalSubsidiaryOtherTableViewCell.h"
+#import "CMT_StateView.h"
+@interface CMT_CapitalSubsidiaryViewController ()<UITableViewDataSource,UITableViewDelegate>{
+    int _pageIndex;
+    int _pageSize;
+}
+@property (strong, nonatomic) IBOutlet UITableView *tableView;
+@property (nonatomic, strong) NSMutableArray *dataArray;
+@property (nonatomic, strong) CMT_CapitalSubsidiaryTableViewCell *tableViewheaderView;
+@end
+
+@implementation CMT_CapitalSubsidiaryViewController
+
+- (CMT_CapitalSubsidiaryTableViewCell *)tableViewheaderView{
+    if(!_tableViewheaderView){
+        _tableViewheaderView = [[[NSBundle mainBundle]loadNibNamed:@"CMT_CapitalSubsidiaryTableViewCell" owner:nil options:nil]lastObject];
+        _tableViewheaderView.backgroundColor = [UIColor clearColor];
+    }
+    return _tableViewheaderView;
+}
+- (NSMutableArray *)dataArray{
+    if(!_dataArray){
+        _dataArray = [NSMutableArray array];
+    }
+    return _dataArray;
+}
+- (void)viewDidLoad {
+    [super viewDidLoad];
+    // Do any additional setup after loading the view from its nib.
+    [self setDefaultUI];
+}
+
+- (void)setDefaultUI{
+    _pageIndex = 0;
+    _pageSize = 10;
+    _tableView.separatorColor = [UIColor clearColor];
+    _tableView.backgroundColor = [UIColor clearColor];
+    _tableView.showsVerticalScrollIndicator = NO;
+    _tableView.tableHeaderView = self.tableViewheaderView;
+    _tableView.tableHeaderView.height = 105;
+    CMT_StateView *stateView = [[CMT_StateView alloc]initWithFrame:_tableView.bounds];
+    [stateView.stateButton addTarget:self action:@selector(stateButtonClicked:) forControlEvents:UIControlEventTouchUpInside];
+    _tableView.backgroundView = stateView;
+    
+    [self loadDataShouYiMingXi];
+    [self createRefreshing];
+    
+    NSString *yuanStr = @"元";
+    //已收收益
+    NSString *yiShouShouYiTotalStr = [NSString stringWithFormat:@"%@%@",_yiShouShouYiStr,yuanStr];
+    self.tableViewheaderView.yiShouShouYiLab.attributedText = [NSMutableAttributedString attributeWithTotalStr:yiShouShouYiTotalStr subStr:yuanStr subStrFont:UIFont22];    //待收收益
+    NSString *daiShouShouYiTotalStr = [NSString stringWithFormat:@"%@%@",_daiShouShouYiStr,yuanStr];
+    self.tableViewheaderView.daiShouShouYiLab.attributedText = [NSMutableAttributedString attributeWithTotalStr:daiShouShouYiTotalStr subStr:yuanStr subStrFont:UIFont22];
+    // 总收益
+    NSString *totalShouYiTotalStr = [NSString stringWithFormat:@"%@%@",_totalShouYiStr,yuanStr];
+    self.tableViewheaderView.totalShouYiLab.attributedText = [NSMutableAttributedString attributeWithTotalStr:totalShouYiTotalStr subStr:yuanStr subStrFont:UIFont22];
+}
+- (void)stateButtonClicked:(UIButton *)button{
+    [self loadDataShouYiMingXi];
+}
+- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView{
+    return 1;
+}
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section{
+    return _dataArray.count;
+}
+
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath{
+
+    CMT_CapitalSubsidiaryOtherTableViewCell *cell = [CMT_CapitalSubsidiaryOtherTableViewCell cellWithTablebView:tableView];
+    cell.bottomLineView.hidden = indexPath.row == _dataArray.count - 1? YES : NO;
+    cell.model = _dataArray[indexPath.row];
+    return cell;
+}
+- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath{
+    return 75;
+}
+
+- (void)loadDataShouYiMingXi{
+    [self showHudInView:self.view hint:CMT_LoadDataWaiting];
+    if(_tableView.mj_header.isRefreshing){
+        _pageIndex = 0;
+    }
+    [CMT_ProcessTheDataTool myShouYiMingXiWithUserId:[CMT_AccountTool accountModel].userId pageIndex:_pageIndex pageSize:_pageSize andBlock:^(CMT_ShouYiMingXIModel *model, NSError *error) {
+        [self hideHud];
+        if(!error){
+            if([[NSString stringWithFormat:@"%@",model.code] isEqualToString:@"1"]){
+                if(_pageIndex == 0){
+                    [self.dataArray removeAllObjects];
+                }
+                [self.dataArray addObjectsFromArray:model.dataModel.listDataArray];
+                _pageIndex = _pageIndex + (int)model.dataModel.listDataArray.count;
+                [_tableView reloadData];
+            }else if ([[NSString stringWithFormat:@"%@",model.code] isEqualToString:CMT_SinglePointCode]){
+                [CMT_SinglePointLoginTool addSinglePointLoginWithSelfVC:self];
+            }else{
+                [self showHint:model.message];
+            }
+        }else{
+            [self showHint:CMT_Error_NotNetWork];
+        }
+        ((CMT_StateView *)self.tableView.backgroundView).dataArray =  self.dataArray;
+        [_tableView.mj_footer endRefreshing];
+        [_tableView.mj_header endRefreshing];
+
+    }];
+}
+
+
+#pragma mark -- createRefreshing
+- (void)createRefreshing{
+    // 下拉刷新
+    _tableView.mj_header= [MJRefreshNormalHeader headerWithRefreshingBlock:^{
+        [self loadDataShouYiMingXi];
+        
+    }];
+    
+    // 设置自动切换透明度(在导航栏下面自动隐藏)
+    _tableView.mj_header.automaticallyChangeAlpha = YES;
+    
+    // 上拉刷新
+    _tableView.mj_footer = [MJRefreshBackNormalFooter footerWithRefreshingBlock:^{
+        [self loadDataShouYiMingXi];
+    }];
+}
+
+
+- (void)didReceiveMemoryWarning {
+    [super didReceiveMemoryWarning];
+    // Dispose of any resources that can be recreated.
+}
+
+/*
+#pragma mark - Navigation
+
+// In a storyboard-based application, you will often want to do a little preparation before navigation
+- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
+    // Get the new view controller using [segue destinationViewController].
+    // Pass the selected object to the new view controller.
+}
+*/
+
+@end

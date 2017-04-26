@@ -1,0 +1,54 @@
+//
+//  CMT_GetNewsListModel.h
+//  CongMingTou
+//
+//  Created by wzh on 16/5/24.
+//  Copyright © 2016年 QiYuan. All rights reserved.
+//
+
+#import <Foundation/Foundation.h>
+
+@interface CMT_GetNewsListModel : NSObject
+@property (nonatomic ,copy) NSString *status;
+/**
+ *  消息日期
+ */
+@property (copy, nonatomic) NSString *msgDate;
+@property (copy, nonatomic) NSString *msgdate;
+
+@property (copy, nonatomic) NSString *msgDateChinese;
+
+/**
+ *  消息ID
+ */
+@property (copy, nonatomic) NSString *messageId;
+/**
+ *  消息标题
+ */
+@property (copy, nonatomic) NSString *msgTitle;
+/**
+ *  用户手机号
+ */
+@property (copy, nonatomic) NSString *userId;
+/**
+ *  已读未读信息 0:未读1：已读
+ */
+@property (copy, nonatomic) NSString *read;
+/**
+ *  消息类型
+ */
+@property (copy, nonatomic) NSString *type;
+/**
+ *  消息内容
+ */
+@property (copy, nonatomic) NSString *msg;
+/**
+ *  用户手机号
+ */
+@property (copy, nonatomic) NSString *mobile;
+
++ (CMT_GetNewsListModel *)getNewsListModelWithDic:(NSDictionary *)dic;
+
+
+
+@end

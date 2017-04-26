@@ -1,0 +1,14 @@
+//
+//  CMT_noNetShowView.h
+//  CongMingTou
+//
+//  Created by summer on 16/6/8.
+//  Copyright © 2016年 QiYuan. All rights reserved.
+//
+
+#import <UIKit/UIKit.h>
+
+@interface CMT_noNetShowView : UIView
+- (instancetype)initWithFrame:(CGRect)frame;
+
+@end

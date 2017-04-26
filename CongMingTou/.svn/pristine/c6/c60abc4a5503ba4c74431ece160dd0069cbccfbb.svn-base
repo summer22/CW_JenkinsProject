@@ -1,0 +1,79 @@
+//
+//  CMT_MyAppointmentInvestmentTableViewCell.m
+//  CongMingTou
+//
+//  Created by wzh on 16/5/18.
+//  Copyright © 2016年 QiYuan. All rights reserved.
+//
+
+#import "CMT_MyAppointmentInvestmentTableViewCell.h"
+//字体颜色
+#define MyDesLabTextColor [CMT_Tools colorWithHexString:@"#ff603e"]
+//到期还本付息方式
+#define MyDaoQiHuanBenFuXiDesTextColor [CMT_Tools colorWithHexString:@"#ffa33e"]
+//先息后本方式
+#define MyXianXIHouBenDesTextColor [CMT_Tools colorWithHexString:@"#46cbfe"]
+
+@implementation CMT_MyAppointmentInvestmentTableViewCell
+
+- (void)awakeFromNib {
+    // Initialization code
+    [_quXiaoYuYueBtn styteWithCornerRadius:_quXiaoYuYueBtn.height/2 shadowColor:ThemeBackgroundColor shadowOffset:CGSizeMake(0, 2) shadowOpacity:0.6 shadowRadius:5];
+
+}
+
+
++ (CMT_MyAppointmentInvestmentTableViewCell *)cellWithTablebView:(UITableView *)tableView{
+    static NSString *indent = @"CMT_MyAppointmentInvestmentTableViewCell";
+    [tableView registerNib:[UINib nibWithNibName:@"CMT_MyAppointmentInvestmentTableViewCell" bundle:nil] forCellReuseIdentifier:indent];
+    CMT_MyAppointmentInvestmentTableViewCell  *cell = [tableView dequeueReusableCellWithIdentifier:indent];
+    cell.selectionStyle = UITableViewCellSelectionStyleNone;
+    return cell;
+    
+}
+- (void)setMyAppointmentInvestmentModel:(CMT_MyAppointmentInvestmentModel *)myAppointmentInvestmentModel{
+    _myAppointmentInvestmentModel = myAppointmentInvestmentModel;
+    
+    
+    NSString *yuanStr = @"元";
+    NSString *yuYueMoneyStr = @"";
+    NSString *yuYueDesStr = @"";
+    NSString *shengYuDayStr = @"";
+    NSString *huanXiFangShiStr = @"";
+    NSString *yuYueMoneyTotalStr = @"";
+    NSString *huanXiFangShiTotalStr = @"";
+    yuYueMoneyStr = @"300,00";
+    yuYueMoneyTotalStr =  [NSString stringWithFormat:@"%@%@",yuYueMoneyStr,yuanStr];
+    _yuYueMoneyLab.attributedText = [NSMutableAttributedString attributeWithTotalStr:yuYueMoneyTotalStr subStr:yuanStr subStrFont:UIFont30];
+    
+    yuYueDesStr = @"预约金额";
+    _yuYueMoneyDesLab.text = yuYueDesStr;
+    shengYuDayStr = @"20天";
+    huanXiFangShiTotalStr = [NSString stringWithFormat:@"剩余期限%@", shengYuDayStr];
+    _shengYuQiXianLab.attributedText = [NSMutableAttributedString attributeWithTotalStr:huanXiFangShiTotalStr subStr:shengYuDayStr subStrFont:UIFont40 andSubStrColor:MyDesLabTextColor];
+    
+    if(_myAppointmentInvestmentModel.huanXiFangShi == 0){
+        _huanXiFangShiLab.textColor = MyDaoQiHuanBenFuXiDesTextColor;
+        [_huanXiFangShiLab styleWithCornerRadius:_huanXiFangShiLab.height borderColor:MyDaoQiHuanBenFuXiDesTextColor borderWidth:0.5];
+        huanXiFangShiStr = @"到期还本付息";
+    }else{
+        _huanXiFangShiLab.textColor = MyXianXIHouBenDesTextColor;
+        [_huanXiFangShiLab styleWithCornerRadius:_huanXiFangShiLab.height borderColor:MyXianXIHouBenDesTextColor borderWidth:0.5];
+        huanXiFangShiStr = @"按月付息到期还本";
+    }
+    
+    _huanXiFangShiLab.text = huanXiFangShiStr;
+    [_quXiaoYuYueBtn setTitle:@"取消预约" forState:UIControlStateNormal];
+    if(_myAppointmentInvestmentModel.isKeYiquXiaoYuYue == 0){
+        _quXiaoYuYueBtn.userInteractionEnabled = NO;
+        _quXiaoYuYueBtn.alpha =0.5;
+    }
+
+}
+- (void)setSelected:(BOOL)selected animated:(BOOL)animated {
+    [super setSelected:selected animated:animated];
+
+    // Configure the view for the selected state
+}
+
+@end

@@ -1,0 +1,28 @@
+//
+//  CMT_InvestResultViewController.h
+//  CongMingTou
+//
+//  Created by summer on 16/5/25.
+//  Copyright © 2016年 QiYuan. All rights reserved.
+//
+
+#import "CMT_BaseVIewController.h"
+#import "CMT_InvestConfirmModel.h"
+
+@interface CMT_InvestResultViewController : CMT_BaseVIewController
+//页面数据源
+@property (nonatomic,strong) CMT_InvestConfirmModel *model;
+/** 投资金额 */
+@property (nonatomic,copy)NSString *investAmount;
+/** 使用加息券情况 */
+@property (nonatomic,copy)NSString *rateTicket;
+/** 标的名字和期数 */
+@property (nonatomic,copy)NSString *markNameAndDate;
+//从哪里跳转来的判断
+@property (nonatomic,assign)COMEFROMCLASS fromType;
+/** markId */
+@property (nonatomic,copy)NSString *markId;
+/** 投资id */
+@property (nonatomic,copy)NSString *investId;
+
+@end
